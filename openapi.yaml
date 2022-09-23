@@ -1,0 +1,217 @@
+openapi: 3.0.0
+info:
+  title: Генерация трехмерного ландшафта (спецификация)
+  version: 1.0.0
+
+tags:
+  - name: users
+    description: information about users
+  - name: terrains
+    description: information about terrain projects
+  - name: sessions
+    description: information about sessions (login, logout)
+    
+components:
+  schemas:
+    BadRequest:
+      type: object
+      properties:
+        fields_problems:
+          type: object
+        data:
+          type: object
+        status:
+          type: string
+          example: bad_request
+        message:
+          type: string
+          example: Bad request
+          
+    User:
+      type: object
+      description: user with password
+      required:
+        - login
+        - password
+        - perm_level
+      properties:
+        id:
+          type: integer
+          description: user id
+        login:
+          type: string
+          description: user login
+        password:
+          type: string
+          description: user password
+        perm_level:
+          type: integer
+          description: permission level
+        blocked:
+          type: boolean
+          description: is user blocked
+        last_time:
+          type: string
+          format: date-time
+    
+    Terrain:
+      type: object
+      description: terrain
+      properties:
+        id: 
+          type: integer
+          description: terrain project id
+        name:
+          type: string
+          description: terrain project name
+        last_edit:
+          type: string
+          format: date-time
+          description: last time project being edited
+          
+    TerrainList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Terrain'
+
+paths:
+  /users:
+    post:
+      summary: add new user (registration)
+      tags:
+        - users
+      description: add new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                login:
+                  type: string
+                password:
+                  type: string
+                perm_level:
+                  type: integer
+              required:
+                - login
+                - password
+                - perm_level
+      responses:
+        '200':
+          description: success
+        '403':
+          description: user is not available
+        '404':
+          description: user is not found
+          
+  /users/{username}:
+    get:
+      tags:
+        - users
+      description: ''
+      summary: return info about one user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+    patch:
+      tags:
+        - users
+      summary: changes one user information
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                fileName:
+                  type: string
+                  format: binary
+                username:
+                  type: string
+                perm_level:
+                  type: integer
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+                
+  /terrains:
+    get:
+      tags:
+        - terrains
+      summary: returns a list of terrain projects.
+  
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TerrainList'
+                
+  /sessions:
+    post:
+      tags:
+        - sessions
+      description: ''
+      summary: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+              required:
+                - login
+                - password
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '403':
+          description: No permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
