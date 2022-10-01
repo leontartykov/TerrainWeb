@@ -54,7 +54,7 @@ components:
           type: string
           format: date-time
     
-    Terrain:
+    TerrainInfo:
       type: object
       description: terrain
       properties:
@@ -72,7 +72,57 @@ components:
     TerrainList:
       type: array
       items:
-        $ref: '#/components/schemas/Terrain'
+        $ref: '#/components/schemas/TerrainInfo'
+        
+    TerrainSubmit:
+      type: object
+      description: submit terrain parametres
+      properties:
+        rotate:
+          type: array
+          description: rotate terrain by OXYZ axes
+          items:
+            type: object
+            properties:
+              rotate_x:
+                type: integer
+              rotate_y:
+                type: integer
+              rotate_z:
+                type: integer
+        scale:
+          type: integer
+          description: scale terrain by value
+        size:
+          type: array
+          description: set terrain width and length
+          items:
+            type: object
+            properties:
+              width:
+                type: integer
+              length:
+                type: integer
+        configure:
+          type: array
+          description: set terrain config values
+          items:
+            type: object
+            properties:
+              octaves:
+                type: integer
+              gain:
+                type: number
+                format: double
+              lacunarity:
+                type: number
+                format: double
+              seed:
+                type: integer
+              frequency:
+                type: number
+                format: double
+        
 
 paths:
   /users:
@@ -176,6 +226,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TerrainList'
+                
+  /terrains/{terrain_id}:
+    put:
+      tags:
+        - terrains
+      summary: set all parametres to specific terrain
+      
+      parameters:
+        - name: terrain_id
+          in: path
+          description: terrain id to put
+          required: true
+          schema:
+            type: integer
+      
+      responses:
+        '200':
+          description: success
+        '520':
+          description: Unknown error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TerrainSubmit'
                 
   /sessions:
     post:
