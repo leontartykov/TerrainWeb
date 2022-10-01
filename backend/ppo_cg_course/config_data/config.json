@@ -1,0 +1,14 @@
+{
+    "PostgreSQL" : {
+          "host": "localhost",
+          "port": 5432,
+          "user": "postgres",
+          "password": "postgres",
+          "db_name": "ppo"},
+     "MySQL" : {
+          "host": "tcp://127.0.0.1:3306",
+          "port": 3306,
+          "user": "root",
+          "password": "Mysql_1235",
+          "db_name": "ppo"},
+ }
