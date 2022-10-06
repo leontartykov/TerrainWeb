@@ -1,0 +1,9 @@
+error: -1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 28; соединение с БД не установлено.; Sat Oct  1 19:48:53 2022
+error: -1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 29; соединение с БД не установлено.; Sat Oct  1 19:51:45 2022
+error: -1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 29; соединение с БД не установлено.; Sat Oct  1 19:53:09 2022
+error: -1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 29; соединение с БД не установлено.; Sat Oct  1 19:56:09 2022
+error: -1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 29; соединение с БД не установлено.; Sat Oct  1 19:59:41 2022
+info: user: admin; подключение пользователя.; Sat Oct  1 20:10:54 2022
+info: user: admin; запуск приложения.; Sat Oct  1 20:10:57 2022
+error: 1; user: admin; /home/lev/iu7_web_labs_2022/backend/ppo_cg_course/core/entry/entry.cpp; 11EntrySystem; _verify_user; line: 55; ошибка идентификации: пользователь не найден.; Sat Oct  1 20:13:08 2022
+info: user: admin; подключение пользователя.; Sat Oct  1 20:13:08 2022
