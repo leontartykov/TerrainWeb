@@ -12,9 +12,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-Wall -fPIC -std=c++14 -DQT_NO_VERSION_TAGGING")
 
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
+include(GoogleTest)
 
-include_directories(${Qt5Gui_INCLUDE_DIRS}, ${PostgreSQL_INCLUDE_DIRS})
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt5Network COMPONENTS QtNetwork REQUIRED)
 
 set(FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR your_path_to_mysql_connectorcpp)
 include_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/include)
@@ -145,6 +146,11 @@ add_executable(
     core/config/config_struct.h
     core/config/config.h
     core/config/config.cpp
+
+    server/server.h
+    server/server.cpp
+    server/async_con.h
+    server/async_con.cpp
 )
 
 enable_testing()
@@ -287,11 +293,11 @@ add_executable(
 )
 
 
-include(GoogleTest)
+
 gtest_discover_tests(unit_all_tests)
 
 target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets -lpqxx -lpq -ljsoncpp ${JSONCPP_LIBRARIES} mysqlcppconn
                                 gtest gtest_main)
-target_link_libraries(core_files Qt5::Gui Qt5::Widgets -lpqxx -lpq -ljsoncpp ${JSONCPP_LIBRARIES} mysqlcppconn)
+target_link_libraries(core_files Qt5::Gui Qt5::Widgets Qt5::Network -lpqxx -lpq -ljsoncpp ${JSONCPP_LIBRARIES} mysqlcppconn)
 
 
