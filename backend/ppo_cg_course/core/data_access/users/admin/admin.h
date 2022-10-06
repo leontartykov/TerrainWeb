@@ -4,7 +4,7 @@
 #include <pqxx/pqxx>
 #include <vector>
 #include <memory>
-#include "mysql_connection.h"
+#include <mysql_connection.h>
 
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>

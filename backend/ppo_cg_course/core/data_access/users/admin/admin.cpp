@@ -216,13 +216,8 @@ int Admin::_delete_user_mysql(users_t &user)
         del_user.password = res->getString("password");
         del_user.is_blocked = res->getString("locked");
 
-        //std::cout << del_user.login;*/
-
         stmt->execute("insert into ppo.deleted_users (login, password, locked) values ('" + del_user.login + "', '" + del_user.password + "', " + del_user.is_blocked + ");");
         stmt->execute("delete from ppo.users where login = '" + user.login + "';");
-
-        //delete res;
-        //delete stmt;
     }
     catch(std::exception const &e){
         std::cerr << e.what() << '\n';
@@ -328,7 +323,9 @@ int Admin::do_action()
             }
             case menu::ADD_USER:
             {
-                //для примера
+                //переделать
+                std::cout << "Функция недступна.\n";
+                break;
                 users_t user;
                 user.login = "user12";
                 user.password = "qwwer";
@@ -343,7 +340,9 @@ int Admin::do_action()
             }
             case menu::DELETE_USER:
             {
-                //для примера
+                //переделать
+                std::cout << "Функция недступна.\n";
+                break;
                 users_t user;
                 user.login = "user12";
                 std::shared_ptr<Admin> admin(new Admin());
@@ -354,7 +353,9 @@ int Admin::do_action()
             }
             case menu::LOCK_USER:
             {
-                //для примера
+                //переделать
+                std::cout << "Функция недступна.\n";
+                break;
                 users_t user;
                 user.login = "user12";
                 std::shared_ptr<Admin> admin(new Admin());
@@ -366,7 +367,9 @@ int Admin::do_action()
             }
             case menu::UNLOCK_USER:
             {
-                //для примера
+                //переделать
+                std::cout << "Функция недступна.\n";
+                break;
                 users_t user;
                 user.login = "user12";
                 std::shared_ptr<Admin> admin(new Admin());
@@ -377,7 +380,7 @@ int Admin::do_action()
             break;
             }
              default:
-                std::cout << "неизвестная команда.\n";
+                std::cout << " Неизвестная команда.\n";
                 break;
         }
     }
