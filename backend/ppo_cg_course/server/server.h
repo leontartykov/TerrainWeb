@@ -8,6 +8,14 @@
 using namespace boost::asio;
 using ip::tcp;
 
+struct request
+{
+    std::string method;
+    std::string uri;
+    int http_v_major;
+    int http_v_minor;
+};
+
 class HTTPServerTCP
 {
     private:

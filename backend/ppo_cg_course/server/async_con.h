@@ -4,18 +4,28 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <boost/beast/http.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/optional/optional_io.hpp>
 
 using namespace boost::asio;
+namespace beast = boost::beast;
+namespace http = beast::http;
 using ip::tcp;
+
+static std::string const fname = "upload.txt";
 
 class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
 {
     private:
         tcp::socket __socket;
         std::string __message;
+        http::request<http::string_body> __request;
+        streambuf response;
         char __data[1024];
-    public:
+
+        bool __handle_post_request();
+public:
         typedef boost::shared_ptr<tcp_connection> pointer;
 
         static pointer create(io_service &io_context);
@@ -23,7 +33,7 @@ class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
 
         void start();
         void handle_write(const boost::system::error_code &error, size_t bytes_transferred);
-        void handle_read(const boost::system::error_code &error, size_t bytes_transferred);
+        bool handle_read();
         tcp::socket &socket();
 };
 

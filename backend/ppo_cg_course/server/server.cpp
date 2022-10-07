@@ -1,7 +1,7 @@
 #include "server.h"
 
 HTTPServerTCP::HTTPServerTCP(boost::asio::io_service &io_service) : __io_service(io_service),
-    __acceptor(__io_service, tcp::endpoint(tcp::v4(), 1234)){
+    __acceptor(__io_service, tcp::endpoint(tcp::v4(), 8080)){
     __start_accept();
 }
 
