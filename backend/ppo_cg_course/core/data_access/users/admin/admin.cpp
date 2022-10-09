@@ -85,52 +85,13 @@ int Admin::disconnect_db()
     return 0;
 }
 
-int Admin::_is_user_empty(users_t &user){
-    int error = 0;
-    if (user.password.empty() && user.login.empty()){
-        error = -1;
-    }
-
-    return error;
-}
-
-int Admin::add_user(users_t &user)
-{
-    int error = this->_add_user_psql(user);
-    error = this->_add_user_mysql(user);
-    return error;
-}
-
-int Admin::_add_user_psql(users_t &user)
-{
-    if (!_connect_psql){
-        std::cout << "error: Нет подключения к БД." << std::endl;
-        return -1;
-    }
-    else if (this->_is_user_empty(user) != 0){
-        std::cout << "О пользователе нет данных.\n";
-        return -2;
-    }
-   try{
-        pqxx::work worker(*_connect_psql);
-
-        worker.exec("insert into ppo.passwords.users values ('" + user.login + "', '" + user.password + "', false, " + "false)");
-        worker.commit();
-        std::cout << "пользователь был добавлен успешно.\n";
-    }
-    catch (std::exception const &e){
-        std::cout << e.what() << '\n';
-        return -3;
-    }
-
-    std::cout << "Добавление в psql произошло успешно.\n";
-
-    return 0;
+int Admin::__add_user_psql(users_t &user){
+    return __users_psql.add(user);
 }
 
 int Admin::_add_user_mysql(users_t &user)
 {
-    if (!_connect_mysql){
+    /*if (!_connect_mysql){
         std::cout << "error: Нет подключения к БД." << std::endl;
         return -1;
     }
@@ -149,54 +110,26 @@ int Admin::_add_user_mysql(users_t &user)
         return -3;
     }
 
-    std::cout << "Добавление в mysql произошло успешно.\n";
+    std::cout << "Добавление в mysql произошло успешно.\n";*/
 
     return 0;
 }
 
-int Admin::delete_user(users_t &user)
+int Admin::delete_user(int id)
 {
-    int error;// = this->_delete_user_psql(user);
-    error = this->_delete_user_mysql(user);
+    int error;
+    error = __delete_user_psql(id);
+    //error = __delete_user_mysql(user);
     return error;
 }
 
-int Admin::_delete_user_psql(users_t &user)
-{
-    if (!_connect_psql){
-        std::cout << "Нет подключения к БД." << std::endl;
-        return -1;
-    }
-    else if (this->_is_user_empty(user) != 0){
-        std::cout << "О пользователе нет данных.\n";
-        return -2;
-    }
-
-    try{
-        users_t del_user;
-        pqxx::work worker(*_connect_psql);
-        pqxx::result response = worker.exec("SELECT * FROM ppo.passwords.users WHERE login = '" + user.login + "';");
-
-        del_user.login = response[0][0].c_str();
-        del_user.password = response[0][1].c_str();
-        del_user.is_blocked = response[0][2].c_str();
-
-        worker.exec("DELETE FROM ppo.passwords.users WHERE login = '" + user.login + "';");
-        worker.exec("insert into ppo.passwords.deleted_users values ('" + del_user.login + "', '" + del_user.password + "', false);");
-        //worker.exec("UPDATE ppo.passwords.users SET delete = true WHERE login = '" + user.login + "';");
-        worker.commit();
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
-    }
-
-    return 0;
+int Admin::__delete_user_psql(int id){
+    return __users_psql.delete_user(id);
 }
 
 int Admin::_delete_user_mysql(users_t &user)
 {
-    if (!_connect_mysql){
+    /*if (!_connect_mysql){
         std::cout << "Нет подключения к БД." << std::endl;
         return -1;
     }
@@ -222,49 +155,33 @@ int Admin::_delete_user_mysql(users_t &user)
     catch(std::exception const &e){
         std::cerr << e.what() << '\n';
         return -3;
-    }
+    }*/
 
     return 0;
 }
 
-int Admin::lock_user(users_t &user)
-{
-    if (this->_is_user_empty(user) != 0){
+int Admin::lock_user(std::string login){
+    int success = 0;
+    if (login.empty()){
         std::cout << "О пользователе нет данных.\n";
         return -1;
     }
 
-    try{
-        pqxx::work worker(*_connect_psql);
-        worker.exec("UPDATE ppo.passwords.users SET lock = true WHERE login LIKE '%" + user.login + "';");
-        worker.commit();
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
-    }
-
-    return 0;
+    success = __users_psql.block(login);
+    return success;
 }
 
-int Admin::unlock_user(users_t &user)
+int Admin::unlock_user(std::string login)
 {
-    if (this->_is_user_empty(user) != 0){
+    int success = 0;
+    if (login.empty()){
         std::cout << "О пользователе нет данных.\n";
         return -1;
     }
 
-    try{
-        pqxx::work worker(*_connect_psql);
-        worker.exec("UPDATE ppo.passwords.users SET lock = false WHERE login LIKE '%" + user.login + "';");
-        worker.commit();
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
-    }
+    success = __users_psql.unlock(login);
 
-    return 0;
+    return success;
 }
 
 int Admin::check_connection(){
