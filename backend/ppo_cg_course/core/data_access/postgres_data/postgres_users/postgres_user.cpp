@@ -4,8 +4,10 @@ users_t UserPostgres::get_by_id(int id)
 {
     users_t res_user;
     pqxx::work worker(*__conn_psql);
-    pqxx::result response = worker.exec(
-                "SELECT * FROM ppo.passwords.users WHERE id = '" + std::to_string(id) + "';");
+    std::string query = "SELECT * FROM terrain_project.users.passwords WHERE id = '" + \
+                         std::to_string(id) + "';";
+
+    pqxx::result response = worker.exec(query);
 
     res_user.login = response[0][1].c_str();
     res_user.password = response[0][2].c_str();
@@ -28,7 +30,9 @@ int UserPostgres::add(users_t &user)
     try{
         pqxx::work worker(*__conn_psql);
 
-        worker.exec("insert into ppo.passwords.users values ('" + user.login + "', '" + user.password + "', false, " + "false)");
+        std::string query = "INSERT terrain_project.users.passwords values ('" + \
+                            user.login + "', '" + user.password + "', false, " + "false)";
+        worker.exec(query);
         worker.commit();
         std::cout << "пользователь был добавлен успешно.\n";
     }
@@ -56,7 +60,9 @@ int UserPostgres::delete_user(int id)
     try{
         users_t del_user;
         pqxx::work worker(*__conn_psql);
-        worker.exec("UPDATE ppo.passwords.users SET delete = true WHERE id = '" + std::to_string(id) + "';");
+        std::string query = "UPDATE terrain_project.users.passwords SET delete = true WHERE id = '" + \
+                            std::to_string(id) + "';";
+        worker.exec(query);
         worker.commit();
     }
     catch(std::exception const &e){
@@ -72,7 +78,9 @@ int UserPostgres::update_login(int id, std::string new_login)
     try{
         users_t del_user;
         pqxx::work worker(*__conn_psql);
-        worker.exec("UPDATE ppo.passwords.users SET login = " + new_login + " WHERE id = '" + std::to_string(id) + "';");
+        std::string query = "UPDATE terrain_project.users.passwords SET login = " + \
+                            new_login + " WHERE id = '" + std::to_string(id) + "';";
+        worker.exec(query);
         worker.commit();
     }
     catch(std::exception const &e){
@@ -92,7 +100,8 @@ int UserPostgres::block(std::string login)
 
     try{
         pqxx::work worker(*__conn_psql);
-        worker.exec("UPDATE ppo.passwords.users SET blocked = true WHERE login LIKE '%" + login + "';");
+        std::string query = "UPDATE terrain_project.users.passwords SET blocked = true WHERE login LIKE '%" + login + "';";
+        worker.exec(query);
         worker.commit();
     }
     catch(std::exception const &e){
@@ -107,7 +116,8 @@ int UserPostgres::unlock(std::string login)
 {
     try{
         pqxx::work worker(*__conn_psql);
-        worker.exec("UPDATE ppo.passwords.users SET lock = false WHERE login LIKE '%" + login + "';");
+        std::string query = "UPDATE terrain_project.users.passwords SET lock = false WHERE login LIKE '%" + login + "';"
+        worker.exec(query);
         worker.commit();
     }
     catch(std::exception const &e){
