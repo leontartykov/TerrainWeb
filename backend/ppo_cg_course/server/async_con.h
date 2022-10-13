@@ -8,12 +8,12 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/optional/optional_io.hpp>
 
+#include "../core/data_access/postgres/postgres_init/postgres.h"
+
 using namespace boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
 using ip::tcp;
-
-static std::string const fname = "upload.txt";
 
 class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
 {
@@ -24,7 +24,10 @@ class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
         streambuf response;
         char __data[1024];
 
+        Postgres __postgres;                            //postgres database
+
         bool __handle_post_request();
+        bool __handle_get_request();
 public:
         typedef boost::shared_ptr<tcp_connection> pointer;
 
