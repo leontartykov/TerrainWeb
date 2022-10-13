@@ -1,10 +1,12 @@
-CREATE DATABASE IF NOT EXISTS terrain_project;
+CREATE DATABASE terrain_project;
 CREATE SCHEMA terrain_project.users;
 
 CREATE TABLE IF NOT EXISTS terrain_project.users.passwords
 (
-	id int primary key,
-	login varchar primary key,
+	id int,
+	login varchar,
+	primary key(id, login),
+	
 	password varchar,
 	blocked boolean,
 	deleted boolean
