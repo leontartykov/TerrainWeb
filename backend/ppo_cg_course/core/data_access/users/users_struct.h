@@ -5,10 +5,11 @@
 
 typedef struct users users_t;
 struct users{
+    int id;
     std::string login;
     std::string password;
     std::string is_blocked; //false if is unblocked, true -- if blocked
-    std::string is_deleted;
+    std::string is_deleted; //false if is not deleted, true -- if deleted
 };
 
 #endif

@@ -9,12 +9,12 @@ class IUsersDb
         IUsersDb() = default;
         virtual ~IUsersDb() = default;
 
-        virtual users_t get_by_id(int id);
-        virtual int add(users_t &user);
-        virtual int delete_user(int id);
-        virtual int update_login(int id, std::string new_login);
-        virtual int block(std::string login);
-        virtual int unlock(std::string login);
+        virtual users_t get(int &id) = 0;
+        virtual int add(users_t &user) = 0;
+        virtual int delete_user(int &id) = 0;
+        virtual int update_login(int &id, std::string &new_login) = 0;
+        virtual int block(int &id) = 0;
+        virtual int unlock(int &id) = 0;
 };
 
 #endif

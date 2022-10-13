@@ -18,16 +18,17 @@
 #include "../../../entry/app_facade/app_facade.h"
 #include "../users_struct.h"
 #include "../../../config/config.h"
-#include "../../postgres_data/postgres_users/postgres_user.h"
-#include "../../postgres_data/postgres_terrains/postgres_terrains.h"
+#include "../../postgres/postgres_data/postgres_users/postgres_user.h"
+#include "../../postgres/postgres_data/postgres_terrains/postgres_terrains.h"
+#include "../../postgres/postgres_init/postgres.h"
 
 class Admin: public BaseUser
 {
     private:
-        std::unique_ptr<pqxx::connection> _connect_psql;
+        std::shared_ptr<pqxx::connection> _connect_psql;
         sql::Connection *_connect_mysql;
 
-        UserPostgres __users_psql;
+        Postgres __postgres;
         TerrainProjectsPostgres __terrain_projects_psql;
 
         std::vector<users_t> _users;
@@ -39,7 +40,7 @@ class Admin: public BaseUser
         int __add_user_psql(users_t &user);
         int _add_user_mysql(users_t &user);
 
-        int __delete_user_psql(int id);
+        int __delete_user_psql(users_t &user);
         int _delete_user_mysql(users_t &user);
 
         void show_menu();
@@ -50,9 +51,9 @@ class Admin: public BaseUser
         ~Admin();
 
         int add_user(users_t &user);
-        int delete_user(int id);
-        int lock_user(std::string login);
-        int unlock_user(std::string login);
+        int delete_user(users_t &user);
+        int lock_user(users_t &user);
+        int unlock_user(users_t &user);
         int disconnect_db();
         int check_connection();
 

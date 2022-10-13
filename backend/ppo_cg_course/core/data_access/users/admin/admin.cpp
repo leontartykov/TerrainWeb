@@ -1,6 +1,5 @@
 #include "admin.h"
 #include "../../../entry/app_command/app_command.h"
-#include "../../../log_app/log_app.h"
 
 Admin::Admin(){
     _current_time = time(NULL);
@@ -8,13 +7,18 @@ Admin::Admin(){
     _connect_mysql = nullptr;
 
     this->_connect_psql_to_db();
-    this->_connect_mysql_to_db();
+
+    //this->_connect_mysql_to_db();
 
     _app_facade = std::shared_ptr<AppFacade>(new AppFacade());
 }
 
 Admin::~Admin(){
     this->disconnect_db();
+}
+
+int Admin::add_user(users_t &user){
+    return __add_user_psql(user);
 }
 
 int Admin::_connect_psql_to_db()
@@ -28,8 +32,10 @@ int Admin::_connect_psql_to_db()
     {
         config_t config_data = _config.read_config_file_postgres();
         std::string options = _config.form_options(config_data);
-        _connect_psql = std::unique_ptr<pqxx::connection>(
+        _connect_psql = std::shared_ptr<pqxx::connection>(
                     new pqxx::connection(options));
+        __postgres.set_psql_connection(_connect_psql);
+
     }
     catch (std::exception const &e){
         std::cerr << e.what() << '\n';
@@ -86,7 +92,8 @@ int Admin::disconnect_db()
 }
 
 int Admin::__add_user_psql(users_t &user){
-    return __users_psql.add(user);
+    std::pair<int, users_t> result =  __postgres.do_action_users(users_action::add, user);
+    return result.first;
 }
 
 int Admin::_add_user_mysql(users_t &user)
@@ -115,16 +122,18 @@ int Admin::_add_user_mysql(users_t &user)
     return 0;
 }
 
-int Admin::delete_user(int id)
+int Admin::delete_user(users_t &user)
 {
     int error;
-    error = __delete_user_psql(id);
+    error = __delete_user_psql(user);
     //error = __delete_user_mysql(user);
     return error;
 }
 
-int Admin::__delete_user_psql(int id){
-    return __users_psql.delete_user(id);
+int Admin::__delete_user_psql(users_t &user){
+    std::pair<int, users_t> result = __postgres.do_action_users(users_action::delete_user, user);
+
+    return result.first;
 }
 
 int Admin::_delete_user_mysql(users_t &user)
@@ -160,34 +169,26 @@ int Admin::_delete_user_mysql(users_t &user)
     return 0;
 }
 
-int Admin::lock_user(std::string login){
-    int success = 0;
-    if (login.empty()){
-        std::cout << "О пользователе нет данных.\n";
-        return -1;
-    }
+int Admin::lock_user(users_t &user){
+    std::pair<int, users_t> result = __postgres.do_action_users(users_action::block, user);
 
-    success = __users_psql.block(login);
-    return success;
+    return result.first;
 }
 
-int Admin::unlock_user(std::string login)
+int Admin::unlock_user(users_t &user)
 {
-    int success = 0;
-    if (login.empty()){
-        std::cout << "О пользователе нет данных.\n";
-        return -1;
-    }
+    std::pair<int, users_t> result = __postgres.do_action_users(users_action::unlock, user);
 
-    success = __users_psql.unlock(login);
-
-    return success;
+    return result.first;
 }
 
 int Admin::check_connection(){
     if (!_connect_psql){
-        std::cout << "Подключение не установлено." << std::endl;
+        std::cout << "Подключение к psql не установлено.\n";
         return -1;
+    }
+    else{
+        std::cout << "Подключение к psql установлено.\n";
     }
 
     if (_connect_psql->is_open()){
@@ -195,114 +196,6 @@ int Admin::check_connection(){
     }
 
     return 0;
-}
-
-void Admin::show_menu(){
-    std::cout << "1. Запустить приложение.\n";
-    std::cout << "2. Добавить пользователя.\n";
-    std::cout << "3. Удалить пользователя.\n";
-    std::cout << "4. Заблокировать пользователя.\n";
-    std::cout << "5. Разблокировать пользователя.\n";
-    std::cout << "0. Выйти.\n";
-    std::cout << std::endl;
-}
-
-int Admin::do_action()
-{
-    this->show_menu();
-    int number = -1;
-    while (number != 0)
-    {
-        std::cout << "Введите пункт меню:\n";
-        std::cin >> number;
-        std::cout << "number: " << number << std::endl;
-
-        switch (number)
-        {
-            case menu::QUIT:
-                std::cout << "quit application.\n";
-                break;
-            case menu::LAUNCH:
-            {
-                log_info_t log_info_exception;
-                log_info_exception.type_log = "info";
-                log_info_exception.message_error = "запуск приложения.";
-                log_info_exception.user_login = user_login;
-                log_info_exception.time_error = ctime(&_current_time);
-
-                LogApp log_app;
-                log_app.write_log_info(log_info_exception);
-
-                std::shared_ptr<LaunchAppCmd> launch_cmd(new LaunchAppCmd());
-                std::shared_ptr<BaseAppCommand> base_launch_cmd = launch_cmd;
-                _app_facade->execute(base_launch_cmd);
-                break;
-            }
-            case menu::ADD_USER:
-            {
-                //переделать
-                std::cout << "Функция недступна.\n";
-                break;
-                users_t user;
-                user.login = "user12";
-                user.password = "qwwer";
-                user.is_blocked = false;
-                std::shared_ptr<Admin> admin(new Admin());
-                std::cout << "проверка соединения: " << admin->check_connection();
-                std::shared_ptr<BaseAppCommand> add_user_cmd(
-                           new AppAddUserCmd<Admin>(admin, &Admin::add_user, user));
-                _app_facade->execute(add_user_cmd);
-
-                break;
-            }
-            case menu::DELETE_USER:
-            {
-                //переделать
-                std::cout << "Функция недступна.\n";
-                break;
-                users_t user;
-                user.login = "user12";
-                std::shared_ptr<Admin> admin(new Admin());
-                std::shared_ptr<BaseAppCommand> delete_user_cmd(
-                           new AppAddUserCmd<Admin>(admin, &Admin::delete_user, user));
-                _app_facade->execute(delete_user_cmd);
-                break;
-            }
-            case menu::LOCK_USER:
-            {
-                //переделать
-                std::cout << "Функция недступна.\n";
-                break;
-                users_t user;
-                user.login = "user12";
-                std::shared_ptr<Admin> admin(new Admin());
-                std::shared_ptr<BaseAppCommand> lock_user_cmd(
-                           new AppAddUserCmd<Admin>(admin, &Admin::lock_user, user));
-                _app_facade->execute(lock_user_cmd);
-                std::cout << "lock_user.\n";
-                break;
-            }
-            case menu::UNLOCK_USER:
-            {
-                //переделать
-                std::cout << "Функция недступна.\n";
-                break;
-                users_t user;
-                user.login = "user12";
-                std::shared_ptr<Admin> admin(new Admin());
-                std::shared_ptr<BaseAppCommand> lock_user_cmd(
-                           new AppAddUserCmd<Admin>(admin, &Admin::unlock_user, user));
-                _app_facade->execute(lock_user_cmd);
-                std::cout << "lock_user.\n";
-            break;
-            }
-             default:
-                std::cout << " Неизвестная команда.\n";
-                break;
-        }
-    }
-
-    return number;
 }
 
 void Admin::set_user_login(std::string &usr_login){
