@@ -102,15 +102,24 @@ add_executable(
     core/data_access/data_access_image/data_access_image_bmp.cpp
     core/data_access/data_access_image/bmp_structure.h
 
+    core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
+    core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
+    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+    core/data_access/postgres/postgres_init/postgres.h
+    core/data_access/postgres/postgres_init/postgres.cpp
+
+    core/data_access/data_interfaces/interface_users_db.h
+
     core/data_access/users/users_struct.h
     core/data_access/users/base_user.h
-    core/data_access/users/base_user.cpp
 
     core/data_access/users/user/users.h
     core/data_access/users/user/users.cpp
 
     core/data_access/users/admin/admin.h
     core/data_access/users/admin/admin.cpp
+    core/data_access/users/admin/admin_menu.cpp
 
     core/entry/entry.h
     core/entry/entry.cpp
@@ -151,6 +160,8 @@ add_executable(
     server/server.cpp
     server/async_con.h
     server/async_con.cpp
+    server/server_handlers.cpp
+
 )
 
 enable_testing()
@@ -248,13 +259,13 @@ add_executable(
 
   core/data_access/users/users_struct.h
   core/data_access/users/base_user.h
-  core/data_access/users/base_user.cpp
 
   core/data_access/users/user/users.h
   core/data_access/users/user/users.cpp
 
   core/data_access/users/admin/admin.h
   core/data_access/users/admin/admin.cpp
+  core/data_access/users/admin/admin_menu.cpp
 
   core/entry/entry.h
   core/entry/entry.cpp
@@ -290,6 +301,15 @@ add_executable(
   core/config/config_struct.h
   core/config/config.h
   core/config/config.cpp
+
+  core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
+  core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
+  core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+  core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+  core/data_access/postgres/postgres_init/postgres.h
+  core/data_access/postgres/postgres_init/postgres.cpp
+
+  core/data_access/data_interfaces/interface_users_db.h
 )
 
 
