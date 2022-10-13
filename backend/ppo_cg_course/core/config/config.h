@@ -1,8 +1,8 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-#include <jsoncpp/include/json/json.h>
-#include <jsoncpp/include/json/value.h>
+#include <jsoncpp/json/json.h>
+#include <jsoncpp/json/value.h>
 #include <fstream>
 #include <string>
 
