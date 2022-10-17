@@ -13,21 +13,24 @@ class UserPostgres: public IUsersDb
 
         void __disconnect_db();
         bool __is_user_empty(users_t &user);
+        void __define_count_users();
 
     public:
-        UserPostgres();
+        UserPostgres() = default;
+        UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql);
         ~UserPostgres() = default;
 
-        virtual users_t get(int &id) override;
+        virtual int get(int &id, users_t &user) override;
         virtual int add(users_t &user) override;
         virtual int delete_user(int &id) override;
-        virtual int update_login(int &id, std::string &new_login) override;
+        virtual int update(int &id, users_t &user) override;
         virtual int block(int &id) override;
         virtual int unlock(int &id) override;
 
         int __connect_psql_to_db();
         void set_psql_connection(std::shared_ptr<pqxx::connection> &conn_psql);
         users_t get(int &id, std::string &schema_name);
+        int get_count_users();
 };
 
 #endif

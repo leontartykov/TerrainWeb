@@ -92,8 +92,8 @@ int Admin::disconnect_db()
 }
 
 int Admin::__add_user_psql(users_t &user){
-    std::pair<int, users_t> result =  __postgres.do_action_users(users_action::add, user);
-    return result.first;
+    int http_response_code =  __postgres.do_action_users(users_action::add, user);
+    return http_response_code;
 }
 
 int Admin::_add_user_mysql(users_t &user)
@@ -131,9 +131,9 @@ int Admin::delete_user(users_t &user)
 }
 
 int Admin::__delete_user_psql(users_t &user){
-    std::pair<int, users_t> result = __postgres.do_action_users(users_action::delete_user, user);
+    int http_response_code = __postgres.do_action_users(users_action::delete_user, user);
 
-    return result.first;
+    return http_response_code;
 }
 
 int Admin::_delete_user_mysql(users_t &user)
@@ -170,16 +170,16 @@ int Admin::_delete_user_mysql(users_t &user)
 }
 
 int Admin::lock_user(users_t &user){
-    std::pair<int, users_t> result = __postgres.do_action_users(users_action::block, user);
+    int http_response_code = __postgres.do_action_users(users_action::block, user);
 
-    return result.first;
+    return http_response_code;
 }
 
 int Admin::unlock_user(users_t &user)
 {
-    std::pair<int, users_t> result = __postgres.do_action_users(users_action::unlock, user);
+    int http_response_code = __postgres.do_action_users(users_action::unlock, user);
 
-    return result.first;
+    return http_response_code;
 }
 
 int Admin::check_connection(){

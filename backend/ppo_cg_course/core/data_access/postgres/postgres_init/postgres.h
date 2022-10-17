@@ -16,7 +16,7 @@ enum users_action{
 class Postgres
 {
     private:
-        UserPostgres __users;                           //postgres's user management
+        std::unique_ptr<UserPostgres> __users;                           //postgres's user management
         Config __config;                                //configure launch postgres database
 
         std::shared_ptr<pqxx::connection> __connection; //postgres's connection
@@ -27,7 +27,8 @@ class Postgres
         ~Postgres() = default;
 
         void set_psql_connection(std::shared_ptr<pqxx::connection> &connection);
-        std::pair<int, users_t> do_action_users(const users_action &action, users_t &user);
+        int do_action_users(const users_action &action, users_t &user);
+        int get_count_users();
 };
 
 #endif
