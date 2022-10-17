@@ -8,12 +8,13 @@ CREATE TABLE IF NOT EXISTS terrain_project.users.passwords
 	primary key(id, login),
 	
 	password varchar,
+	perm_level int,
 	blocked boolean,
 	deleted boolean
 );
 
 INSERT INTO terrain_project.users.passwords values
-(0, 'admin', 'admin', false, false);
+(0, 'admin', 'admin', 0, false, false);
 
 CREATE TABLE IF NOT EXISTS terrain_project.terrains.terrain
 (
