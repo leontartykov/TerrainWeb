@@ -7,6 +7,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/optional/optional_io.hpp>
+#include <nlohmann/json.hpp>
 
 #include "../core/data_access/postgres/postgres_init/postgres.h"
 
@@ -14,6 +15,7 @@ using namespace boost::asio;
 namespace beast = boost::beast;
 namespace http = beast::http;
 using ip::tcp;
+using json = nlohmann::json;
 
 class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
 {
@@ -21,13 +23,19 @@ class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
         tcp::socket __socket;
         std::string __message;
         http::request<http::string_body> __request;
-        streambuf response;
         char __data[1024];
+        std::stringstream __return_request;
 
         Postgres __postgres;                            //postgres database
 
-        bool __handle_post_request();
-        bool __handle_get_request();
+        http::response<http::buffer_body> __form_htpp_response_code(int &code_error);
+        bool __define_target_url(int &id, std::string &category);
+        void __define_category(std::string &category);
+
+        std::stringstream __handle_get_request(int &http_response_code);
+        bool __handle_post_request(int &http_response_code);
+        bool __handle_patch_request(int &http_response_code);
+        bool __handle_put_request(int &http_response_code);
 public:
         typedef boost::shared_ptr<tcp_connection> pointer;
 
@@ -37,7 +45,7 @@ public:
         void start();
         void handle_write(const boost::system::error_code &error, size_t bytes_transferred);
         bool handle_read();
-        tcp::socket &socket();
+        tcp::socket &socket();        
 };
 
 #endif
