@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8080/iu7_web_labs_2022/api/v1"
+      "url": "http://localhost:7000/iu7_web_labs_2022/api/v1"
     }
   ],
   "tags": [
@@ -19,11 +19,25 @@
       "description": "information about terrain projects"
     },
     {
-      "name": "sessions",
-      "description": "information about sessions (login, logout)"
+      "name": "authorization",
+      "description": "authorize users"
     }
   ],
   "components": {
+    "securitySchemes": {
+      "Authorization": {
+        "type": "apiKey",
+        "description": "API key to authorize requests. If you don't have an OpenWeatherMap API key, please login.",
+        "name": "Authorization",
+        "in": "header"
+      },
+      "Id": {
+        "type": "apiKey",
+        "description": "API key to authorize requests. If you don't have an OpenWeatherMap API key, please login.",
+        "name": "Id",
+        "in": "header"
+      }
+    },
     "schemas": {
       "BadRequest": {
         "type": "object",
@@ -78,7 +92,7 @@
           }
         }
       },
-      "TerrainInfo": {
+      "Terrain": {
         "type": "object",
         "description": "terrain",
         "properties": {
@@ -100,28 +114,22 @@
       "TerrainList": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/TerrainInfo"
+          "$ref": "#/components/schemas/Terrain"
         }
       },
       "TerrainSubmit": {
         "type": "object",
         "description": "submit terrain parametres",
         "properties": {
-          "rotate": {
-            "type": "array",
-            "description": "rotate terrain by OXYZ axes",
-            "items": {
-              "type": "object",
-              "properties": {
-                "rotate_x": {
-                  "type": "integer"
-                },
-                "rotate_y": {
-                  "type": "integer"
-                },
-                "rotate_z": {
-                  "type": "integer"
-                }
+          "size": {
+            "type": "object",
+            "description": "set terrain width and length",
+            "properties": {
+              "width": {
+                "type": "integer"
+              },
+              "length": {
+                "type": "integer"
               }
             }
           },
@@ -129,45 +137,42 @@
             "type": "integer",
             "description": "scale terrain by value"
           },
-          "size": {
-            "type": "array",
-            "description": "set terrain width and length",
-            "items": {
-              "type": "object",
-              "properties": {
-                "width": {
-                  "type": "integer"
-                },
-                "length": {
-                  "type": "integer"
-                }
+          "config": {
+            "type": "object",
+            "description": "set terrain config values",
+            "properties": {
+              "octaves": {
+                "type": "integer"
+              },
+              "gain": {
+                "type": "number",
+                "format": "double"
+              },
+              "lacunarity": {
+                "type": "number",
+                "format": "double"
+              },
+              "seed": {
+                "type": "integer"
+              },
+              "frequency": {
+                "type": "number",
+                "format": "double"
               }
             }
           },
-          "configure": {
-            "type": "array",
-            "description": "set terrain config values",
-            "items": {
-              "type": "object",
-              "properties": {
-                "octaves": {
-                  "type": "integer"
-                },
-                "gain": {
-                  "type": "number",
-                  "format": "double"
-                },
-                "lacunarity": {
-                  "type": "number",
-                  "format": "double"
-                },
-                "seed": {
-                  "type": "integer"
-                },
-                "frequency": {
-                  "type": "number",
-                  "format": "double"
-                }
+          "rotate": {
+            "type": "object",
+            "description": "rotate terrain by OXYZ axes",
+            "properties": {
+              "angle_x": {
+                "type": "integer"
+              },
+              "angle_y": {
+                "type": "integer"
+              },
+              "angle_z": {
+                "type": "integer"
               }
             }
           }
@@ -208,6 +213,14 @@
             }
           }
         },
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "success"
@@ -238,6 +251,14 @@
             }
           }
         ],
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "success",
@@ -258,6 +279,9 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "user is not found"
           }
         }
       },
@@ -272,44 +296,102 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
                   "login": {
-                    "format": "string"
+                    "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "login"
+                ]
               }
             }
           }
         },
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
         "responses": {
           "200": {
-            "description": "success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "success"
+          },
+          "404": {
+            "description": "user is not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "delete user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 3
+          }
+        ],
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "user was deleted successful"
+          },
+          "404": {
+            "description": "user is not found"
           }
         }
       }
     },
-    "/terrains": {
+    "/users/{id}/terrains": {
       "get": {
         "tags": [
           "terrains"
         ],
         "summary": "returns a list of terrain projects.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "success",
@@ -320,21 +402,159 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "terrain is not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "add new terrain",
+        "tags": [
+          "terrains"
+        ],
+        "description": "add new terrain",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "successful created"
+          },
+          "400": {
+            "description": "BadRequest"
+          },
+          "404": {
+            "description": "user is not found"
           }
         }
       }
     },
-    "/terrains/{terrain_id}": {
-      "put": {
+    "/users/{id}/terrains/{terrain_id}": {
+      "get": {
         "tags": [
           "terrains"
         ],
-        "summary": "set all parametres to specific terrain",
+        "summary": "get config values for this terrain",
         "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
           {
             "name": "terrain_id",
             "in": "path",
-            "description": "terrain id to put",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerrainSubmit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "user is not available"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "terrains"
+        ],
+        "summary": "delete terrain by terrain id and user id",
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "Id": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "terrain_id",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "integer"
@@ -343,30 +563,20 @@
         ],
         "responses": {
           "200": {
-            "description": "success"
+            "description": "terrain was deleted successful"
           },
-          "520": {
-            "description": "Unknown error"
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TerrainSubmit"
-              }
-            }
+          "404": {
+            "description": "not found"
           }
         }
       }
     },
-    "/sessions": {
+    "/login": {
       "post": {
         "tags": [
-          "sessions"
+          "authorization"
         ],
-        "description": "",
-        "summary": "login",
+        "summary": "authorize user",
         "requestBody": {
           "content": {
             "application/json": {
@@ -390,34 +600,25 @@
         },
         "responses": {
           "200": {
-            "description": "success",
+            "description": "authorization is successfull",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "No permissions",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              }
-            }
+            "description": "authorization is denied"
           }
         }
       }
