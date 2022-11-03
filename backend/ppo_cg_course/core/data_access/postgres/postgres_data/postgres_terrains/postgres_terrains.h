@@ -43,10 +43,12 @@ class TerrainProjectsPostgres
         ~TerrainProjectsPostgres() = default;
 
         void set_terrain_params(std::string &project_name, terrain_t &terrain_params);
-        void get_terrain_projects(int &user_id);
+        std::pair<int, std::vector<terrain_project_t>> get_terrain_projects(int &user_id);
         int get_count_terrain_projects();
+
         int add_new_terrain_project(terrain_project_t &ter_proj, int &user_id);
         int get_terrain_project(terrain_project &ter_proj, int &user_id);
+        int delete_terrain_project(terrain_project &ter_proj, int &user_id);
 };
 
 #endif

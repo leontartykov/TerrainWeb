@@ -5,6 +5,7 @@
 #include "../postgres_data/postgres_terrains/postgres_terrains.h"
 #include "../../../config/config.h"
 
+///actions with users
 enum users_action{
     add_u,
     get_u,
@@ -14,12 +15,17 @@ enum users_action{
     unlock_u
 };
 
+///actions with one terrain project
 enum terrains_action{
     add_t,
-    get_tpl,                //get terrain project list
     get_t,
     update_t,
     delete_t
+};
+
+///actions with terrain projects
+enum ter_projs_action{
+    get_tpl,                //get terrain project list
 };
 
 class Postgres
@@ -38,11 +44,16 @@ class Postgres
 
         void set_psql_connection(std::shared_ptr<pqxx::connection> &connection);
 
-        int do_action_users(const users_action &action, users_t &user);
         int get_count_users();
         int get_count_terrains();
 
+        int do_action_users(const users_action &action, users_t &user);
         int do_action_terrains(const terrains_action &action, terrain_project_t &ter_proj, int &user_id);
+
+        std::pair<int, std::vector<terrain_project_t>>
+        do_action_terrain_projects(const ter_projs_action &action, int &user_id);
+
+        bool check_validation(users_t &user);
 };
 
 #endif

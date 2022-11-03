@@ -1,4 +1,5 @@
 # include "entry.h"
+#include <QDebug>
 #include "../exceptions/base_error.h"
 
 EntrySystem::EntrySystem(){
@@ -9,6 +10,7 @@ EntrySystem::~EntrySystem(){
 }
 
 int EntrySystem::_verify_user(user_info_t &user){
+    std::string query;
     int error = 0;
     try
     {
@@ -25,21 +27,22 @@ int EntrySystem::_verify_user(user_info_t &user){
             .function_name = __FUNCTION__,
             .line_error = __LINE__,
             .time_error = ctime(&_current_time),
-            .message_error = "ошибка идентификации пользователя; соединение с БД не установлено.",
+            .message_error = "соединение с БД не установлено.",
             .number_error = -1,
             .user_login = user.login
         };
-
+        std::cerr << e.what() << std::endl;
         throw BaseError(log_info_exception);
 
         return -1;
     }
 
     pqxx::work worker(*_connect);
-    pqxx::result R {worker.exec(
-                    "SELECT * FROM ppo.passwords.users "
-                    "WHERE users.login = '" + user.login + "' "
-                    "AND users.password = '" + user.password + "';")};
+    query = "SELECT * FROM terrain_project.users.info "
+            "WHERE login = '" + user.login + "' "
+            "AND password = '" + user.password + "';";
+
+    pqxx::result R {worker.exec(query)};
 
     if (R.size() == 0){
         error = 1;
@@ -71,10 +74,10 @@ int EntrySystem::enter_system(){
     {
         std::cout << "Вход в систему." << std::endl;
 
-        std::cout << "Логин:";
+        std::cout << "Логин: ";
         std::cin >> user_info.login;
 
-        std::cout << "Пароль:";
+        std::cout << "Пароль: ";
         std::cin >> user_info.password;
 
         error = this->_verify_user(user_info);

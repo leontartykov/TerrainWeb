@@ -8,20 +8,19 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall -fPIC -std=c++14 -DQT_NO_VERSION_TAGGING")
+set(CMAKE_CXX_FLAGS "-Wall -fPIC -std=c++20 -DQT_NO_VERSION_TAGGING")
 
 include(GoogleTest)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5Network COMPONENTS QtNetwork REQUIRED)
 
+
 set(FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR your_path_to_mysql_connectorcpp)
 include_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/include)
 include_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/include/cppconn)
 link_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/lib)
-
 
 add_executable(
     core_files
@@ -91,7 +90,6 @@ add_executable(
     core/geometry/plane/plane.h
     core/geometry/plane/plane.cpp
 
-    #core/data_access/data_access_base.h
     core/data_access/data_access_file/data_access_file_base.h
     core/data_access/data_access_file/data_access_file.h
     core/data_access/data_access_file/data_access_file.hpp
@@ -140,7 +138,6 @@ add_executable(
     core/gui/main_window.cpp
     core/gui/main_window.h
     core/gui/mainwindow.ui
-    #core/gui/ui_mainwindow.h
 
     core/transform/transform.h
     core/transform/transform.cpp
@@ -160,8 +157,17 @@ add_executable(
     server/server.cpp
     server/async_con.h
     server/async_con.cpp
-    server/server_handlers.cpp
+    server/controllers/server_handlers.cpp
+    server/server_codes.h
 
+    server/jwt/jwt.hpp
+    server/jwt/jwt.cpp
+
+    server/json_former/json_former.hpp
+    server/json_former/json_former.cpp
+
+    core/data_access/redis/sessions.hpp
+    core/data_access/redis/sessions.cpp
 )
 
 enable_testing()
@@ -176,6 +182,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(
   unit_all_tests
+
   unit_tests/tests_point_3d.cpp
   unit_tests/tests_vector_3d.cpp
   unit_tests/tests_perlin_noise.cpp
@@ -312,12 +319,28 @@ add_executable(
   core/data_access/data_interfaces/interface_users_db.h
 )
 
-
-
 gtest_discover_tests(unit_all_tests)
 
-target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets -lpqxx -lpq -ljsoncpp ${JSONCPP_LIBRARIES} mysqlcppconn
-                                gtest gtest_main)
-target_link_libraries(core_files Qt5::Gui Qt5::Widgets Qt5::Network -lpqxx -lpq -ljsoncpp ${JSONCPP_LIBRARIES} mysqlcppconn)
+find_path(HIREDIS_HEADER hiredis)
+target_include_directories(core_files PUBLIC ${HIREDIS_HEADER})
+
+
+find_library(HIREDIS_LIB hiredis)
+
+find_path(REDIS_PLUS_PLUS_HEADER sw)
+target_include_directories(core_files PUBLIC ${REDIS_PLUS_PLUS_HEADER})
+
+find_library(REDIS_PLUS_PLUS_LIB redis++)
+
+target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets
+                      -lpqxx -lpq -ljsoncpp
+                      ${JSONCPP_LIBRARIES} mysqlcppconn
+                      gtest gtest_main)
+
+target_link_libraries(core_files Qt5::Gui Qt5::Widgets Qt5::Network
+                        ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
+                        -lpqxx -lpq
+                        -ljsoncpp  ${JSONCPP_LIBRARIES}
+                        mysqlcppconn  -lpthread -lssl -lcrypto -ljwt)
 
 

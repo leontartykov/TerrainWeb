@@ -27,7 +27,8 @@ class UserPostgres: public IUsersDb
         virtual int block(int &id) override;
         virtual int unlock(int &id) override;
 
-        int __connect_psql_to_db();
+        bool check_validation(users_t &user);
+
         void set_psql_connection(std::shared_ptr<pqxx::connection> &conn_psql);
         users_t get(int &id, std::string &schema_name);
         int get_count_users();

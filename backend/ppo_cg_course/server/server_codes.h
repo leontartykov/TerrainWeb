@@ -1,0 +1,9 @@
+#ifndef _SERVER_CODES_H_
+#define _SERVER_CODES_H_
+
+#define SERVER_ERR_SUCCESS 200
+#define SERVER_ERR_OK 0
+#define FORBIDDEN 403
+#define NOT_FOUND 404
+
+#endif // SERVER_CODES_H

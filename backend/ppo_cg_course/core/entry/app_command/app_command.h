@@ -17,7 +17,7 @@ class LaunchAppCmd: public BaseAppCommand
 };
 
 template <typename Receiver>
-class AppAddUserCmd: public BaseAppCommand
+class AppUserCmd: public BaseAppCommand
 {
     private:
         typedef int(Receiver::*Action)(users_t&);
@@ -27,7 +27,7 @@ class AppAddUserCmd: public BaseAppCommand
         users_t user;
 
     public:
-        AppAddUserCmd(std::shared_ptr<Receiver> r, Action a, users_t u): receiver(r), action(a), user(u) {}
+        AppUserCmd(std::shared_ptr<Receiver> r, Action a, users_t u): receiver(r), action(a), user(u) {}
         virtual void execute() override {((*receiver).*action)(user);}
 };
 

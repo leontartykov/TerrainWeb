@@ -8,7 +8,6 @@ UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
 int UserPostgres::get(int &id, users_t &user)
 {
     int http_response_code = 200;
-    std::cout << "id: " << id << "; count_users: " << __count_users << "\n";
     if (!id || id >= __count_users){
         http_response_code = 400;
     }
@@ -26,7 +25,6 @@ int UserPostgres::get(int &id, users_t &user)
         user.is_blocked = response[0][4].c_str();
         user.is_deleted = response[0][5].c_str();
     }
-    std::cout << "http_response_code: " << http_response_code << "\n";
 
     return http_response_code;
 }
@@ -99,7 +97,7 @@ int UserPostgres::delete_user(int &id)
         worker.exec(query);
         worker.commit();
 
-        std::cout << "\nУдаление пользователя выполнена успешно.\n";
+        std::cout << "\nУдаление пользователя выполнено успешно.\n";
     }
     catch(std::exception const &e){
         std::cerr << e.what() << '\n';
@@ -112,7 +110,6 @@ int UserPostgres::delete_user(int &id)
 int UserPostgres::update(int &id, users_t &user)
 {
     int response_code = 0;
-    std::cout << "id: " << id << "login: " << user.login << "\n";
     try{
         users_t del_user;
         pqxx::work worker(*__conn_psql);
@@ -177,6 +174,40 @@ int UserPostgres::unlock(int &id)
     return 0;
 }
 
+bool UserPostgres::check_validation(users_t &user)
+{
+    std::string query;
+    pqxx::result response;
+    bool success = true;
+    user.id = -1;
+
+    if (user.login.empty() || user.password.empty()){
+        return false;
+    }
+
+    try{
+        pqxx::work worker(*__conn_psql);
+        query = "SELECT info.id, info.blocked, info.deleted " \
+                "FROM terrain_project.users.info as info " \
+                "WHERE info.login = '" + user.login + "' AND info.password = '" + user.password + "';";
+        response = worker.exec(query);
+        if (response.empty()){
+            success = false;
+        }
+        else{
+            user.id = response[0][0].as<int>();
+            user.is_blocked = response[0][1].c_str();
+            user.is_deleted = response[0][2].c_str();
+        }
+    }
+    catch(std::exception const &e){
+        std::cerr << e.what() << '\n';
+        return -2;
+    }
+
+    return success;
+}
+
 bool UserPostgres::__is_user_empty(users_t &user){
     if (user.password.empty() && user.login.empty()){
         return true;
@@ -213,8 +244,6 @@ void UserPostgres::__define_count_users()
         std::string query = "SELECT COUNT(*) FROM terrain_project.users.info";
         pqxx::result response = worker.exec(query);
         __count_users = std::stoi(response[0][0].c_str());
-
-        std::cout << "count_user: " << __count_users << "\n";
     }
     catch(std::exception const &e){
         std::cout << e.what() << '\n';

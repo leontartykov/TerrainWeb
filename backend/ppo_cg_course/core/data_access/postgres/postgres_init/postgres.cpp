@@ -74,17 +74,15 @@ int Postgres::do_action_terrains(const terrains_action &action, terrain_project_
 {
     int http_response_code = 0;
 
-    if (user_id > get_count_users()){
+    if (user_id > get_count_users() || (action != add_t && ter_proj.id > get_count_terrains())){
         http_response_code = 404;
     }
-    else{
+    else
+    {
         switch(action)
         {
             case add_t:
                 http_response_code = __terrains.get()->add_new_terrain_project(ter_proj, user_id);
-                break;
-            case get_tpl:
-                std::cout << "Нет функционала.\n";
                 break;
             case get_t:
                 http_response_code = __terrains.get()->get_terrain_project(ter_proj, user_id);
@@ -93,14 +91,46 @@ int Postgres::do_action_terrains(const terrains_action &action, terrain_project_
                 std::cout << "Нет функционала.\n";
                 break;
             case delete_t:
-                std::cout << "Нет функционала.\n";
+                http_response_code = __terrains.get()->delete_terrain_project(ter_proj, user_id);
                 break;
             default:
                 std::cout << "Неизвестная команда.\n";
         }
     }
 
-    std::cout << "terrain_http_error: " << http_response_code << "\n";
-
     return http_response_code;
+}
+
+std::pair<int, std::vector<terrain_project_t>>
+Postgres::do_action_terrain_projects(const ter_projs_action &action, int &user_id)
+{
+    std::vector<terrain_project_t> ter_projs;
+    int http_response_code = 0;
+    if (user_id > get_count_users()){
+        http_response_code = 404;
+    }
+    else
+    {
+        switch (action)
+        {
+            case get_tpl:
+                std::pair<int, std::vector<terrain_project_t>> result;
+                result = __terrains.get()->get_terrain_projects(user_id);
+                http_response_code = result.first;
+                ter_projs = result.second;
+                break;
+        }
+    }
+    return {http_response_code, ter_projs};
+}
+
+bool Postgres::check_validation(users_t &user){
+    bool success;
+
+    success = __users->check_validation(user);
+    if (!success || user.is_blocked == "t" || user.is_deleted == "t"){
+        success = false;
+    }
+
+    return success;
 }
