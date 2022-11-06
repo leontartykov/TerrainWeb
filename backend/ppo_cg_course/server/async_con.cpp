@@ -1,5 +1,11 @@
-#include "async_con.h"
 #include <boost/beast/version.hpp>
+#include <chrono>
+#include <ctime>   // localtime
+#include <sstream> // stringstream
+#include <iomanip> // put_time
+
+#include "async_con.h"
+#include "./server/server_codes.h"
 
 tcp_connection::tcp_connection(io_service &io_context): __socket(io_context){}
 
@@ -11,8 +17,8 @@ tcp::socket &tcp_connection::socket(){
     return __socket;
 }
 
-void tcp_connection::start()
-{
+///Entry point to handle requests
+void tcp_connection::start(){
     handle_request();
 }
 
@@ -25,22 +31,22 @@ void tcp_connection::handle_read(){
     http::read(__socket, buf, __request);
 }
 
-http::response<http::buffer_body> tcp_connection::__form_htpp_response_code(int &code_error)
+http::response<http::buffer_body> tcp_connection::__form_htpp_response_code(int &http_response_code)
 {
     http::response<http::buffer_body> response;
-    if (code_error == 0 || code_error == 200){
+    if (http_response_code == 0 || http_response_code == SERV_SUCCESS){
         response.result(http::status::ok);
     }
-    else if (code_error == 201){
+    else if (http_response_code == SERV_SUCCESS_CREATED){
         response.result(http::status::created);
     }
-    else if (code_error == 400){
+    else if (http_response_code == SERV_BAD_REQUEST){
         response.result(http::status::bad_request);
     }
-    else if (code_error == 403){
+    else if (http_response_code == SERV_FORBIDDEN){
         response.result(http::status::forbidden);
     }
-    else if (code_error == 404){
+    else if (http_response_code == SERV_NOT_FOUND){
         response.result(http::status::not_found);
     }
 
@@ -68,6 +74,31 @@ http::response<http::buffer_body> tcp_connection::__form_htpp_response_code(int 
     return response;
 }
 
+///Form log info (access or error)
+/// Time | port | protocol |  method | request url | response code | destination
+void tcp_connection::__form_log_info(int &http_response_code)
+{
+    std::string log_info {};
+    std::stringstream ss;
+    unsigned version;
+
+    //form time
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+    ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+    log_info += ss.str() + " ";
+
+    version = __request.version();
+
+    log_info += std::string(__request.base()["Host"]) + " HTTP/" + std::to_string(version / 10) + \
+                "." + std::to_string(version % 10) + " " + \
+                std::string(__request.method_string()) + " " + __url_path + \
+                " ";
+
+    __logs_access.write_log(log_info);
+}
+
 ///Parse all elements in url path
 void tcp_connection::__form_url_path_elems()
 {
@@ -75,7 +106,9 @@ void tcp_connection::__form_url_path_elems()
     int count = 10, target_path, i;
     bool end_parse = false;
     url_path = __request.target().to_string();
-    std::cout << "url_path: " << url_path << "\n";
+
+    //this url is for log
+    __url_path = url_path;
 
     __url_path_elems.resize(count);
 
@@ -120,7 +153,7 @@ bool tcp_connection::__check_authorization(){
 ///Handle http methods
 bool tcp_connection::handle_request()
 {
-    int http_response_code = 200;
+    int http_response_code = SERV_SUCCESS;
     http::verb method;
     http::response<http::buffer_body> response;
 
@@ -132,7 +165,7 @@ bool tcp_connection::handle_request()
         __response_buffer = __handle_post_request(http_response_code);
     }
     else if (method != http::verb::options && !__check_authorization()){
-        http_response_code = 403;
+        http_response_code = SERV_FORBIDDEN;
     }
     else
     {
@@ -169,6 +202,7 @@ bool tcp_connection::handle_request()
     }
 
     response = __form_htpp_response_code(http_response_code);
+    __form_log_info(http_response_code);
     handle_write(response);
 
     return true;

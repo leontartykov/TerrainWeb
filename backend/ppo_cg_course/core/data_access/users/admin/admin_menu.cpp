@@ -23,7 +23,6 @@ int Admin::do_action()
         switch (number)
         {
             case menu::QUIT:
-                std::cout << "quit application.\n";
                 break;
             case menu::LAUNCH:
             {
@@ -58,7 +57,6 @@ int Admin::do_action()
                 user.is_deleted = false;
 
                 std::shared_ptr<Admin> admin(new Admin());
-                std::cout << "проверка соединения: " << admin->check_connection();
                 std::shared_ptr<BaseAppCommand> add_user_cmd(
                            new AppUserCmd<Admin>(admin, &Admin::add_user, user));
                 _app_facade->execute(add_user_cmd);

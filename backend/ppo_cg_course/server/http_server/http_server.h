@@ -1,9 +1,11 @@
-#ifndef _SERVER_H_
-#define _SERVER_H_
+#ifndef _HTTP_SERVER_H_
+#define _HTTP_SERVER_H_
 
 #include <boost/asio.hpp>
 
-#include "async_con.h"
+#include "./server/async_con.h"
+
+#define PORT_NUM 7000
 
 using namespace boost::asio;
 using ip::tcp;
@@ -25,9 +27,6 @@ class HTTPServerTCP
 
     public:
         HTTPServerTCP(boost::asio::io_service &io_service);
-
-        std::string read(tcp::socket &socket);
-        void send(tcp::socket &socket, const std::string &message);
 
         void handle_accept(tcp_connection::pointer connection, const boost::system::error_code &error);
 };

@@ -70,7 +70,6 @@ std::pair<int, std::vector<terrain_project_t>> TerrainProjectsPostgres::get_terr
         ter_projs.resize(count_ter_projs);
         for (int i = 0; i < count_ter_projs; ++i){
             ter_projs[i].id = response[i][0].as<int>();
-            std::cout << "response[i][1] = " << response[i][1].c_str() << "\n";
             ter_projs[i].name = response[i][1].c_str();
             ter_projs[i].last_edit = response[i][2].c_str();
         }

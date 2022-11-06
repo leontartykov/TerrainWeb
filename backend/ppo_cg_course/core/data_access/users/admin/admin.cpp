@@ -24,7 +24,6 @@ int Admin::add_user(users_t &user){
 int Admin::_connect_psql_to_db()
 {
     if (_connect_psql){
-        std::cout << "Уже есть подключение к БД.\n";
         return -1;
     }
 
@@ -48,7 +47,6 @@ int Admin::_connect_psql_to_db()
 int Admin::_connect_mysql_to_db()
 {
     if (_connect_mysql){
-        std::cout << "Уже есть подключение к БД.\n";
         return -1;
     }
 
@@ -73,19 +71,11 @@ int Admin::disconnect_db()
     if (_connect_psql){
         _connect_psql->disconnect();
         _connect_psql = nullptr;
-        std::cout << "Отключение от psql проведено успешно.\n";
-    }
-    else{
-        std::cout << "Не было подключения к БД psql.\n";
-    }
 
-    if (_connect_mysql){
-        _connect_mysql->close();
-        _connect_mysql = nullptr;
-        std::cout << "Отключение от mysql проведено успешно.\n";
-    }
-    else{
-        std::cout << "Не было подключения к БД mysql.\n";
+        if (_connect_mysql){
+            _connect_mysql->close();
+            _connect_mysql = nullptr;
+        }
     }
 
     return 0;
@@ -184,11 +174,7 @@ int Admin::unlock_user(users_t &user)
 
 int Admin::check_connection(){
     if (!_connect_psql){
-        std::cout << "Подключение к psql не установлено.\n";
         return -1;
-    }
-    else{
-        std::cout << "Подключение к psql установлено.\n";
     }
 
     if (_connect_psql->is_open()){

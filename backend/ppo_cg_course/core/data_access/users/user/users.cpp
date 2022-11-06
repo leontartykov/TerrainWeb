@@ -1,5 +1,5 @@
 #include "users.h"
-#include "../../../log_app/log_app.h"
+#include "./core/log_app/log_app.h"
 
 User::User(){
     _current_time = time(NULL);
@@ -8,8 +8,7 @@ User::User(){
 
 void User::show_menu(){
     std::cout << "1. Запустить приложение.\n";
-    std::cout << "0. Выйти.\n";
-    std::cout << std::endl;
+    std::cout << "0. Выйти.\n\n";
 }
 
 int User::do_action()
@@ -24,7 +23,6 @@ int User::do_action()
         switch (number)
         {
             case menu::QUIT:
-                std::cout << "quit application.\n";
                 break;
             case menu::LAUNCH:
             {

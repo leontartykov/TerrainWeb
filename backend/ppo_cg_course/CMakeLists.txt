@@ -23,9 +23,9 @@ include_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/include/cppconn)
 link_directories(${FULL_PATH_TO_MYSQL_CONNECTOR_CPP_DIR}/lib)
 
 add_executable(
-    core_files
+    app_client.exe
 
-    core/main.cpp
+    core/main_client.cpp
 
     core/geometry/point/point_base.h
     core/geometry/point/point_3d.h
@@ -153,12 +153,27 @@ add_executable(
     core/config/config.h
     core/config/config.cpp
 
-    server/server.h
-    server/server.cpp
+    core/data_access/redis/sessions.hpp
+    core/data_access/redis/sessions.cpp
+)
+
+set(
+    SERVER_SOURCERS
+    server/main_server.cpp
+
+    server/http_server/http_server.h
+    server/http_server/http_server.cpp
+
+    server/http2_server/http2_server.h
+    server/http2_server/http2_server.cpp
+
     server/async_con.h
     server/async_con.cpp
     server/controllers/server_handlers.cpp
     server/server_codes.h
+
+    core/data_access/redis/sessions.hpp
+    core/data_access/redis/sessions.cpp
 
     server/jwt/jwt.hpp
     server/jwt/jwt.cpp
@@ -166,9 +181,29 @@ add_executable(
     server/json_former/json_former.hpp
     server/json_former/json_former.cpp
 
-    core/data_access/redis/sessions.hpp
-    core/data_access/redis/sessions.cpp
+    core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
+    core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
+    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+    core/data_access/postgres/postgres_init/postgres.h
+    core/data_access/postgres/postgres_init/postgres.cpp
+
+    core/data_access/data_interfaces/interface_users_db.h
+
+    core/data_access/users/users_struct.h
+    core/data_access/users/base_user.h
+
+    core/config/config_struct.h
+    core/config/config.h
+    core/config/config.cpp
+
+    server/logs/access/access_log.hpp
+    server/logs/access/access_log.cpp
+    server/logs/error/error_log.hpp
+    server/logs/error/error_log.cpp
 )
+
+add_executable(terrain_server ${SERVER_SOURCERS})
 
 enable_testing()
 
@@ -322,13 +357,15 @@ add_executable(
 gtest_discover_tests(unit_all_tests)
 
 find_path(HIREDIS_HEADER hiredis)
-target_include_directories(core_files PUBLIC ${HIREDIS_HEADER})
+target_include_directories(app_client.exe PUBLIC ${HIREDIS_HEADER})
+target_include_directories(terrain_server PUBLIC ${HIREDIS_HEADER})
 
 
 find_library(HIREDIS_LIB hiredis)
 
 find_path(REDIS_PLUS_PLUS_HEADER sw)
-target_include_directories(core_files PUBLIC ${REDIS_PLUS_PLUS_HEADER})
+target_include_directories(app_client.exe PUBLIC ${REDIS_PLUS_PLUS_HEADER})
+target_include_directories(terrain_server PUBLIC ${REDIS_PLUS_PLUS_HEADER})
 
 find_library(REDIS_PLUS_PLUS_LIB redis++)
 
@@ -337,10 +374,17 @@ target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets
                       ${JSONCPP_LIBRARIES} mysqlcppconn
                       gtest gtest_main)
 
-target_link_libraries(core_files Qt5::Gui Qt5::Widgets Qt5::Network
+target_link_libraries(app_client.exe Qt5::Gui Qt5::Widgets Qt5::Network
                         ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
                         -lpqxx -lpq
                         -ljsoncpp  ${JSONCPP_LIBRARIES}
                         mysqlcppconn  -lpthread -lssl -lcrypto -ljwt)
 
+target_link_libraries(terrain_server Qt5::Gui Qt5::Widgets Qt5::Network
+                      ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
+                      -lpqxx -lpq
+                      -ljsoncpp  ${JSONCPP_LIBRARIES}
+                      mysqlcppconn  -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
+                      -lssl -lcrypto -ljwt
+                      -lnghttp2 )
 
