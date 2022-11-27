@@ -43,6 +43,9 @@ CREATE TABLE IF NOT EXISTS terrain_project.terrains.projects
 	
 	name varchar,
 	last_edited date,
+	rating real,
+	n_rates integer,
+	exhibited boolean,
 
 	id_terrain int,
 	foreign key(id_terrain) references terrain_project.terrains.terrains(id)
