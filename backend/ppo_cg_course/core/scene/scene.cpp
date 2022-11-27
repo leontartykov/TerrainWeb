@@ -1,6 +1,6 @@
 #include "scene.h"
-#include "../data_access/data_access_image/data_access_image_base.h"
-#include "../data_access/data_access_image/data_access_image_bmp.h"
+#include "core/data_access/images/base_image.h"
+#include "core/data_access/images/data_access_image_bmp.h"
 
 Scene::Scene(){
     _terrain = new Terrain();
@@ -42,6 +42,53 @@ void Scene::build_scene(all_scene_info_t &scene_info)
     _terrain->remove_invisible_lines(*_zbuffer, scene_info.scene_point_light_position);
 }
 
+std::pair<std::vector<std::vector<QColor>>, struct scene_window>
+        Scene::create_scene(all_scene_info_t &scene_info)
+{
+    scene_win_t win;
+    this->build_scene(scene_info);
+    std::vector<std::vector<QColor>> color_matrix = _zbuffer->get_color_matrix();
+
+    int width = color_matrix[0].size(), height = color_matrix.size();
+    int min_i = height, min_j = width, max_i = 0, max_j = 0;
+    for (int i = 0; i < height; ++i){
+        //std::cerr << "i=" << i;
+        for (int j = 0; j < width; ++j){
+            if (!is_background_color(color_matrix[i][j])){
+                if (i < min_i){
+                    min_i = i;
+                }
+                if (i > max_i){
+                    max_i = i;
+                }
+
+                if (j < min_j){
+                    min_j = j;
+                }
+                if (j > max_j){
+                    max_j = j;
+                }
+
+            }
+            //std::cerr << "(" << color_matrix[i][j].red() << "," << color_matrix[i][j].green() << "," << color_matrix[i][j].blue() << "),";
+        }
+        //std::cerr << "\n";
+    }
+    win.min_x = min_j; win.max_x = max_j;
+    win.min_y = min_i; win.max_y = max_i;
+
+    std::cerr << "min_i: " << min_i << "max_i: " << max_i << "min_j: " << min_j << "max_j: " << max_j << "\n";
+
+    return {color_matrix, win};
+}
+
+bool Scene::is_background_color(QColor &color){
+    if (color.red() == 255 && color.green() == 255 && color.blue() == 255){
+        return true;
+    }
+    return false;
+}
+
 void Scene::draw_scene(QGraphicsScene *scene, QGraphicsView *view){
     _terrain->draw_terrain(_zbuffer->get_color_matrix(), scene, view);
 }
@@ -51,7 +98,8 @@ int Scene::export_terrain()
     std::shared_ptr<DataAccessFileBMP> image_bmp(new DataAccessFileBMP());
     //std::shared_ptr<BaseDataAccessImage> base_image = image_bmp;
 
-    int error = image_bmp->create("../data/color.bmp", _zbuffer->get_color_matrix());
+    std::string file_name = "../data/color.bmp";
+    int error = image_bmp->create(file_name, _zbuffer->get_color_matrix());
     return error;
 }
 

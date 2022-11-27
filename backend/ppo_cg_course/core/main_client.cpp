@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QDebug>
 
 #include "core/entry/entry.h"
 #include "core/entry/app_command/app_command.h"
@@ -10,6 +11,9 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     std::unique_ptr<EntrySystem> system;
     system = std::unique_ptr<EntrySystem>(new EntrySystem());
+
+    /*QColor color(255,255,255);
+    qDebug() << color.name();*/
 
     system->enter_system();
     return a.exec();

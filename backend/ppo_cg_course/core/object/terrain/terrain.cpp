@@ -1,11 +1,11 @@
 #include "terrain.h"
 #include "terrain.hpp"
-#include "../../data_access/data_access_image/data_access_image_bmp.hpp"
-#include "../../invisible/zbuffer/zbuffer.h"
-#include "../../geometry/triangle/triangle_3d.hpp"
-#include "../../geometry/vector/vector_3d.h"
-#include "../../heightmap/perlin_noise/perlin_original.h"
-#include "../../transform/transform.h"
+//#include "core/data_access/images/data_access_image_bmp.hpp"
+#include "core/invisible/zbuffer/zbuffer.h"
+#include "core/geometry/triangle/triangle_3d.hpp"
+#include "core/geometry/vector/vector_3d.h"
+#include "core/heightmap/perlin_noise/perlin_original.h"
+#include "core/transform/transform.h"
 
 /*!
  * \brief Terrain::Terrain
@@ -326,12 +326,12 @@ void Terrain::find_average_normals_of_each_node()
     }
 }
 
-int Terrain::write_to_file_bmp(std::string &path, ZBuffer &zbuffer)
+/*int Terrain::write_to_file_bmp(std::string &path, ZBuffer &zbuffer)
 {
     DataAccessFileBMP file_bmp;
     int error = file_bmp.create(path, zbuffer.get_color_matrix());
     return error;
-}
+}*/
 
 void Terrain::set_meta_data(meta_data_t &meta_data)
 {

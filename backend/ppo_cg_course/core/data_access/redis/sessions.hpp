@@ -5,7 +5,7 @@
 
 using namespace sw::redis;
 
-class UserSessions
+class RedisSessions
 {
     private:
         Redis __redis;
@@ -13,8 +13,8 @@ class UserSessions
         std::string __get_access_token(int &user_id);
 
     public:
-        explicit UserSessions();
-        ~UserSessions() = default;
+        explicit RedisSessions();
+        ~RedisSessions() = default;
 
         void add(int &user_id, std::string access_token);
 

@@ -1,5 +1,5 @@
 #include "app_command.h"
-#include "../../gui/main_window.h"
+#include "core/gui/main_window.h"
 
 BaseAppCommand::~BaseAppCommand() {}
 
@@ -10,8 +10,7 @@ void LaunchAppCmd::execute(){
 int LaunchAppCmd::_execute()
 {
     int argc = 1;
-    std::cout << "Launch execute." << std::endl;
-    char *argv[] = {"/home/lev/Desktop/study/semester_6/iu7_software_design_labs_2022/src/build-ppo_cg_course-Desktop-Release/core_files"};
+    char *argv[] = {"/home/lev/iu7_web_labs_2022/backend/build-ppo_cg_course-Desktop-Release/app_client"};
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

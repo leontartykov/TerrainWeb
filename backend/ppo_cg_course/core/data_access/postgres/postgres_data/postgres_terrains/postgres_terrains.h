@@ -25,6 +25,17 @@ struct terrain_project
     terrain_t terrain;
 };
 
+typedef struct light light_t;
+struct light{
+    int x, y, z;
+};
+
+struct terrain_scene
+{
+    terrain_t terrain;
+    light_t light;
+};
+
 class TerrainProjectsPostgres
 {
     private:
@@ -46,9 +57,11 @@ class TerrainProjectsPostgres
         std::pair<int, std::vector<terrain_project_t>> get_terrain_projects(int &user_id);
         int get_count_terrain_projects();
 
-        int add_new_terrain_project(terrain_project_t &ter_proj, int &user_id);
+        int add_new_terrain_project(std::string &terProjName, int &user_id);
         int get_terrain_project(terrain_project &ter_proj, int &user_id);
-        int delete_terrain_project(terrain_project &ter_proj, int &user_id);
+        int delete_terrain_project(int &terId, int &user_id);
+        double get_terrain_project_rating(int &terId);
+        int set_terrain_project_rating(int &terId, int &rating);
 };
 
 #endif

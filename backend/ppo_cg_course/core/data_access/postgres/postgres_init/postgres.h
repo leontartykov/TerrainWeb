@@ -54,6 +54,19 @@ class Postgres
         do_action_terrain_projects(const ter_projs_action &action, int &user_id);
 
         bool check_validation(users_t &user);
+        int get_user(int &id, users_t &user);
+        int add_user(users_t &user);
+        int update_user(int &id, users_t &user);
+        int delete_user(int &id);
+        int block_user(int &id);
+        int unlock_user(int &id);
+
+        int add_new_terrain_project(std::string &terProjName, int &userId);
+        int get_terrain_project(terrain_project &terProj, int &userId);
+        std::pair<int, std::vector<terrain_project_t> > get_terrain_projects(int &userId);
+        int delete_terrain_project(int &terId, int &userId);
+        double get_terrain_project_rating(int &terId);
+        int set_terrain_project_rating(int &terId, int &rating);
 };
 
 #endif

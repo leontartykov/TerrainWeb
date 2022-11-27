@@ -42,6 +42,56 @@ void Postgres::set_psql_connection(std::shared_ptr<pqxx::connection> &connection
     __connection = connection;
 }
 
+int Postgres::get_user(int &id, users_t &user){
+    return __users.get()->get(id, user);
+}
+
+int Postgres::add_user(users_t &user){
+    return __users.get()->add(user);
+}
+
+int Postgres::update_user(int &id, users_t &user){
+    return __users.get()->update(user.id, user);
+}
+
+int Postgres::delete_user(int &id){
+    return __users.get()->delete_user(id);
+}
+
+int Postgres::block_user(int &id){
+    return __users.get()->block(id);
+}
+
+int Postgres::unlock_user(int &id){
+    return __users.get()->unlock(id);
+}
+
+int Postgres::add_new_terrain_project(std::string &terProjName, int &userId){
+    return __terrains.get()->add_new_terrain_project(terProjName, userId);
+}
+
+int Postgres::get_terrain_project(terrain_project &terProj, int &userId){
+    return __terrains.get()->get_terrain_project(terProj, userId);
+}
+
+int Postgres::delete_terrain_project(int &terId, int &userId){
+    return __terrains.get()->delete_terrain_project(terId, userId);
+}
+
+double Postgres::get_terrain_project_rating(int &terId){
+    return __terrains.get()->get_terrain_project_rating(terId);
+}
+
+int Postgres::set_terrain_project_rating(int &terId, int &rating){
+    return __terrains.get()->set_terrain_project_rating(terId, rating);
+}
+
+std::pair<int, std::vector<terrain_project_t>>
+    Postgres::get_terrain_projects(int &userId)
+{
+    return __terrains.get()->get_terrain_projects(userId);
+}
+
 int Postgres::do_action_users(const users_action &action, users_t &user)
 {
     int http_response_code = 0;
@@ -82,7 +132,7 @@ int Postgres::do_action_terrains(const terrains_action &action, terrain_project_
         switch(action)
         {
             case add_t:
-                http_response_code = __terrains.get()->add_new_terrain_project(ter_proj, user_id);
+                //http_response_code = __terrains.get()->add_new_terrain_project(ter_proj, user_id);
                 break;
             case get_t:
                 http_response_code = __terrains.get()->get_terrain_project(ter_proj, user_id);
@@ -91,7 +141,7 @@ int Postgres::do_action_terrains(const terrains_action &action, terrain_project_
                 std::cout << "Нет функционала.\n";
                 break;
             case delete_t:
-                http_response_code = __terrains.get()->delete_terrain_project(ter_proj, user_id);
+                //http_response_code = __terrains.get()->delete_terrain_project(ter_proj, user_id);
                 break;
             default:
                 std::cout << "Неизвестная команда.\n";
@@ -127,7 +177,7 @@ Postgres::do_action_terrain_projects(const ter_projs_action &action, int &user_i
 bool Postgres::check_validation(users_t &user){
     bool success;
 
-    success = __users->check_validation(user);
+    success = __users.get()->check_validation(user);
     if (!success || user.is_blocked == "t" || user.is_deleted == "t"){
         success = false;
     }

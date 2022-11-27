@@ -9,12 +9,11 @@
 #include <memory>
 #include <QApplication>
 
-#include "../object/terrain/terrain.h"
-#include "../object/light/light.h"
-//#include "../invisible/zbuffer/zbuffer.hpp"
-#include "../scene/scene_facade/scene_facade.h"
-#include "../scene/scene.h"
-#include "../scene/scene_struct.h"
+#include "core/object/terrain/terrain.h"
+#include "core/object/light/light.h"
+#include "core/scene/scene_facade/scene_facade.h"
+#include "core/scene/scene.h"
+#include "core/scene/scene_struct.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

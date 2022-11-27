@@ -1,13 +1,12 @@
 #include "main_window.h"
-#include "./ui_mainwindow.h"
-#include "../scene/scene_commands/scene_command_base.h"
-#include "../scene/scene_commands/scene_commands.h"
+#include "ui_mainwindow.h"
+#include "core/scene/scene_commands/scene_command_base.h"
+#include "core/scene/scene_commands/scene_commands.h"
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     view = ui->graphicsView;
     scene = new QGraphicsScene(ui->graphicsView);
     view->setScene(scene);

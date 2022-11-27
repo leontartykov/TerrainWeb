@@ -1,12 +1,12 @@
 #include "sessions.hpp"
 #include <iostream>
 
-UserSessions::UserSessions(): __redis(Redis("tcp://127.0.0.1:6379")){
+RedisSessions::RedisSessions(): __redis(Redis("tcp://127.0.0.1:6379")){
     __usr_hash = "usr:";
 }
 
 ///Add info {accessToken: string}
-void UserSessions::add(int &user_id, std::string access_token)
+void RedisSessions::add(int &user_id, std::string access_token)
 {
     std::unordered_map<std::string, std::string> m;
     m = {{"access_token", access_token}, {"EX", "60"}};
@@ -17,7 +17,7 @@ void UserSessions::add(int &user_id, std::string access_token)
 }
 
 ///Check correctness access token
-bool UserSessions::check_access_token(int &user_id, std::string token)
+bool RedisSessions::check_access_token(int &user_id, std::string token)
 {
     std::string db_token;
     db_token = __get_access_token(user_id);
@@ -30,7 +30,7 @@ bool UserSessions::check_access_token(int &user_id, std::string token)
 }
 
 ///Return user session info {accessToken: string}
-std::string UserSessions::__get_access_token(int &user_id)
+std::string RedisSessions::__get_access_token(int &user_id)
 {
     std::unordered_map<std::string, std::string> m;
     std::string usr_access;

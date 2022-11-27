@@ -1,4 +1,5 @@
 #include "postgres_user.h"
+#include <QDebug>
 
 UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
     __conn_psql = conn_psql;
@@ -8,8 +9,11 @@ UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
 int UserPostgres::get(int &id, users_t &user)
 {
     int http_response_code = 200;
-    if (!id || id >= __count_users){
+    if (!id){
         http_response_code = 400;
+    }
+    else if (id >= __count_users){
+        http_response_code = 404;
     }
     else{
         pqxx::work worker(*__conn_psql);
@@ -49,11 +53,12 @@ int UserPostgres::add(users_t &user)
     try{
         pqxx::work worker(*__conn_psql);
         query = "SELECT * from terrain_project.users.info where login like '%" \
-                 + user.login + "'";
+                 + user.login + "';";
         response = worker.exec(query);
 
         if (!response.empty()){
-            query = "UPDATE terrain_project.users.info SET deleted = false";
+            query = "UPDATE terrain_project.users.info SET deleted = false \
+                     WHERE login like '%" + user.login + "';";
         }
         else
         {
@@ -80,13 +85,14 @@ int UserPostgres::add(users_t &user)
 
 int UserPostgres::delete_user(int &id)
 {
+    int success = 0;
     if (!__conn_psql){
         std::cout << "Нет подключения к БД." << std::endl;
-        return -1;
+        success = -1;
     }
     else if (!id){
         std::cout << "О пользователе нет данных (ID).\n";
-        return -2;
+        success = -2;
     }
 
     try{
@@ -94,9 +100,10 @@ int UserPostgres::delete_user(int &id)
         pqxx::work worker(*__conn_psql);
         std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
                             std::to_string(id) + "';";
-        worker.exec(query);
-        worker.commit();
+        pqxx::result result = worker.exec(query);
+        std::cerr << "result: " << result.empty() << "\n";
 
+        worker.commit();
         std::cout << "\nУдаление пользователя выполнено успешно.\n";
     }
     catch(std::exception const &e){
@@ -104,7 +111,7 @@ int UserPostgres::delete_user(int &id)
         return -3;
     }
 
-    return 0;
+    return success;
 }
 
 int UserPostgres::update(int &id, users_t &user)
@@ -249,3 +256,4 @@ void UserPostgres::__define_count_users()
         std::cout << e.what() << '\n';
     }
 }
+

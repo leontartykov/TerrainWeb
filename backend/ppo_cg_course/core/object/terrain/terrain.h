@@ -7,11 +7,11 @@
 
 #include "base_terrain.h"
 #include "terrain_struct.h"
-#include "../../geometry/point/point_3d.h"
-#include "../../geometry/vector/vector_3d.h"
-#include "../../invisible/zbuffer/zbuffer.h"
-#include "../../heightmap/perlin_noise/perlin_original.h"
-#include "../../geometry/triangle/triangle_3d.h"
+#include "core/geometry/point/point_3d.h"
+#include "core/geometry/vector/vector_3d.h"
+#include "core/invisible/zbuffer/zbuffer.h"
+#include "core/heightmap/perlin_noise/perlin_original.h"
+#include "core/geometry/triangle/triangle_3d.h"
 
 class Terrain
 {
@@ -52,7 +52,7 @@ class Terrain
         void find_average_normals_of_each_node();
         void form_terrain();
 
-        int write_to_file_bmp(std::string &path, ZBuffer &zbuffer);
+        //int write_to_file_bmp(std::string &path, ZBuffer &zbuffer);
         void set_meta_data(meta_data_t &meta_data);
 
         rotate_t get_rotate_angles();
