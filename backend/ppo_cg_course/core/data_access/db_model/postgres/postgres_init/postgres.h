@@ -55,12 +55,6 @@ class Postgres: public DbModel
         int get_count_users();
         int get_count_terrains();
 
-        int do_action_users(const users_action &action, users_t &user);
-        int do_action_terrains(const terrains_action &action, terrain_project_t &ter_proj, int &user_id);
-
-        std::pair<int, std::vector<terrain_project_t>>
-        do_action_terrain_projects(const ter_projs_action &action, int &user_id);
-
         bool check_validation(users_t &user);
 
         virtual int add_new_terrain_project(std::string &terProjName, int &userId) override;
