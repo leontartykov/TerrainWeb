@@ -6,7 +6,7 @@ UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
     __define_count_users();
 }
 
-int UserPostgres::get(int &id, users_t &user)
+int UserPostgres::get(int &id, dbUsers_t &user)
 {
     int http_response_code = 200;
     if (!id){
@@ -37,7 +37,7 @@ int UserPostgres::get_count_users(){
     return __count_users;
 }
 
-int UserPostgres::add(users_t &user)
+int UserPostgres::add(dbUsers_t &user)
 {
     std::string query;
     pqxx::result response;
@@ -96,7 +96,7 @@ int UserPostgres::delete_user(int &id)
     }
 
     try{
-        users_t del_user;
+        dbUsers_t del_user;
         pqxx::work worker(*__conn_psql);
         std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
                             std::to_string(id) + "';";
@@ -113,11 +113,11 @@ int UserPostgres::delete_user(int &id)
     return success;
 }
 
-int UserPostgres::update(int &id, users_t &user)
+int UserPostgres::update(int &id, dbUsers_t &user)
 {
     int response_code = 0;
     try{
-        users_t del_user;
+        dbUsers_t del_user;
         pqxx::work worker(*__conn_psql);
         std::string query = "UPDATE terrain_project.users.info SET login = '" + \
                             user.login + "' WHERE id = '" + std::to_string(id) + "';";
@@ -180,7 +180,7 @@ int UserPostgres::unlock(int &id)
     return 0;
 }
 
-bool UserPostgres::check_validation(users_t &user)
+bool UserPostgres::check_validation(dbUsers_t &user)
 {
     std::string query;
     pqxx::result response;
@@ -214,7 +214,7 @@ bool UserPostgres::check_validation(users_t &user)
     return success;
 }
 
-bool UserPostgres::__is_user_empty(users_t &user){
+bool UserPostgres::__is_user_empty(dbUsers_t &user){
     if (user.password.empty() && user.login.empty()){
         return true;
     }

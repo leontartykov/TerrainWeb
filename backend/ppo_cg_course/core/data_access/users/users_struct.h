@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-typedef struct users users_t;
-struct users{
+typedef struct dbUsers dbUsers_t;
+struct dbUsers{
     int id;
     std::string login;
     std::string password;

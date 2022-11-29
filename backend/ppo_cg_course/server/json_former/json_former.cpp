@@ -1,6 +1,6 @@
 #include "json_former.hpp"
 
-json form_json_response(std::vector<terrain_project_t> &ter_projs)
+json form_json_response(std::vector<dbTerrainProject_t> &ter_projs)
 {
     json json_ret, jsonObjects;
     int count_ter_projs;
@@ -19,7 +19,7 @@ json form_json_response(std::vector<terrain_project_t> &ter_projs)
     return json_ret;
 }
 
-json form_json_response(terrain_project_t &ter_proj)
+json form_json_response(dbTerrainProject_t &ter_proj)
 {
     json json_ret;
     json_ret["rotate"]["angle_x"] = ter_proj.terrain.rotate_angles.angle_x;
@@ -40,7 +40,7 @@ json form_json_response(terrain_project_t &ter_proj)
     return json_ret;
 }
 
-json form_json_response(users_t &user)
+json form_json_response(dbUsers_t &user)
 {
     json json_ret;
     json_ret["login"] = user.login;

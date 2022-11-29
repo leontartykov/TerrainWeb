@@ -134,12 +134,15 @@ add_executable(
     core/data_access/images/base_image.h
 
     core/data_access/db_model/base_db_model.hpp
+    core/data_access/terrains/terrains_struct.hpp
+    core/data_access/db_model/postgres/postgres.hpp
+    core/data_access/db_model/postgres/postgres.cpp
+
     core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h
     core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
     core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
     core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-    core/data_access/db_model/postgres/postgres_init/postgres.h
-    core/data_access/db_model/postgres/postgres_init/postgres.cpp
+
 
     core/data_access/data_interfaces/interface_users_db.h
 
@@ -188,15 +191,15 @@ add_executable(
 set(
     SERVER_SOURCERS
 
-    server/http_server/http_server.h
-    server/http_server/http_server.cpp
+    #server/http_server/http_server.h
+    #server/http_server/http_server.cpp
 
-    server/http2_server/http2_server.h
-    server/http2_server/http2_server.cpp
+    #server/http2_server/http2_server.h
+    #server/http2_server/http2_server.cpp
 
-    server/async_con.h
-    server/async_con.cpp
-    server/controllers/server_handlers.cpp
+    #server/async_con.h
+    #server/async_con.cpp
+    #server/controllers/server_handlers.cpp
     server/server_codes.h
 
     core/data_access/redis/sessions.hpp
@@ -212,8 +215,8 @@ set(
     core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
     core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
     core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-    core/data_access/db_model/postgres/postgres_init/postgres.h
-    core/data_access/db_model/postgres/postgres_init/postgres.cpp
+    core/data_access/db_model/postgres/postgres.hpp
+    core/data_access/db_model/postgres/postgres.cpp
 
     core/data_access/data_interfaces/interface_users_db.h
 
@@ -353,7 +356,6 @@ add_executable(
   core/gui/main_window.cpp
   core/gui/main_window.h
   core/gui/mainwindow.ui
-  #core/gui/ui_mainwindow.h
 
   core/transform/transform.h
   core/transform/transform.cpp
@@ -369,12 +371,13 @@ add_executable(
   core/config/config.h
   core/config/config.cpp
 
+  core/data_access/db_model/base_db_model.hpp
   core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h
   core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
   core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
   core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-  core/data_access/db_model/postgres/postgres_init/postgres.h
-  core/data_access/db_model/postgres/postgres_init/postgres.cpp
+  core/data_access/db_model/postgres/postgres.hpp
+  core/data_access/db_model/postgres/postgres.cpp
 
   core/data_access/data_interfaces/interface_users_db.h
 )
@@ -384,6 +387,9 @@ gtest_discover_tests(unit_all_tests)
 find_package(Drogon CONFIG REQUIRED)
 set (
     HTTP_SERVER
+    http_server/http_server_10/http_server_10.hpp
+    http_server/http_server_10/http_server_10.cpp
+
     http_server/controllers/http_controllers.hpp
 
     http_server/controllers/terrains/terrain_controller.cpp
@@ -401,20 +407,20 @@ set (
     http_server/controllers/form_http_response.hpp
 )
 
-add_executable(terrain_server ${SERVER_SOURCERS} server/main_server.cpp)
+#add_executable(terrain_server ${SERVER_SOURCERS} server/main_server.cpp)
 add_executable(http_server ${TERRAIN_ENGINE} ${IMAGES_ENGINE} ${SERVER_SOURCERS} ${HTTP_SERVER}
                http_server/main_http_server.cpp)
 
 find_path(HIREDIS_HEADER hiredis)
 target_include_directories(app_client PUBLIC ${HIREDIS_HEADER})
-target_include_directories(terrain_server PUBLIC ${HIREDIS_HEADER})
+#target_include_directories(terrain_server PUBLIC ${HIREDIS_HEADER})
 
 
 find_library(HIREDIS_LIB hiredis)
 
 find_path(REDIS_PLUS_PLUS_HEADER sw)
 target_include_directories(app_client PUBLIC ${REDIS_PLUS_PLUS_HEADER})
-target_include_directories(terrain_server PUBLIC ${REDIS_PLUS_PLUS_HEADER})
+#target_include_directories(terrain_server PUBLIC ${REDIS_PLUS_PLUS_HEADER})
 
 find_library(REDIS_PLUS_PLUS_LIB redis++)
 
@@ -429,13 +435,13 @@ target_link_libraries(app_client Qt5::Gui Qt5::Widgets Qt5::Network
                         -ljsoncpp  ${JSONCPP_LIBRARIES}
                         mysqlcppconn  -lpthread -lssl -lcrypto -ljwt -lpng -lz)
 
-target_link_libraries(terrain_server Qt5::Gui Qt5::Widgets Qt5::Network
-                        ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
-                        -lpqxx -lpq
-                        -ljsoncpp  ${JSONCPP_LIBRARIES}
-                        mysqlcppconn  -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
-                        -lssl -lcrypto -ljwt
-                        )
+#target_link_libraries(terrain_server Qt5::Gui Qt5::Widgets Qt5::Network
+#                        ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
+#                        -lpqxx -lpq
+#                        -ljsoncpp  ${JSONCPP_LIBRARIES}
+#                        mysqlcppconn  -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
+#                        -lssl -lcrypto -ljwt
+#                        )
 
 target_link_libraries(http_server Qt5::Gui Qt5::Widgets Qt5::Network
                         ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}

@@ -7,7 +7,7 @@ void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr 
      std::string userId)
 {
     int user_id, uuid, response_code;
-    std::pair<int, std::vector<terrain_project_t>> result;
+    std::pair<int, std::vector<dbTerrainProject_t>> result;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
@@ -78,7 +78,7 @@ void api::v1::TerrainsController::get_terrain_project_info(const HttpRequestPtr 
      std::string userId, std::string terrainId)
 {
     int user_id, terrain_id, response_code, uuid;
-    terrain_project ter_proj;
+    dbTerrainProject_t ter_proj;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
@@ -227,7 +227,7 @@ void api::v1::TerrainsController::get_render_image(
     Json::Value jsonBodyout;
     std::string token;
     drogon::HttpResponsePtr resp;
-    std::pair<terrain_t, light_t> scene_info;
+    std::pair<dbTerrain_t, light_t> scene_info;
     std::shared_ptr<Json::Value> jsonBodyIn;
     std::string filename = "images/fee.png";
 
@@ -254,10 +254,10 @@ void api::v1::TerrainsController::get_render_image(
     }
 }
 
-std::pair<terrain_t, light_t>
+std::pair<dbTerrain_t, light_t>
     api::v1::TerrainsController::__handle_json_body(std::shared_ptr<Json::Value> jsonBodyIn)
 {
-    terrain_t terrain;
+    dbTerrain_t terrain;
     light_t light;
 
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();

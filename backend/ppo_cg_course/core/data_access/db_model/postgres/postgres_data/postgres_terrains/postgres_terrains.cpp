@@ -25,7 +25,7 @@ void TerrainProjectsPostgres::__define_count_terrain_projects()
     }
 }
 
-void TerrainProjectsPostgres::set_terrain_params(std::string &project_name, terrain_t &terrain_params){
+void TerrainProjectsPostgres::set_terrain_params(std::string &project_name, dbTerrain_t &terrain_params){
     pqxx::work worker(*__conn_psql);
     std::string query = "UPDATE terrain_project.terrains.terrains SET ('" + \
                          std::to_string(terrain_params.width) + "', '" + \
@@ -45,9 +45,9 @@ void TerrainProjectsPostgres::set_terrain_params(std::string &project_name, terr
 }
 
 ///Return all user terrain projects
-std::pair<int, std::vector<terrain_project_t>> TerrainProjectsPostgres::get_terrain_projects(int &user_id)
+std::pair<int, std::vector<dbTerrainProject_t>> TerrainProjectsPostgres::get_terrain_projects(int &user_id)
 {
-    std::vector<terrain_project_t> ter_projs;
+    std::vector<dbTerrainProject_t> ter_projs;
     std::string id_user = std::to_string(user_id);
     pqxx::work worker(*__conn_psql);
     pqxx::result response;
@@ -115,7 +115,7 @@ int TerrainProjectsPostgres::add_new_terrain_project(std::string &terProjName, i
     return 201;
 }
 
-int TerrainProjectsPostgres::get_terrain_project(terrain_project &ter_proj, int &user_id)
+int TerrainProjectsPostgres::get_terrain_project(dbTerrainProject_t &ter_proj, int &user_id)
 {
     pqxx::result response;
     std::string query;

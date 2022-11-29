@@ -1,10 +1,11 @@
-#include "postgres.h"
+#include "postgres.hpp"
 
 Postgres::Postgres(){
     __connect_psql_to_db();
     __users = std::make_unique<UserPostgres>(__connection);
     __terrains = std::make_unique<TerrainProjectsPostgres>(__connection);
 }
+
 
 int Postgres::__connect_psql_to_db()
 {
@@ -42,15 +43,15 @@ void Postgres::set_psql_connection(std::shared_ptr<pqxx::connection> &connection
     __connection = connection;
 }
 
-int Postgres::get_user(int &id, users_t &user){
+int Postgres::get_user(int &id, dbUsers_t &user){
     return __users.get()->get(id, user);
 }
 
-int Postgres::add_user(users_t &user){
+int Postgres::add_user(dbUsers_t &user){
     return __users.get()->add(user);
 }
 
-int Postgres::update_user(int &id, users_t &user){
+int Postgres::update_user(int &id, dbUsers_t &user){
     return __users.get()->update(user.id, user);
 }
 
@@ -70,7 +71,7 @@ int Postgres::add_new_terrain_project(std::string &terProjName, int &userId){
     return __terrains.get()->add_new_terrain_project(terProjName, userId);
 }
 
-int Postgres::get_terrain_project(terrain_project &terProj, int &userId){
+int Postgres::get_terrain_project(dbTerrainProject_t &terProj, int &userId){
     return __terrains.get()->get_terrain_project(terProj, userId);
 }
 
@@ -86,13 +87,13 @@ int Postgres::set_terrain_project_rating(int &terId, int &rating){
     return __terrains.get()->set_terrain_project_rating(terId, rating);
 }
 
-std::pair<int, std::vector<terrain_project_t>>
+std::pair<int, std::vector<dbTerrainProject_t>>
     Postgres::get_terrain_projects(int &userId)
 {
     return __terrains.get()->get_terrain_projects(userId);
 }
 
-bool Postgres::check_validation(users_t &user){
+bool Postgres::check_validation(dbUsers_t &user){
     bool success;
 
     success = __users.get()->check_validation(user);

@@ -42,7 +42,7 @@ int Admin::do_action()
             }
             case menu::ADD_USER:
             {
-                users_t user;
+                dbUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
                 std::cout << "user.id: " << user.id << std::endl;
@@ -65,7 +65,7 @@ int Admin::do_action()
             }
             case menu::DELETE_USER:
             {
-                users_t user;
+                dbUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
 
@@ -77,7 +77,7 @@ int Admin::do_action()
             }
             case menu::LOCK_USER:
             {
-                users_t user;
+                dbUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
 
@@ -89,7 +89,7 @@ int Admin::do_action()
             }
             case menu::UNLOCK_USER:
             {
-                users_t user;
+                dbUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
 

@@ -17,7 +17,7 @@ Admin::~Admin(){
     this->disconnect_db();
 }
 
-int Admin::add_user(users_t &user){
+int Admin::add_user(dbUsers_t &user){
     return __add_user_psql(user);
 }
 
@@ -81,12 +81,13 @@ int Admin::disconnect_db()
     return 0;
 }
 
-int Admin::__add_user_psql(users_t &user){
-    int http_response_code =  __postgres.do_action_users(users_action::add_u, user);
-    return http_response_code;
+int Admin::__add_user_psql(dbUsers_t &user){
+    //int http_response_code =  __postgres.do_action_users(users_action::add_u, user);
+    //return http_response_code;
+    return -1;
 }
 
-int Admin::_add_user_mysql(users_t &user)
+int Admin::_add_user_mysql(dbUsers_t &user)
 {
     /*if (!_connect_mysql){
         std::cout << "error: Нет подключения к БД." << std::endl;
@@ -112,7 +113,7 @@ int Admin::_add_user_mysql(users_t &user)
     return 0;
 }
 
-int Admin::delete_user(users_t &user)
+int Admin::delete_user(dbUsers_t &user)
 {
     int error;
     error = __delete_user_psql(user);
@@ -120,13 +121,14 @@ int Admin::delete_user(users_t &user)
     return error;
 }
 
-int Admin::__delete_user_psql(users_t &user){
-    int http_response_code = __postgres.do_action_users(users_action::delete_u, user);
+int Admin::__delete_user_psql(dbUsers_t &user){
+    //int http_response_code = __postgres.do_action_users(users_action::delete_u, user);
 
-    return http_response_code;
+    //return http_response_code;
+    return -1;
 }
 
-int Admin::_delete_user_mysql(users_t &user)
+int Admin::_delete_user_mysql(dbUsers_t &user)
 {
     /*if (!_connect_mysql){
         std::cout << "Нет подключения к БД." << std::endl;
@@ -159,17 +161,19 @@ int Admin::_delete_user_mysql(users_t &user)
     return 0;
 }
 
-int Admin::lock_user(users_t &user){
-    int http_response_code = __postgres.do_action_users(users_action::block_u, user);
+int Admin::lock_user(dbUsers_t &user){
+    //int http_response_code = __postgres.do_action_users(users_action::block_u, user);
 
-    return http_response_code;
+    //return http_response_code;
+    return -1;
 }
 
-int Admin::unlock_user(users_t &user)
+int Admin::unlock_user(dbUsers_t &user)
 {
-    int http_response_code = __postgres.do_action_users(users_action::unlock_u, user);
+    //int http_response_code = __postgres.do_action_users(users_action::unlock_u, user);
 
-    return http_response_code;
+    //return http_response_code;
+    return -1;
 }
 
 int Admin::check_connection(){

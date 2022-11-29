@@ -4,10 +4,10 @@
 #include <pqxx/pqxx>
 #include <iostream>
 
-#include "core/object/terrain/terrain_struct.h"
+#include "core/data_access/terrains/terrains_struct.hpp"
 #include "core/heightmap/perlin_noise/perlin_noise_struct.h"
 
-typedef struct terrain terrain_t;
+/*typedef struct terrain terrain_t;
 struct terrain
 {
     int width, height;
@@ -34,13 +34,13 @@ struct terrain_scene
 {
     terrain_t terrain;
     light_t light;
-};
+};*/
 
 class TerrainProjectsPostgres
 {
     private:
         std::string __project_name;
-        terrain_t __terrain_params;
+        dbTerrain_t __terrain_params;
         int __count_terrain_projs;
 
         std::shared_ptr<pqxx::connection> __conn_psql;
@@ -53,12 +53,12 @@ class TerrainProjectsPostgres
 
         ~TerrainProjectsPostgres() = default;
 
-        void set_terrain_params(std::string &project_name, terrain_t &terrain_params);
-        std::pair<int, std::vector<terrain_project_t>> get_terrain_projects(int &user_id);
+        void set_terrain_params(std::string &project_name, dbTerrain_t &terrain_params);
+        std::pair<int, std::vector<dbTerrainProject_t>> get_terrain_projects(int &user_id);
         int get_count_terrain_projects();
 
         int add_new_terrain_project(std::string &terProjName, int &user_id);
-        int get_terrain_project(terrain_project &ter_proj, int &user_id);
+        int get_terrain_project(dbTerrainProject_t &ter_proj, int &user_id);
         int delete_terrain_project(int &terId, int &user_id);
         double get_terrain_project_rating(int &terId);
         int set_terrain_project_rating(int &terId, int &rating);

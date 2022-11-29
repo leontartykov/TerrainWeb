@@ -7,7 +7,7 @@ TEST(tests_users_add_user, positive)
     int result = 0;
     std::unique_ptr<Admin> admin(new Admin());
 
-    users_t user = {.id = 1,
+    dbUsers_t user = {.id = 1,
                     .login = "user_1",
                     .password = "ur21",
                     .is_blocked="false",
@@ -22,7 +22,7 @@ TEST(tests_users_delete_user, positive)
     int result = 0;
     std::unique_ptr<Admin> admin(new Admin());
 
-    users_t user = {.id = 1,
+    dbUsers_t user = {.id = 1,
                     .login = "user_1",
                     .password = "ur21",
                     .is_blocked="false",
@@ -38,7 +38,7 @@ TEST(tests_users_lock_user, positive)
     int result = 0;
     std::unique_ptr<Admin> admin(new Admin());
 
-    users_t user = {
+    dbUsers_t user = {
         .id = 1,
         .login = "user_1",
         .password = "ur21",
@@ -55,7 +55,7 @@ TEST(tests_users_unlock_user, positive)
     int result = 0;
     std::unique_ptr<Admin> admin(new Admin());
 
-    users_t user = {
+    dbUsers_t user = {
         .id = 1,
         .login = "user_1",
         .password = "ur21",

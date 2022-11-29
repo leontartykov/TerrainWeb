@@ -9,7 +9,7 @@ void api::v1::UsersController::get_info(const HttpRequestPtr &req,
                                         std::string userId)
 {
     int user_id, response_code, uuid;
-    users_t user;
+    dbUsers_t user;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
@@ -40,7 +40,7 @@ void api::v1::UsersController::get_info(const HttpRequestPtr &req,
 void api::v1::UsersController::add_new(const HttpRequestPtr &req,
                                        std::function<void (const HttpResponsePtr &)> &&callback)
 {
-    users_t user;
+    dbUsers_t user;
     int response_code, uuid;
     std::string token;
     drogon::HttpResponsePtr resp;
@@ -81,7 +81,7 @@ void api::v1::UsersController::delete_usr(const HttpRequestPtr &req, std::functi
                                 std::string userId)
 {
     int user_id, response_code, uuid;
-    users_t user;
+    dbUsers_t user;
     std::string token;
     drogon::HttpResponsePtr resp;
     Json::Value jsonBody;
@@ -115,7 +115,7 @@ void api::v1::UsersController::change_usr_login(const HttpRequestPtr &req,
 {
     std::string new_login, token;
     json j_complete;
-    users_t user;
+    dbUsers_t user;
     int uuid, response_code;
     drogon::HttpResponsePtr resp;
     Json::Value jsonBody;
@@ -153,7 +153,7 @@ void api::v1::UsersController::log_in_to_system(
 {
     int response_code;
     auto json = req.get()->getJsonObject();
-    users_t user;
+    dbUsers_t user;
     std::string access_token;
     JWTUser jwt_user;
     Json::Value jsonBody;

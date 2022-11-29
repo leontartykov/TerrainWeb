@@ -9,7 +9,7 @@
 #include <boost/optional/optional_io.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "core/data_access/db_model/postgres/postgres_init/postgres.h"
+#include "core/data_access/db_model/postgres/postgres.hpp"
 #include "core/data_access/redis/sessions.hpp"
 #include "server/logs/access/access_log.hpp"
 

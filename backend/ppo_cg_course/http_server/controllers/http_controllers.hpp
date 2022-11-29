@@ -57,7 +57,7 @@ namespace api
                 TerrainsService __terrains_service;
                 TerrainSessions __sessions;
 
-                std::pair<terrain_t, light_t> __handle_json_body(std::shared_ptr<Json::Value> jsonBodyIn);
+                std::pair<dbTerrain_t, light_t> __handle_json_body(std::shared_ptr<Json::Value> jsonBodyIn);
 
             public:
                 METHOD_LIST_BEGIN

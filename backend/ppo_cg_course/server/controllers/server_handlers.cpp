@@ -46,10 +46,10 @@ std::string tcp_connection::__define_category(){
 ///Post http method handler
 std::string tcp_connection::__handle_post_request(int &http_response_code)
 {
-    users_t user;
+    dbUsers_t user;
     json j_complete, json_ret;
     std::string category;
-    terrain_project_t ter_proj;
+    dbTerrainProject_t ter_proj;
     int user_id;
     std::string msg, access_token;
 

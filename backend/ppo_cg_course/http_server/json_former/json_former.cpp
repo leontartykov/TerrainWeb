@@ -1,6 +1,6 @@
 #include "http_server/json_former/json_former.hpp"
 
-json form_json_response_new(std::vector<terrain_project_t> &ter_projs)
+json form_json_response_new(std::vector<dbTerrainProject_t> &ter_projs)
 {
     json json_ret, jsonObjects;
     int count_ter_projs;
@@ -19,7 +19,7 @@ json form_json_response_new(std::vector<terrain_project_t> &ter_projs)
     return json_ret;
 }
 
-json form_json_response_new(terrain_project_t &ter_proj)
+json form_json_response_new(dbTerrainProject_t &ter_proj)
 {
     json json_ret;
     json_ret["rotate"]["angle_x"] = ter_proj.terrain.rotate_angles.angle_x;
@@ -40,7 +40,7 @@ json form_json_response_new(terrain_project_t &ter_proj)
     return json_ret;
 }
 
-json form_json_response_new(users_t &user)
+json form_json_response_new(dbUsers_t &user)
 {
     json json_ret;
     json_ret["login"] = user.login;
@@ -60,7 +60,7 @@ json form_json_response_new(std::string token, int &user_id)
     return json_ret;
 }
 
-Json::Value form_json_response(users_t &user)
+Json::Value form_json_response(dbUsers_t &user)
 {
     Json::Value json_ret;
     json_ret["login"] = user.login;
@@ -83,7 +83,7 @@ Json::Value form_json_response(users_t &user)
     return json_ret;
 }
 
-Json::Value form_json_response(std::vector<terrain_project_t> &ter_projs)
+Json::Value form_json_response(std::vector<dbTerrainProject_t> &ter_projs)
 {
     int count_ter_projs;
     Json::Value jsonObj, jsonObjects;
@@ -100,7 +100,7 @@ Json::Value form_json_response(std::vector<terrain_project_t> &ter_projs)
     return jsonObjects;
 }
 
-Json::Value form_json_response(terrain_project_t &ter_proj)
+Json::Value form_json_response(dbTerrainProject_t &ter_proj)
 {
     Json::Value json_ret;
     json_ret["rotate"]["angle_x"] = ter_proj.terrain.rotate_angles.angle_x;
