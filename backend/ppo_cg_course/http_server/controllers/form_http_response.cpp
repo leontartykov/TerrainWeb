@@ -7,7 +7,7 @@ drogon::HttpResponsePtr form_http_response(int &response_code, Json::Value &json
 
     if (response_code == SERV_BAD_REQUEST){
         jsonBody["status"] = "error";
-        jsonBody["message"] = "error in header or body";
+        jsonBody["message"] = "BadRequest";
         resp = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
         resp.get()->setStatusCode(drogon::HttpStatusCode::k400BadRequest);
     }
@@ -32,9 +32,6 @@ drogon::HttpResponsePtr form_http_response(int &response_code, Json::Value &json
         resp = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
         resp.get()->setStatusCode(drogon::HttpStatusCode::k201Created);
     }
-
-
-    resp->addHeader("Server", "Terrain Server");
 
     return resp;
 }

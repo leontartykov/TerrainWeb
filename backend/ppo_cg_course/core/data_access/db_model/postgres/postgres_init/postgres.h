@@ -1,9 +1,10 @@
 #ifndef _POSTGRES_H_
 #define _POSTGRES_H_
 
-#include "../postgres_data/postgres_users/postgres_user.h"
-#include "../postgres_data/postgres_terrains/postgres_terrains.h"
-#include "../../../config/config.h"
+#include "core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h"
+#include "core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h"
+#include "core/config/config.h"
+#include "core/data_access/db_model/base_db_model.hpp"
 
 ///actions with users
 enum users_action{
@@ -28,7 +29,7 @@ enum ter_projs_action{
     get_tpl,                //get terrain project list
 };
 
-class Postgres
+class Postgres: public DbModel
 {
     private:
         std::unique_ptr<UserPostgres> __users;                          //postgres's user management
@@ -42,6 +43,13 @@ class Postgres
         Postgres();
         ~Postgres() = default;
 
+        virtual int get_user(int &id, users_t &user) override;
+        virtual int add_user(users_t &user) override;
+        virtual int update_user(int &id, users_t &user) override;
+        virtual int delete_user(int &id) override;
+        virtual int block_user(int &id) override;
+        virtual int unlock_user(int &id) override;
+
         void set_psql_connection(std::shared_ptr<pqxx::connection> &connection);
 
         int get_count_users();
@@ -54,19 +62,13 @@ class Postgres
         do_action_terrain_projects(const ter_projs_action &action, int &user_id);
 
         bool check_validation(users_t &user);
-        int get_user(int &id, users_t &user);
-        int add_user(users_t &user);
-        int update_user(int &id, users_t &user);
-        int delete_user(int &id);
-        int block_user(int &id);
-        int unlock_user(int &id);
 
-        int add_new_terrain_project(std::string &terProjName, int &userId);
-        int get_terrain_project(terrain_project &terProj, int &userId);
-        std::pair<int, std::vector<terrain_project_t> > get_terrain_projects(int &userId);
-        int delete_terrain_project(int &terId, int &userId);
-        double get_terrain_project_rating(int &terId);
-        int set_terrain_project_rating(int &terId, int &rating);
+        virtual int add_new_terrain_project(std::string &terProjName, int &userId) override;
+        virtual int get_terrain_project(terrain_project &terProj, int &userId) override;
+        virtual std::pair<int, std::vector<terrain_project_t> > get_terrain_projects(int &userId) override;
+        virtual int delete_terrain_project(int &terId, int &userId) override;
+        virtual double get_terrain_project_rating(int &terId) override;
+        virtual int set_terrain_project_rating(int &terId, int &rating) override;
 };
 
 #endif

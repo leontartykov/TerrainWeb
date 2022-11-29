@@ -1,7 +1,7 @@
 #ifndef _TERRAINS_SERVICE_HPP_
 #define _TERRAINS_SERVICE_HPP_
 
-#include "core/data_access/postgres/postgres_init/postgres.h"
+#include "core/data_access/db_model/postgres/postgres_init/postgres.h"
 #include "core/data_access/images/png/png.hpp"
 #include "core/scene/scene.h"
 

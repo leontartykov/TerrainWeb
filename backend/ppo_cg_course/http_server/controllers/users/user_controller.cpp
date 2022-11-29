@@ -193,7 +193,6 @@ bool api::v1::UserSessions::check_usr_authorization(std::string &token, int &uui
     try{
         if (!token.empty()){
             success = this->check_access_token(uuid, token);
-            std::cerr << "success: " << success << "\n";
         }
         else{
             success = false;

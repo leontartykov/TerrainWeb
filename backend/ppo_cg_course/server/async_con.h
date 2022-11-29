@@ -9,9 +9,9 @@
 #include <boost/optional/optional_io.hpp>
 #include <boost/property_tree/ptree.hpp>
 
-#include "./core/data_access/postgres/postgres_init/postgres.h"
-#include "./core/data_access/redis/sessions.hpp"
-#include "./server/logs/access/access_log.hpp"
+#include "core/data_access/db_model/postgres/postgres_init/postgres.h"
+#include "core/data_access/redis/sessions.hpp"
+#include "server/logs/access/access_log.hpp"
 
 using namespace boost::asio;
 namespace beast = boost::beast;
@@ -30,7 +30,7 @@ class tcp_connection: public boost::enable_shared_from_this<tcp_connection>
         std::string __url_path;
 
         Postgres __postgres;                            //postgres database
-        UserSessions __sessions;                        //redis sessions
+        RedisSessions __sessions;                        //redis sessions
         ServerAccessLog __logs_access;                   //server error logs
 
         http::response<http::buffer_body> __form_htpp_response_code(int &code_error);

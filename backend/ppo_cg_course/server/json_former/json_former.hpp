@@ -3,8 +3,8 @@
 
 #include <nlohmann/json.hpp>
 #include <vector>
-#include <core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h>
-#include <core/data_access/postgres/postgres_data/postgres_users/postgres_user.h>
+#include <core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h>
+#include <core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h>
 
 using json = nlohmann::json;
 

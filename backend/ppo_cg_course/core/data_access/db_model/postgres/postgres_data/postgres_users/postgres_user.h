@@ -2,7 +2,7 @@
 #define _POSTGRES_USERS_H_
 
 #include <pqxx/pqxx>
-#include "../../../data_interfaces/interface_users_db.h"
+#include "core/data_access/data_interfaces/interface_users_db.h"
 
 class UserPostgres: public IUsersDb
 {

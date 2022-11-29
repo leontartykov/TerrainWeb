@@ -101,7 +101,6 @@ int UserPostgres::delete_user(int &id)
         std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
                             std::to_string(id) + "';";
         pqxx::result result = worker.exec(query);
-        std::cerr << "result: " << result.empty() << "\n";
 
         worker.commit();
         std::cout << "\nУдаление пользователя выполнено успешно.\n";

@@ -219,11 +219,11 @@ void api::v1::TerrainsController::set_rating_terrain_project(const HttpRequestPt
     }
 }
 
-void api::v1::TerrainsController::get_render_image(const HttpRequestPtr &req,
-                                                   std::function<void (const HttpResponsePtr &)> &&callback,
-                                                   std::string terrainId)
+void api::v1::TerrainsController::get_render_image(
+        const HttpRequestPtr &req,
+        std::function<void (const HttpResponsePtr &)> &&callback)
 {
-    int terrain_id, response_code, uuid, rating;
+    int response_code, uuid;
     Json::Value jsonBodyout;
     std::string token;
     drogon::HttpResponsePtr resp;
@@ -239,7 +239,6 @@ void api::v1::TerrainsController::get_render_image(const HttpRequestPtr &req,
             resp = form_http_response(response_code, jsonBodyout);
         }
         else{
-            terrain_id = std::stoi(terrainId);
             jsonBodyIn = req.get()->getJsonObject();
             scene_info = __handle_json_body(jsonBodyIn);
             response_code = __terrains_service.get_render_png_image(scene_info.first, scene_info.second);

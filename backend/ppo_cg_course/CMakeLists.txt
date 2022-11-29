@@ -133,12 +133,13 @@ add_executable(
 
     core/data_access/images/base_image.h
 
-    core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
-    core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
-    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
-    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-    core/data_access/postgres/postgres_init/postgres.h
-    core/data_access/postgres/postgres_init/postgres.cpp
+    core/data_access/db_model/base_db_model.hpp
+    core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h
+    core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
+    core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+    core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+    core/data_access/db_model/postgres/postgres_init/postgres.h
+    core/data_access/db_model/postgres/postgres_init/postgres.cpp
 
     core/data_access/data_interfaces/interface_users_db.h
 
@@ -207,12 +208,12 @@ set(
     server/json_former/json_former.hpp
     server/json_former/json_former.cpp
 
-    core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
-    core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
-    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
-    core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-    core/data_access/postgres/postgres_init/postgres.h
-    core/data_access/postgres/postgres_init/postgres.cpp
+    core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h
+    core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
+    core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+    core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+    core/data_access/db_model/postgres/postgres_init/postgres.h
+    core/data_access/db_model/postgres/postgres_init/postgres.cpp
 
     core/data_access/data_interfaces/interface_users_db.h
 
@@ -368,12 +369,12 @@ add_executable(
   core/config/config.h
   core/config/config.cpp
 
-  core/data_access/postgres/postgres_data/postgres_users/postgres_user.h
-  core/data_access/postgres/postgres_data/postgres_users/postgres_user.cpp
-  core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.h
-  core/data_access/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
-  core/data_access/postgres/postgres_init/postgres.h
-  core/data_access/postgres/postgres_init/postgres.cpp
+  core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h
+  core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.cpp
+  core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h
+  core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.cpp
+  core/data_access/db_model/postgres/postgres_init/postgres.h
+  core/data_access/db_model/postgres/postgres_init/postgres.cpp
 
   core/data_access/data_interfaces/interface_users_db.h
 )

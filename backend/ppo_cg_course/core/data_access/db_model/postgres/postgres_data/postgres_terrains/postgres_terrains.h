@@ -4,8 +4,8 @@
 #include <pqxx/pqxx>
 #include <iostream>
 
-#include "../../../../object/terrain/terrain_struct.h"
-#include "../../../../heightmap/perlin_noise/perlin_noise_struct.h"
+#include "core/object/terrain/terrain_struct.h"
+#include "core/heightmap/perlin_noise/perlin_noise_struct.h"
 
 typedef struct terrain terrain_t;
 struct terrain

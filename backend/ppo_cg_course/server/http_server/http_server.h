@@ -5,7 +5,7 @@
 
 #include "./server/async_con.h"
 
-#define PORT_NUM 7000
+#define PORT_NUM 7004
 
 using namespace boost::asio;
 using ip::tcp;

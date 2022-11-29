@@ -4,6 +4,7 @@
 #include <drogon/HttpController.h>
 #include <drogon/HttpResponse.h>
 #include <drogon/HttpTypes.h>
+#include <drogon/HttpAppFramework.h>
 #include "http_server/json_former/json_former.hpp"
 
 drogon::HttpResponsePtr form_http_response(int &response_code, Json::Value &json);

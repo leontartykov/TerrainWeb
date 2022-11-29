@@ -67,7 +67,7 @@ namespace api
                     ADD_METHOD_TO(TerrainsController::delete_terrain_project, "api/v1/users/{1}/terrains/{2}", Delete, Options);
                     ADD_METHOD_TO(TerrainsController::get_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Get, Options);
                     ADD_METHOD_TO(TerrainsController::set_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Post, Options);
-                    ADD_METHOD_TO(TerrainsController::get_render_image, "api/v1/renderJobs/terrains/{id}/image", Post, Options);
+                    ADD_METHOD_TO(TerrainsController::get_render_image, "api/v1/renderJobs/terrains/image", Post, Options);
                 METHOD_LIST_END
 
                 void get_all_terrain_projects(const HttpRequestPtr &req,
@@ -89,8 +89,7 @@ namespace api
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string terrainId);
                 void get_render_image(const HttpRequestPtr &req,
-                              std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string terrainId);
+                              std::function<void (const HttpResponsePtr &)> &&callback);
         };
 
 

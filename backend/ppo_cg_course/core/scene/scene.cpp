@@ -52,7 +52,6 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     int width = color_matrix[0].size(), height = color_matrix.size();
     int min_i = height, min_j = width, max_i = 0, max_j = 0;
     for (int i = 0; i < height; ++i){
-        //std::cerr << "i=" << i;
         for (int j = 0; j < width; ++j){
             if (!is_background_color(color_matrix[i][j])){
                 if (i < min_i){
@@ -70,14 +69,10 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
                 }
 
             }
-            //std::cerr << "(" << color_matrix[i][j].red() << "," << color_matrix[i][j].green() << "," << color_matrix[i][j].blue() << "),";
         }
-        //std::cerr << "\n";
     }
     win.min_x = min_j; win.max_x = max_j;
     win.min_y = min_i; win.max_y = max_i;
-
-    std::cerr << "min_i: " << min_i << "max_i: " << max_i << "min_j: " << min_j << "max_j: " << max_j << "\n";
 
     return {color_matrix, win};
 }
@@ -96,7 +91,6 @@ void Scene::draw_scene(QGraphicsScene *scene, QGraphicsView *view){
 int Scene::export_terrain()
 {
     std::shared_ptr<DataAccessFileBMP> image_bmp(new DataAccessFileBMP());
-    //std::shared_ptr<BaseDataAccessImage> base_image = image_bmp;
 
     std::string file_name = "../data/color.bmp";
     int error = image_bmp->create(file_name, _zbuffer->get_color_matrix());
