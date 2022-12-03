@@ -1,5 +1,5 @@
 #include "scene.h"
-#include "core/data_access/images/base_image.h"
+#include "core/data_access/images/base_image.hpp"
 #include "core/data_access/images/data_access_image_bmp.h"
 
 Scene::Scene(){
@@ -74,6 +74,8 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     win.min_x = min_j; win.max_x = max_j;
     win.min_y = min_i; win.max_y = max_i;
 
+    std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
+
     return {color_matrix, win};
 }
 
@@ -88,15 +90,15 @@ void Scene::draw_scene(QGraphicsScene *scene, QGraphicsView *view){
     _terrain->draw_terrain(_zbuffer->get_color_matrix(), scene, view);
 }
 
-int Scene::export_terrain()
+/*int Scene::export_terrain()
 {
     std::shared_ptr<DataAccessFileBMP> image_bmp(new DataAccessFileBMP());
 
     std::string file_name = "../data/color.bmp";
     int error = image_bmp->create(file_name, _zbuffer->get_color_matrix());
     return error;
-}
-
+}*/
+/*
 int Scene::load_terrain()
 {
     std::shared_ptr<DataAccessFileBMP> image_bmp(new DataAccessFileBMP());
@@ -107,7 +109,7 @@ int Scene::load_terrain()
     }
 
     return 0;
-}
+}*/
 
 void Scene::convert_color_to_black_and_white(){
     _zbuffer->convert_color_to_black_and_white();

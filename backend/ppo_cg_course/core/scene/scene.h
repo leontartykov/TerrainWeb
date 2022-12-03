@@ -25,8 +25,8 @@ class Scene
         Terrain *get_terrain();
         ZBuffer *get_zbuffer();
 
-        int export_terrain();
-        int load_terrain();
+        //int export_terrain();
+        //int load_terrain();
 
         void convert_color_to_black_and_white();
 
