@@ -131,7 +131,7 @@ add_executable(
     core/data_access/data_access_file/data_access_file.h
     core/data_access/data_access_file/data_access_file.hpp
 
-    core/data_access/images/base_image.h
+    core/data_access/images/base_image.hpp
 
     core/data_access/db_model/base_db_model.hpp
     core/data_access/terrains/terrains_struct.hpp
@@ -200,7 +200,7 @@ set(
     #server/async_con.h
     #server/async_con.cpp
     #server/controllers/server_handlers.cpp
-    server/server_codes.h
+    error_codes.h
 
     core/data_access/redis/sessions.hpp
     core/data_access/redis/sessions.cpp
@@ -246,14 +246,19 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
   unit_all_tests
 
-  unit_tests/tests_point_3d.cpp
-  unit_tests/tests_vector_3d.cpp
-  unit_tests/tests_perlin_noise.cpp
-  unit_tests/tests_zbuffer.cpp
-  unit_tests/tests_plane.cpp
-  unit_tests/tests_file.cpp
-  unit_tests/tests_image.cpp
-  unit_tests/tests_users.cpp
+  tests/unit_tests/mocks.hpp
+  tests/unit_tests/data_builders/user_builder.hpp
+  tests/unit_tests/data_builders/point3D_builder.hpp
+  tests/unit_tests/data_builders/plain_builder.hpp
+
+  tests/unit_tests/tests_point_3d.cpp
+  tests/unit_tests/tests_vector_3d.cpp
+  tests/unit_tests/tests_perlin_noise.cpp
+  tests/unit_tests/tests_zbuffer.cpp
+  tests/unit_tests/tests_plane.cpp
+  tests/unit_tests/tests_file.cpp
+  tests/unit_tests/tests_image.cpp
+  tests/unit_tests/tests_users.cpp
 
   core/geometry/point/point_base.h
   core/geometry/point/point_3d.h
@@ -321,7 +326,7 @@ add_executable(
   core/data_access/data_access_file/data_access_file.h
   core/data_access/data_access_file/data_access_file.hpp
 
-  core/data_access/images/base_image.h
+  core/data_access/images/base_image.hpp
   core/data_access/images/data_access_image_bmp.h
   core/data_access/images/data_access_image_bmp.hpp
   core/data_access/images/data_access_image_bmp.cpp
@@ -395,10 +400,12 @@ set (
     http_server/controllers/terrains/terrain_controller.cpp
     http_server/controllers/users/user_controller.cpp
 
-    http_server/services/users_service.cpp
-    http_server/services/users_service.hpp
-    http_server/services/terrains_service.hpp
-    http_server/services/terrains_service.cpp
+    http_server/services/user/struct_users_service.hpp
+    http_server/services/user/users_service.cpp
+    http_server/services/user/users_service.hpp
+    http_server/services/terrain/struct_terrains_service.hpp
+    http_server/services/terrain/terrains_service.hpp
+    http_server/services/terrain/terrains_service.cpp
 
     http_server/json_former/json_former.hpp
     http_server/json_former/json_former.cpp
@@ -427,7 +434,7 @@ find_library(REDIS_PLUS_PLUS_LIB redis++)
 target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets
                     -lpqxx -lpq -ljsoncpp
                      ${JSONCPP_LIBRARIES} mysqlcppconn
-                     gtest gtest_main )
+                     gtest gmock pthread gtest_main)
 
 target_link_libraries(app_client Qt5::Gui Qt5::Widgets Qt5::Network
                         ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
