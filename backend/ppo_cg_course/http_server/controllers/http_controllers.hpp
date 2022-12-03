@@ -1,12 +1,15 @@
-#pragma once
+#ifndef _HTTP_CONTROLLERS_HPP_
+#define _HTTP_CONTROLLERS_HPP_
 
 #include <drogon/HttpController.h>
-#include "http_server/services/users_service.hpp"
-#include "http_server/services/terrains_service.hpp"
 
-#include "server/jwt/jwt.hpp"
+#include "core/config/config.h"
+#include "core/data_access/db_model/base_db_model.hpp"
+#include "http_server/services/user/users_service.hpp"
+#include "http_server/services/terrain/terrains_service.hpp"
 #include "http_server/json_former/json_former.hpp"
 #include "core/data_access/redis/sessions.hpp"
+#include "server/jwt/jwt.hpp"
 
 using namespace drogon;
 
@@ -14,9 +17,10 @@ namespace api
 {
     namespace v1
     {
+        std::shared_ptr<DbModel> create_db_model(config_t &config);
         class UserSessions: public RedisSessions {
             public:
-                bool check_usr_authorization(std::string &token, int &uuid);
+                int check_usr_authorization(std::string &token, int &uuid);
         };
 
         class TerrainSessions: public UserSessions {};
@@ -24,16 +28,20 @@ namespace api
         class UsersController : public drogon::HttpController<UsersController>
         {
             private:
-                UsersService __users_service;
+                std::shared_ptr<UsersService> __users_service;
                 UserSessions __sessions;
+                Config __config;
 
             public:
+                UsersController();
+                //void init(std::shared_ptr<DbModel> dbModel);
+                ~UsersController();
                 METHOD_LIST_BEGIN
                     ADD_METHOD_TO(UsersController::get_info, "api/v1/users/{1}", Get);
                     ADD_METHOD_TO(UsersController::add_new, "api/v1/users", Post, Options);
                     ADD_METHOD_TO(UsersController::delete_usr, "api/v1/users/{1}", Delete, Options);
                     ADD_METHOD_TO(UsersController::change_usr_login, "api/v1/users/{1}", Patch, Options);
-                    ADD_METHOD_TO(UsersController::log_in_to_system, "api/v1/login", Post, Options);
+                    ADD_METHOD_TO(UsersController::login, "api/v1/login", Post, Options);
                 METHOD_LIST_END
 
                 void get_info(const HttpRequestPtr &req,
@@ -47,23 +55,27 @@ namespace api
                 void change_usr_login(const HttpRequestPtr &req,
                                 std::function<void (const HttpResponsePtr &)> &&callback,
                                 std::string userId);
-                void log_in_to_system(const HttpRequestPtr &req,
+                void login(const HttpRequestPtr &req,
                                       std::function<void (const HttpResponsePtr &)> &&callback);
+                void set_dbModel(std::shared_ptr<DbModel> dbModel);
+
         };
 
         class TerrainsController : public drogon::HttpController<TerrainsController>
         {
             private:
-                TerrainsService __terrains_service;
+                std::shared_ptr<TerrainsService> __terrains_service;
                 TerrainSessions __sessions;
+                Config __config;
 
                 std::pair<dbTerrain_t, light_t> __handle_json_body(std::shared_ptr<Json::Value> jsonBodyIn);
 
             public:
+                TerrainsController();
                 METHOD_LIST_BEGIN
                     ADD_METHOD_TO(TerrainsController::get_all_terrain_projects, "api/v1/users/{1}/terrains", Get);
                     ADD_METHOD_TO(TerrainsController::add_new_project, "api/v1/users/{1}/terrains", Post, Options);
-                    ADD_METHOD_TO(TerrainsController::get_terrain_project_info, "api/v1/users/{1}/terrains/{2}", Get);
+                    ADD_METHOD_TO(TerrainsController::get_terrain_params, "api/v1/users/{1}/terrains/{2}", Get);
                     ADD_METHOD_TO(TerrainsController::delete_terrain_project, "api/v1/users/{1}/terrains/{2}", Delete, Options);
                     ADD_METHOD_TO(TerrainsController::get_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Get, Options);
                     ADD_METHOD_TO(TerrainsController::set_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Post, Options);
@@ -76,7 +88,7 @@ namespace api
                 void add_new_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string userId);
-                void get_terrain_project_info(const HttpRequestPtr &req,
+                void get_terrain_params(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string userId, std::string terrainId);
                 void delete_terrain_project(const HttpRequestPtr &req,
@@ -90,8 +102,12 @@ namespace api
                               std::string terrainId);
                 void get_render_image(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback);
+                void set_dbModel(std::shared_ptr<DbModel> dbModel);
+
         };
 
 
     }
 }
+
+#endif
