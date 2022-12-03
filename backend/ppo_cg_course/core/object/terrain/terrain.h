@@ -33,6 +33,7 @@ class Terrain
         Vector3D<T1> find_int_normal(Point3D<T2> point_1, Point3D<T2> point_2, Point3D<T2> point_3);
 
         Vector3D<double> find_shading_normals(std::vector<Vector3D<int>> &normals, int i, int j);
+
     public:
         Terrain();
         Terrain(int width, int height);
@@ -68,7 +69,8 @@ class Terrain
         void clear();
         void clear_normals();
 
-        void draw_terrain(std::vector<std::vector<QColor>> &colors, QGraphicsScene *scene, QGraphicsView *view);
+        void draw_terrain(std::vector<std::vector<QColor>> &colors, QGraphicsScene *scene,
+                          QGraphicsView *view);
 
         void change_size(int width, int height);
 };
