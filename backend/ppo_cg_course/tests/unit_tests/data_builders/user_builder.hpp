@@ -25,8 +25,8 @@ class UserBuilder
             user.login = "default";
             user.password = "default";
             user.perm_level = 2;
-            std::unique_ptr<UserBuilder> userBuild = std::make_unique<UserBuilder>(user);
-            return userBuild;
+
+            return std::make_unique<UserBuilder>(user);
         };
 
         dbUsers_t getUser() const{

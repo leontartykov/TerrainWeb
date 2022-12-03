@@ -1,13 +1,18 @@
 #include <gtest/gtest.h>
 #include "core/geometry/vector/vector_3d.hpp"
 #include "core/geometry/point/point_3d.hpp"
+#include "tests/unit_tests/data_builders/point3D_builder.hpp"
+#include "tests/unit_tests/data_builders/vector3D_builder.hpp"
 
 TEST(test_vector_3d_length_vector, positive)
 {
-    Vector3D<int> vector(3, 4, 0);
-    double length = vector.length();
-    double result_ok = 5;
-    EXPECT_EQ(result_ok, length);
+    std::unique_ptr<Vector3DBuilder<int>> vector;
+    double length;
+
+    vector = Vector3DBuilder<int>().WithCoords(3, 4, 0);
+    length = vector->get().length();
+
+    EXPECT_EQ(length, 5);
 }
 
 TEST(test_vector_3d_normalize_vector, positive)
@@ -25,17 +30,30 @@ TEST(test_vector_3d_normalize_vector, positive)
 
 TEST(test_vector_3d_find_normal, positive)
 {
-    Point3D<double> point_1(1.0, 2.0, -3.0), point_2(-2.0, 4.0, 1.0), point_3(2.0, -3.0, 2.0);
-    Vector3D<double> vector = find_normal<double>(point_1, point_2, point_3);
-    int result_x = 30, result_y = 19, result_z = 13;
-    EXPECT_EQ(result_x, vector.get_x());
-    EXPECT_EQ(result_y, vector.get_y());
-    EXPECT_EQ(result_z, vector.get_z());
+    std::unique_ptr<Point3DBuilder<double>> point_1, point_2, point_3;
+    Vector3D<double> vector;
+
+    point_1 = Point3DBuilder<double>().WithCoords(1, 2, -3);
+    point_2 = Point3DBuilder<double>().WithCoords(-2, 4, 1);
+    point_3 = Point3DBuilder<double>().WithCoords(2, -3, 2);
+
+    vector = find_normal<double>(point_1->get(), point_2->get(), point_3->get());
+
+    EXPECT_EQ(vector.get_x(), 30);
+    EXPECT_EQ(vector.get_y(), 19);
+    EXPECT_EQ(vector.get_z(), 13);
 }
 
 TEST(test_vector_3d_dot_product, positive)
 {
-    Vector3D<int>vector_1(1, 2, 3),  vector_2(4, 5, 6);
-    int result = 32;
-    EXPECT_EQ(result, dot_product<int>(vector_1, vector_2));
+    Vector3D<int> vector_11, vector_12;
+    std::unique_ptr<Vector3DBuilder<int>> vector_1, vector_2;
+
+    vector_1 = Vector3DBuilder<int>().WithCoords(1, 2, 3);
+    vector_2 = Vector3DBuilder<int>().WithCoords(4, 5, 6);
+
+    vector_11 = vector_1->get();
+    vector_12 = vector_2->get();
+
+    EXPECT_EQ(dot_product<int>(vector_11, vector_12), 32);
 }
