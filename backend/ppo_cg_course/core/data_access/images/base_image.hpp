@@ -1,5 +1,5 @@
-#ifndef _BASE_IMAGE_H_
-#define _BASE_IMAGE_H_
+#ifndef _BASE_IMAGE_HPP_
+#define _BASE_IMAGE_HPP_
 
 #include <iostream>
 #include <vector>
@@ -7,13 +7,16 @@
 #include <QColor>
 
 #include "bmp_structure.h"
+#include "core/scene/scene.h"
 
-class BaseDataAccessImage
+class BaseImage
 {
     public:
-        virtual ~BaseDataAccessImage() = default;
+        virtual ~BaseImage() {};
 
         virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer) = 0;
+        virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer,
+                            scene_win_t win_boards) = 0;
 
         virtual std::vector<std::vector<QColor>> load(std::string path) = 0;
 };

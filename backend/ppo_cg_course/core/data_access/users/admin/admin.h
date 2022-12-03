@@ -37,10 +37,10 @@ class Admin: public BaseUser
 
         int _connect_psql_to_db();
         int _connect_mysql_to_db();
-        int __add_user_psql(dbUsers_t &user);
+        int __add_user_psql(const dbUsers_t &user);
         int _add_user_mysql(dbUsers_t &user);
 
-        int __delete_user_psql(dbUsers_t &user);
+        int __delete_user_psql(const dbUsers_t &user);
         int _delete_user_mysql(dbUsers_t &user);
 
         void show_menu();
@@ -50,10 +50,10 @@ class Admin: public BaseUser
         Admin();
         ~Admin();
 
-        int add_user(dbUsers_t &user);
-        int delete_user(dbUsers_t &user);
-        int lock_user(dbUsers_t &user);
-        int unlock_user(dbUsers_t &user);
+        int add_user(const dbUsers_t &user);
+        int delete_user(const dbUsers_t &user);
+        int lock_user(const dbUsers_t &user);
+        int unlock_user(const dbUsers_t &user);
         int disconnect_db();
         int check_connection();
 

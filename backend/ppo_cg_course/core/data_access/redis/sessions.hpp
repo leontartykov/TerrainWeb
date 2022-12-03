@@ -2,6 +2,7 @@
 #define SESSIONS_HPP
 
 #include <sw/redis++/redis++.h>
+#include "error_codes.h"
 
 using namespace sw::redis;
 
@@ -18,7 +19,7 @@ class RedisSessions
 
         void add(int &user_id, std::string access_token);
 
-        bool check_access_token(int &user_id, std::string token);
+        int check_access_token(int &user_id, std::string token);
 };
 
 #endif // SESSIONS_HPP

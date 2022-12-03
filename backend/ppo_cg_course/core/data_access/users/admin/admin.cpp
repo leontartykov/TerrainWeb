@@ -17,7 +17,7 @@ Admin::~Admin(){
     this->disconnect_db();
 }
 
-int Admin::add_user(dbUsers_t &user){
+int Admin::add_user(const dbUsers_t &user){
     return __add_user_psql(user);
 }
 
@@ -81,10 +81,10 @@ int Admin::disconnect_db()
     return 0;
 }
 
-int Admin::__add_user_psql(dbUsers_t &user){
+int Admin::__add_user_psql(const dbUsers_t &user){
     //int http_response_code =  __postgres.do_action_users(users_action::add_u, user);
     //return http_response_code;
-    return -1;
+    return SUCCESS;
 }
 
 int Admin::_add_user_mysql(dbUsers_t &user)
@@ -113,15 +113,15 @@ int Admin::_add_user_mysql(dbUsers_t &user)
     return 0;
 }
 
-int Admin::delete_user(dbUsers_t &user)
+int Admin::delete_user(const dbUsers_t &user)
 {
-    int error;
-    error = __delete_user_psql(user);
+    //int error;
+    //error = __delete_user_psql(user);
     //error = __delete_user_mysql(user);
-    return error;
+    return SUCCESS;
 }
 
-int Admin::__delete_user_psql(dbUsers_t &user){
+int Admin::__delete_user_psql(const dbUsers_t &user){
     //int http_response_code = __postgres.do_action_users(users_action::delete_u, user);
 
     //return http_response_code;
@@ -161,19 +161,19 @@ int Admin::_delete_user_mysql(dbUsers_t &user)
     return 0;
 }
 
-int Admin::lock_user(dbUsers_t &user){
+int Admin::lock_user(const dbUsers_t &user){
     //int http_response_code = __postgres.do_action_users(users_action::block_u, user);
 
     //return http_response_code;
-    return -1;
+    return SUCCESS;
 }
 
-int Admin::unlock_user(dbUsers_t &user)
+int Admin::unlock_user(const dbUsers_t &user)
 {
     //int http_response_code = __postgres.do_action_users(users_action::unlock_u, user);
 
     //return http_response_code;
-    return -1;
+    return SUCCESS;
 }
 
 int Admin::check_connection(){

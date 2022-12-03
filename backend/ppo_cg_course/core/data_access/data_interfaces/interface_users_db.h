@@ -9,12 +9,12 @@ class IUsersDb
         IUsersDb() = default;
         virtual ~IUsersDb() = default;
 
-        virtual int get(int &id, dbUsers_t &user) = 0;
-        virtual int add(dbUsers_t &user) = 0;
-        virtual int delete_user(int &id) = 0;
-        virtual int update(int &id, dbUsers_t &user) = 0;
-        virtual int block(int &id) = 0;
-        virtual int unlock(int &id) = 0;
+        virtual int get(const int &id, dbUsers_t &user) = 0;
+        virtual int add(const dbUsers_t &user) = 0;
+        virtual int delete_user(const int &id) = 0;
+        virtual int update(const int &id, const dbUsers_t &user) = 0;
+        virtual int block(const int &id) = 0;
+        virtual int unlock(const int &id) = 0;
 };
 
 #endif

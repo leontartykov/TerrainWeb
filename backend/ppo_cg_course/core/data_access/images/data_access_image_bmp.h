@@ -2,9 +2,9 @@
 #define _DATA_ACCESS_IMAGE_BMP_H_
 
 #include <QColor>
-#include "base_image.h"
+#include "base_image.hpp"
 
-class DataAccessFileBMP: BaseDataAccessImage
+class DataAccessFileBMP: BaseImage
 {
     public:
         DataAccessFileBMP() = default;

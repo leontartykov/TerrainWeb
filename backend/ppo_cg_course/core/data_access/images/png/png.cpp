@@ -6,9 +6,9 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor> > &color
 {
 }
 
-int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_buffer, scene_win_t win_boards)
+int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_buffer,
+                     scene_win_t win_boards)
 {
-    std::cerr << "path: " << path << "\n";
     int width = 0, height = 0;
     bool success = true;
     png_bytep *row_pointers = NULL;
@@ -27,15 +27,15 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
 
     png_init_io(png, file);
 
-    width = win_boards.max_y; height = win_boards.max_x;
+    //width = win_boards.max_y; height = win_boards.max_x;
     int min_x = win_boards.min_x, max_x = win_boards.max_x;
     int min_y = win_boards.min_y, max_y = win_boards.max_y;
     width = max_x - min_x, height = max_y - min_y;
-    std::cerr << " height: " << height << "width: " << width  << "\n";
+    //std::cerr << " height: " << height << "width: " << width  << "\n";
     png_set_IHDR(
         png,
         info,
-        height, width,
+        width, height,
         8,
         PNG_COLOR_TYPE_RGBA,
         PNG_INTERLACE_NONE,

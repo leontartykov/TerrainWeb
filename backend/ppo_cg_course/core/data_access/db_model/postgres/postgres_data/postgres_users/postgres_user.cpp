@@ -1,19 +1,15 @@
 #include "postgres_user.h"
-#include <QDebug>
 
 UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
     __conn_psql = conn_psql;
     __define_count_users();
 }
 
-int UserPostgres::get(int &id, dbUsers_t &user)
+int UserPostgres::get(const int &id, dbUsers_t &user)
 {
-    int http_response_code = 200;
-    if (!id){
-        http_response_code = 400;
-    }
-    else if (id >= __count_users){
-        http_response_code = 404;
+    int ret_code = SUCCESS;
+    if (id <= 0 || id >= __count_users){
+        ret_code = NOT_FOUND;
     }
     else{
         pqxx::work worker(*__conn_psql);
@@ -30,25 +26,26 @@ int UserPostgres::get(int &id, dbUsers_t &user)
         user.is_deleted = response[0][5].c_str();
     }
 
-    return http_response_code;
+    return ret_code;
 }
 
 int UserPostgres::get_count_users(){
     return __count_users;
 }
 
-int UserPostgres::add(dbUsers_t &user)
+int UserPostgres::add(const dbUsers_t &user)
 {
     std::string query;
     pqxx::result response;
+    int userId;
 
     if (!__conn_psql){
         std::cout << "Ошибка: нет подключения к БД." << std::endl;
-        return -1;
+        return CONNECTION_FAILED;
     }
-    else if (__is_user_empty(user)){
+    else if (__is_user_empty(user) || user.perm_level == 0){
         std::cout << "О пользователе нет данных.\n";
-        return -2;
+        return BAD_REQUEST;
     }
     try{
         pqxx::work worker(*__conn_psql);
@@ -62,10 +59,11 @@ int UserPostgres::add(dbUsers_t &user)
         }
         else
         {
+            userId = __count_users;
             __count_users++;
 
             query = "INSERT INTO terrain_project.users.info values (" + \
-                                std::to_string(user.id) + ", '" +
+                                std::to_string(userId) + ", '" +
                                 user.login + "', '" + user.password + "', " + std::to_string(user.perm_level) +
                                 ", false, " + "false)";
         }
@@ -75,120 +73,142 @@ int UserPostgres::add(dbUsers_t &user)
     }
     catch (std::exception const &e){
         std::cout << e.what() << '\n';
-        return -3;
+        return BAD_REQUEST;
     }
 
     std::cout << "\nДобавление в psql произошло успешно.\n";
 
-    return 0;
+    return SUCCESS_CREATED;
 }
 
-int UserPostgres::delete_user(int &id)
+int UserPostgres::delete_user(const int &id)
 {
-    int success = 0;
+    int success = SUCCESS;
     if (!__conn_psql){
         std::cout << "Нет подключения к БД." << std::endl;
-        success = -1;
+        success = CONNECTION_FAILED;
     }
-    else if (!id){
+    else if (id <= 0 || id >= __count_users){
         std::cout << "О пользователе нет данных (ID).\n";
-        success = -2;
+        success = NOT_FOUND;
     }
+    else{
+        try{
 
-    try{
-        dbUsers_t del_user;
-        pqxx::work worker(*__conn_psql);
-        std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
-                            std::to_string(id) + "';";
-        pqxx::result result = worker.exec(query);
+            dbUsers_t del_user;
+            pqxx::work worker(*__conn_psql);
+            std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
+                                std::to_string(id) + "';";
+            pqxx::result result = worker.exec(query);
 
-        worker.commit();
-        std::cout << "\nУдаление пользователя выполнено успешно.\n";
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
+            worker.commit();
+            std::cout << "\nУдаление пользователя выполнено успешно.\n";
+        }
+        catch(std::exception const &e){
+            std::cerr << e.what() << '\n';
+            return BAD_REQUEST;
+        }
     }
 
     return success;
 }
 
-int UserPostgres::update(int &id, dbUsers_t &user)
+int UserPostgres::update(const int &id, const dbUsers_t &user)
 {
-    int response_code = 0;
-    try{
-        dbUsers_t del_user;
-        pqxx::work worker(*__conn_psql);
-        std::string query = "UPDATE terrain_project.users.info SET login = '" + \
-                            user.login + "' WHERE id = '" + std::to_string(id) + "';";
-        worker.exec(query);
-        worker.commit();
-        std::cout << "\nЛогин обновлен успешно.\n";
+    dbUsers_t del_user;
+    std::string query;
+    int ret_code = SUCCESS;
+
+    if (!__conn_psql){
+        std::cout << "Нет подключения к БД." << std::endl;
+        ret_code = CONNECTION_FAILED;
     }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        response_code = -3;
+    else if (id <= 0 || id >= __count_users){
+        ret_code = NOT_FOUND;
+    }
+    else{
+        try{
+                pqxx::work worker(*__conn_psql);
+                query = "UPDATE terrain_project.users.info SET login = '" + \
+                                    user.login + "' WHERE id = '" + std::to_string(id) + "';";
+                worker.exec(query);
+                worker.commit();
+                std::cout << "\nЛогин обновлен успешно.\n";
+        }
+        catch(std::exception const &e){
+            std::cerr << e.what() << '\n';
+            ret_code = BAD_REQUEST;
+        }
     }
 
-    return response_code;
+    return ret_code;
 }
 
-int UserPostgres::block(int &id)
+int UserPostgres::block(const int &id)
 {
-    if (!id){
-        std::cout << "О пользователе нет данных.\n";
-        return -1;
+    int ret_code = SUCCESS;
+    if (!__conn_psql){
+        std::cout << "Нет подключения к БД." << std::endl;
+        ret_code = CONNECTION_FAILED;
+    }
+    else if (id <= 0 || id >= __count_users){
+        ret_code = NOT_FOUND;
+    }
+    else{
+        try{
+            pqxx::work worker(*__conn_psql);
+            std::string query = "UPDATE terrain_project.users.info SET blocked = true WHERE id = " \
+                                 + std::to_string(id) + ";";
+            worker.exec(query);
+            worker.commit();
+
+            std::cout << "\nБлокировка пользователя выполнена успешно.\n";
+        }
+        catch(std::exception const &e){
+            std::cerr << e.what() << '\n';
+            return BAD_REQUEST;
+        }
     }
 
-    try{
-        pqxx::work worker(*__conn_psql);
-        std::string query = "UPDATE terrain_project.users.info SET blocked = true WHERE id = " \
-                             + std::to_string(id) + ";";
-        worker.exec(query);
-        worker.commit();
-
-        std::cout << "\nБлокировка пользователя выполнена успешно.\n";
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
-    }
-
-    return 0;
+    return ret_code;
 }
 
-int UserPostgres::unlock(int &id)
+int UserPostgres::unlock(const int &id)
 {
-    if (!id){
-        std::cout << "О пользователе нет данных.\n";
-        return -1;
+    int ret_code = SUCCESS;
+    if (!__conn_psql){
+        std::cout << "Нет подключения к БД." << std::endl;
+        ret_code = CONNECTION_FAILED;
+    }
+    else if (id <= 0 || id >= __count_users){
+        ret_code = NOT_FOUND;
+    }
+    else{
+        try{
+            pqxx::work worker(*__conn_psql);
+            std::string query = "UPDATE terrain_project.users.info SET blocked = false WHERE id = " \
+                                + std::to_string(id) + ";";
+            worker.exec(query);
+            worker.commit();
+            std::cout << "\nРазблокировка пользователя выполнена успешно.\n";
+        }
+        catch(std::exception const &e){
+            std::cerr << e.what() << '\n';
+            return BAD_REQUEST;
+        }
     }
 
-    try{
-        pqxx::work worker(*__conn_psql);
-        std::string query = "UPDATE terrain_project.users.info SET blocked = false WHERE id = " \
-                            + std::to_string(id) + ";";
-        worker.exec(query);
-        worker.commit();
-        std::cout << "\nРазблокировка пользователя выполнена успешно.\n";
-    }
-    catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -3;
-    }
-
-    return 0;
+    return ret_code;
 }
 
-bool UserPostgres::check_validation(dbUsers_t &user)
+int UserPostgres::get_validation(dbUsers_t &user)
 {
     std::string query;
     pqxx::result response;
-    bool success = true;
-    user.id = -1;
+    int success = SUCCESS;
 
     if (user.login.empty() || user.password.empty()){
-        return false;
+        return BAD_REQUEST;
     }
 
     try{
@@ -198,7 +218,7 @@ bool UserPostgres::check_validation(dbUsers_t &user)
                 "WHERE info.login = '" + user.login + "' AND info.password = '" + user.password + "';";
         response = worker.exec(query);
         if (response.empty()){
-            success = false;
+            success = NOT_FOUND;
         }
         else{
             user.id = response[0][0].as<int>();
@@ -214,7 +234,7 @@ bool UserPostgres::check_validation(dbUsers_t &user)
     return success;
 }
 
-bool UserPostgres::__is_user_empty(dbUsers_t &user){
+bool UserPostgres::__is_user_empty(const dbUsers_t &user){
     if (user.password.empty() && user.login.empty()){
         return true;
     }

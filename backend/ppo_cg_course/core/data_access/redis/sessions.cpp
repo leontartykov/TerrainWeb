@@ -17,16 +17,18 @@ void RedisSessions::add(int &user_id, std::string access_token)
 }
 
 ///Check correctness access token
-bool RedisSessions::check_access_token(int &user_id, std::string token)
+int RedisSessions::check_access_token(int &user_id, std::string token)
 {
+    int success = FORBIDDEN;
     std::string db_token;
     db_token = __get_access_token(user_id);
 
     if (token.compare(db_token) == 0){
-        return true;
+       success = SUCCESS;
     }
+    std::cerr << "success: " << success << "\n";
 
-    return false;
+    return success;
 }
 
 ///Return user session info {accessToken: string}
