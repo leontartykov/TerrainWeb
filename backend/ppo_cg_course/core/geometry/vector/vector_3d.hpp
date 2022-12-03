@@ -111,7 +111,7 @@ Vector3D<T> find_normal(Point3D<T> point_1, Point3D<T> point_2, Point3D<T> point
     vector_2_z = int_point_3.get_z() - int_point_1.get_z();
 
     double a = vector_1_y * vector_2_z - vector_1_z * vector_2_y;
-    double b = vector_2_x * vector_1_z - vector_2_z * vector_1_x;
+    double b = vector_1_x * vector_2_z - vector_1_z * vector_2_x;
     double c = vector_1_x * vector_2_y - vector_1_y * vector_2_x;
 
     normal_vector.set_vector(a, b, c);
