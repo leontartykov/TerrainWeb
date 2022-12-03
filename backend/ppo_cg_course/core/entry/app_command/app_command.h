@@ -20,14 +20,14 @@ template <typename Receiver>
 class AppUserCmd: public BaseAppCommand
 {
     private:
-        typedef int(Receiver::*Action)(dbUsers_t&);
+        typedef int(Receiver::*Action)(const dbUsers_t&);
 
         std::shared_ptr<Receiver> receiver;
         Action action;
         dbUsers_t user;
 
     public:
-        AppUserCmd(std::shared_ptr<Receiver> r, Action a, dbUsers_t u): receiver(r), action(a), user(u) {}
+        AppUserCmd(std::shared_ptr<Receiver> r, Action a, const dbUsers_t u): receiver(r), action(a), user(u) {}
         virtual void execute() override {((*receiver).*action)(user);}
 };
 

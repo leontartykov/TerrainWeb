@@ -9,7 +9,7 @@
 class BaseAppCommand
 {
     public:
-        virtual ~BaseAppCommand() = 0;
+        virtual ~BaseAppCommand() {};
         virtual void execute() = 0;
 };
 

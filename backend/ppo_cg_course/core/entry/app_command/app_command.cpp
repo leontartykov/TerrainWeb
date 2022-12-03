@@ -1,8 +1,6 @@
 #include "app_command.h"
 #include "core/gui/main_window.h"
 
-BaseAppCommand::~BaseAppCommand() {}
-
 void LaunchAppCmd::execute(){
     this->_execute();
 }
