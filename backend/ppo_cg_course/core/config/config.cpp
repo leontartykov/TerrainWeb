@@ -1,16 +1,18 @@
 #include "config.h"
 
 Config::Config(){
-    _config_path = "../ppo_cg_course/config_data/config.json";
+    __old_config_path = "../ppo_cg_course/config_data/config.json";
+    __config_path = "../ppo_cg_course/http_server/config.json";
 }
 
 config_t Config::read_config_file_postgres()
 {
     config_t config_data;
     std::ifstream config_file;
-    config_file.open(_config_path);
     Json::Reader reader;
     Json::Value root;
+
+    config_file.open(__old_config_path);
     reader.parse(config_file, root);
 
     if (root["PostgreSQL"])
@@ -28,13 +30,39 @@ config_t Config::read_config_file_postgres()
     return config_data;
 }
 
+config_t Config::read_config_postgres()
+{
+    config_t config_data;
+    std::ifstream config_file;
+    Json::Reader reader;
+    Json::Value root;
+
+    config_file.open(__config_path);
+    reader.parse(config_file, root);
+
+    if (root["db_clients"])
+    {
+        config_data.name_db_client = root["db_clients"][0]["name"].asString().c_str();
+        config_data.dbms_type = root["db_clients"][0]["rdbms"].asString().c_str();
+        config_data.db_name = root["db_clients"][0]["dbname"].asString().c_str();
+        config_data.host = root["db_clients"][0]["host"].asString().c_str();
+        config_data.user = root["db_clients"][0]["user"].asString().c_str();
+        config_data.password = root["db_clients"][0]["password"].asString().c_str();
+        config_data.port = root["db_clients"][0]["port"].asString().c_str();
+    }
+    config_file.close();
+
+    return config_data;
+}
+
 config_t Config::read_config_file_mysql()
 {
     config_t config_data;
     std::ifstream config_file;
-    config_file.open(_config_path);
     Json::Reader reader;
     Json::Value root;
+
+    config_file.open(__old_config_path);
     reader.parse(config_file, root);
 
     if (root["MySQL"])

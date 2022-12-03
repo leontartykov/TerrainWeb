@@ -11,7 +11,8 @@
 class Config
 {
     private:
-        std::string _config_path;
+        std::string __old_config_path;
+        std::string __config_path;
 
     public:
         Config();
@@ -21,6 +22,7 @@ class Config
         config_t read_config_file_mysql();
 
         std::string form_options(config_t &config_data);
+        config_t read_config_postgres();
 };
 
 #endif

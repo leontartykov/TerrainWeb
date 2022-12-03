@@ -6,6 +6,7 @@
 typedef struct config config_t;
 struct config
 {
+    std::string name_db_client;
     std::string dbms_type;
     std::string host;
     std::string port;
