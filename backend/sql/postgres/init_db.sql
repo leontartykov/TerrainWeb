@@ -38,10 +38,9 @@ CREATE TABLE IF NOT EXISTS terrain_project.terrains.terrains
 
 CREATE TABLE IF NOT EXISTS terrain_project.terrains.projects
 (
-	id int,
-	primary key(id),
-	
 	name varchar,
+	primary key(name),
+	
 	last_edited date,
 	rating real,
 	n_rates integer,
@@ -51,11 +50,13 @@ CREATE TABLE IF NOT EXISTS terrain_project.terrains.projects
 	foreign key(id_terrain) references terrain_project.terrains.terrains(id)
 );
 
-CREATE TABLE IF NOT EXISTS terrain_project.terrains.terrains_users
+CREATE TABLE IF NOT EXISTS terrain_project.terrains.users_projs
 (
 	id_user int,
 	foreign key(id_user) references terrain_project.users.info(id),
 
-	id_terrain int,
-	foreign key(id_terrain) references terrain_project.terrains.projects(id)
+	proj_name varchar,
+	foreign key(proj_name) references terrain_project.terrains.projects(name)
 );
+
+
