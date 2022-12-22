@@ -5,6 +5,7 @@ import inputStyles from 'components/input/style.module.scss'
 import fontStyles from 'components/fonts/style.module.scss'
 import buttonStyle from "components/button/style.module.scss"
 import {Link} from "react-router-dom"
+import {TerrainValues} from "components/types/terrain"
 
 export const SignInfoForm = (props: {sign_info?: string, usr_login?: string, usr_password?: string, 
                         retype_password?: string, sign_in?: string, sign_up?: string
@@ -26,12 +27,12 @@ export const SignInfoForm = (props: {sign_info?: string, usr_login?: string, usr
     )
 }
 
-export const CoordinatesForm = (props: {coord?: string, input?: string}) =>
+export const CoordinatesForm = (props: {coord?: string, input?: string, value?: string}) =>
 {
     return(
         <div>
             {props.coord ? <span>{props.coord}</span>: null}
-            {props.input ? <Input style={inputStyles.terrainCoord}></Input>: null}
+            {props.input ? <Input style={inputStyles.terrainCoord} value={props.value}></Input>: null}
         </div>
     )
 }
@@ -39,27 +40,27 @@ export const CoordinatesForm = (props: {coord?: string, input?: string}) =>
 export const TerrainForm = (props: {action?: string, width?: string, height?: string, scale?: string,
                                     octaves?: string, gain?: string, lacunarity?: string,
                                     seed?: string, frequency?: string, landscape?: string,
-                                    light?: string}) => {
+                                    light?: string, terVals?: TerrainValues}) => {
     return(
         <div>
             <div className={formStyles.terrainSettingsName}>
                 <span className={fontStyles.middleText}>{props.action}</span>
             </div>
             <div className={formStyles.terrainSettingsForm}>
-                {props.width ? <div className={formStyles.terrainFormWidth}><span>{props.width}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.height ? <div className={formStyles.terrainFormHeight}><span>{props.height}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.scale ? <div className={formStyles.terrainFormScale}><span>{props.scale}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.octaves ? <div className={formStyles.terrainFormOctaves}><span>{props.octaves}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.gain ? <div className={formStyles.terrainFormGain}><span>{props.gain}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.lacunarity ? <div className={formStyles.terrainFormLacunarity}><span>{props.lacunarity}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.seed ? <div className={formStyles.terrainFormSeed}><span>{props.seed}</span><Input style={inputStyles.settings}></Input></div> : null}
-                {props.frequency ? <div className={formStyles.terrainFormFrequency}><span>{props.frequency}</span><Input style={inputStyles.settings}></Input></div> : null}
+                {props.width ? <div className={formStyles.terrainFormWidth}><span>{props.width}</span><Input style={inputStyles.settings} id="terWidth" value={props.terVals?.size.width}></Input></div> : null}
+                {props.height ? <div className={formStyles.terrainFormHeight}><span>{props.height}</span><Input style={inputStyles.settings} id="terHeight" value={props.terVals?.size.height}></Input></div> : null}
+                {props.scale ? <div className={formStyles.terrainFormScale}><span>{props.scale}</span><Input style={inputStyles.settings} id="terScale" value={props.terVals?.scale}></Input></div> : null}
+                {props.octaves ? <div className={formStyles.terrainFormOctaves}><span>{props.octaves}</span><Input style={inputStyles.settings} id="terOctaves" value={props.terVals?.config.octaves}></Input></div> : null}
+                {props.gain ? <div className={formStyles.terrainFormGain}><span>{props.gain}</span><Input style={inputStyles.settings} id="terGain" value={props.terVals?.config.gain}></Input></div> : null}
+                {props.lacunarity ? <div className={formStyles.terrainFormLacunarity}><span>{props.lacunarity}</span><Input style={inputStyles.settings} id="terLacunarity" value={props.terVals?.config.lacunarity}></Input></div> : null}
+                {props.seed ? <div className={formStyles.terrainFormSeed}><span>{props.seed}</span><Input style={inputStyles.settings} id="terSeed" value={props.terVals?.config.seed}></Input></div> : null}
+                {props.frequency ? <div className={formStyles.terrainFormFrequency}><span>{props.frequency}</span><Input style={inputStyles.settings} id="terFrequency" value={props.terVals?.config.frequency}></Input></div> : null}
                 {props.landscape ?<div>
                                     <span>{props.landscape}</span>
                                     <div className={formStyles.terrainRowCoords}>
-                                        <CoordinatesForm coord="X" input="input"></CoordinatesForm>
-                                        <CoordinatesForm coord="Y" input="input"></CoordinatesForm>
-                                        <CoordinatesForm coord="Z" input="input"></CoordinatesForm>
+                                        <CoordinatesForm coord="X" input="input" value={props.terVals?.rotate.angle_x}></CoordinatesForm>
+                                        <CoordinatesForm coord="Y" input="input" value={props.terVals?.rotate.angle_y}></CoordinatesForm>
+                                        <CoordinatesForm coord="Z" input="input" value={props.terVals?.rotate.angle_z}></CoordinatesForm>
                                     </div>
                                  </div>: null}
                 {props.light ?<div>

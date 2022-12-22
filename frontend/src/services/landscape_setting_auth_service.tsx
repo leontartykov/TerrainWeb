@@ -21,7 +21,10 @@ export default class LandscapeSettingAuthService extends React.Component {
         console.log("getTerrainParams");
         this.data_resp = await TerrainService.getParams("2", "tatata");
         this.setState({data_resp : this.data_resp});
+        this.terrain = this.data_resp.data;
         console.log("data_return: ", this.data_resp);
+        console.log("terrain_data: ", this.terrain);
+        this.render()
     }
 
     async handleGenerate(event: React.SyntheticEvent){
@@ -39,11 +42,13 @@ export default class LandscapeSettingAuthService extends React.Component {
             console.log("here_yes")
             console.log("data_yes: ", this.data);
             return (<LandscapeSettingsAuthComponent 
+                    terVals={this.terrain}
                     userName={this.userName} image={this.data.data} onClickGenerate={this.handleGenerate.bind(this)}/>)
         }else{
         console.log("here_no")
         return (<LandscapeSettingsAuthComponent 
-                userName={this.userName} onClickGenerate={this.handleGenerate.bind(this)}></LandscapeSettingsAuthComponent>)
+                userName={this.userName} terVals={this.terrain}
+                onClickGenerate={this.handleGenerate.bind(this)}></LandscapeSettingsAuthComponent>)
         }
     }
 }
