@@ -1,0 +1,138 @@
+@import "index.css";
+
+.button {
+    padding: 1px 1px;
+    height: 60px;
+    width:100%;
+    background: var(--AppBackgroundColor2);
+    border: 1px solid var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+    font-size: var(--TitleText);
+    font-family: var(--FontFamily);
+    color: var(--FontColor3);
+    transition: background ease .3s;
+    
+    &:hover {
+    background: var(--HoverColor);
+    }
+}
+
+.button__icon {
+    font-size: 56px!important;
+    padding-right:0px;
+}
+
+.button__icon_settings {
+    font-size: 40px!important;
+    padding: none;
+}
+
+.button_star_icon{
+    font-size: var(--LogoText)!important;
+    padding-right:0px;
+}
+
+.buttonForm{
+    height: 65px;
+    width: 120%;
+
+    font-size: var(--LogoText);
+    color: var(--FontColor3);
+
+    background: var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonWithImg{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width:30%;
+    height:30%;
+    gap: 45px;
+}
+
+.buttonCard{
+    background:var(--FontColor3);
+    border: 2px solid var(--StrokeColor);
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonCardProject{
+    background:var(--SettingsBackgroundColor);
+    font-size: var(--TitleText);
+    border: none;
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonNum{
+    font-family: var(--FontFamily);
+    font-style: normal;
+    font-size: 30px;
+    font-feature-settings: 'lnum' on;
+
+    color: var(--FontColor3);
+    background: var(--AppBackgroundColor2);
+    stroke: var(--FontColor2);
+    border: none;
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonActiveNum{
+    font-family: var(--FontFamily);
+    font-style: normal;
+    font-size: 30px;
+    font-feature-settings: 'lnum' on;
+
+    color: var(--FontColor2);
+    background: var(--AppBackgroundColor2);
+    stroke: var(--FontColor2);
+    border: none;
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonProject{
+    background: var(--AppBackgroundColor2);
+    height: 45px;
+    font-size: var(--MiddleText);
+    color: var(--FontColor3);
+    border: 2px solid var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}
+
+.buttonsGroup{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.buttonModuleCreateProject{
+    background: var(--AppBackgroundColor2);
+    font-size: var(--TitleText);
+    color: var(--FontColor3);
+    width: 50%;
+
+    &:hover {
+        background: var(--HoverColor);
+    }
+}

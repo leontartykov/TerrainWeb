@@ -1,0 +1,59 @@
+@import "index.css";
+
+.seacrhProjectNavBar{
+    height: 60px;
+    width:100%;
+
+    font-size: var(--TitleText);
+    background: var(--FontColor3);
+    border: 1.0868px solid var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+}
+
+.searchProject{
+    padding: 0px 0px 0px 15px;
+    background: var(--FontColor3);
+    border: 1px solid var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+
+    font-size: var(--MiddleText);
+
+    height: 45px;
+    width:100%;
+}
+
+.inputUserInfo{
+    height: 60px;
+    width:21.5%;
+
+    font-size: var(--TitleText);
+    background: var(--FontColor3);
+    border: 1.0868px solid var(--StrokeColor);
+    border-radius: var(--BorderRadius);
+}
+
+.form{
+    height: 76px;
+    background: var(--SettingsBackgroundColor);
+    border-radius: var(--BorderRadius);
+}
+
+.coords{
+    height:30px;
+    width:30px;
+}
+
+.settings{
+    border-radius: var(--BorderRadius);
+    width: 80px;
+}
+
+.terrainCoord{
+    width: 40px;
+}
+
+.createProjectModule{
+    font-size: var(--MiddleText);
+    background: var(--FontColor3);
+    width: 80%;
+}
