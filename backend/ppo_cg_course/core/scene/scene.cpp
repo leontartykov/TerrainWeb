@@ -74,7 +74,7 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     win.min_x = min_j; win.max_x = max_j;
     win.min_y = min_i; win.max_y = max_i;
 
-    std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
+    //std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
 
     return {color_matrix, win};
 }

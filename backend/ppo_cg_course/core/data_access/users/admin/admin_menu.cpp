@@ -42,7 +42,7 @@ int Admin::do_action()
             }
             case menu::ADD_USER:
             {
-                dbUsers_t user;
+                servUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
                 std::cout << "user.id: " << user.id << std::endl;
@@ -63,9 +63,9 @@ int Admin::do_action()
 
                 break;
             }
-            case menu::DELETE_USER:
+            /*case menu::DELETE_USER:
             {
-                dbUsers_t user;
+                servUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
 
@@ -74,10 +74,10 @@ int Admin::do_action()
                            new AppUserCmd<Admin>(admin, &Admin::delete_user, user));
                 _app_facade->execute(delete_user_cmd);
                 break;
-            }
+            }*/
             case menu::LOCK_USER:
             {
-                dbUsers_t user;
+                servUsers_t user;
                 std::cout << "Введите id пользователя: ";
                 std::cin >> user.id;
 
@@ -87,7 +87,7 @@ int Admin::do_action()
                 _app_facade->execute(lock_user_cmd);
                 break;
             }
-            case menu::UNLOCK_USER:
+            /*case menu::UNLOCK_USER:
             {
                 dbUsers_t user;
                 std::cout << "Введите id пользователя: ";
@@ -98,7 +98,7 @@ int Admin::do_action()
                            new AppUserCmd<Admin>(admin, &Admin::unlock_user, user));
                 _app_facade->execute(lock_user_cmd);
             break;
-            }
+            }*/
              default:
                 std::cout << " Неизвестная команда.\n";
                 break;

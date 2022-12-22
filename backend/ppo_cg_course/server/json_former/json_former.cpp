@@ -9,7 +9,6 @@ json form_json_response(std::vector<dbTerrainProject_t> &ter_projs)
     count_ter_projs = ter_projs.size();
     for(int i = 0; i < count_ter_projs; ++i)
     {
-        json_ret["id"] = ter_projs[i].id;
         json_ret["name"] = ter_projs[i].name;
         json_ret["last_edited"] = ter_projs[i].last_edit;
         jsonObjects.push_back(json_ret);

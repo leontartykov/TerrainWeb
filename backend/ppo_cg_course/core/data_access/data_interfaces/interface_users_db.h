@@ -12,6 +12,7 @@ class IUsersDb
         virtual int get(const int &id, dbUsers_t &user) = 0;
         virtual int add(const dbUsers_t &user) = 0;
         virtual int delete_user(const int &id) = 0;
+        virtual int delete_user(const std::string &login) = 0;
         virtual int update(const int &id, const dbUsers_t &user) = 0;
         virtual int block(const int &id) = 0;
         virtual int unlock(const int &id) = 0;

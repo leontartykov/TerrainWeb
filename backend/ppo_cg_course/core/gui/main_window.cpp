@@ -61,7 +61,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::rotate_terrain()
 {
-    Terrain* terrain = _scene.get_terrain();
+    Terrain *terrain = _scene.get_terrain();
 
     rotate_t rotate_angles, rotate_angles_landscape = terrain->get_rotate_angles();
     rotate_angles.angle_x = ui->spinbox_rotate_x->value() -  terrain->get_rotate_x();

@@ -3,13 +3,14 @@
 
 #include <iostream>
 
-class BaseUser
+class BaseAppUser
 {
     public:
-        virtual ~BaseUser() = default;
+        virtual ~BaseAppUser() {};
 
         virtual int do_action() = 0;
         virtual void set_user_login(std::string &usr_login) = 0;
+
     protected:
         std::string user_login;
 };

@@ -18,9 +18,11 @@ struct dbTerrain
 typedef struct dbTerrainProject dbTerrainProject_t;
 struct dbTerrainProject
 {
-    int id;
     std::string name;
     std::string last_edit;
+    double rating;
+    int n_rates;
+    bool exhibited;
     dbTerrain_t terrain;
 };
 

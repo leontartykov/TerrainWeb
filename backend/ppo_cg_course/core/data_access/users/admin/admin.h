@@ -22,7 +22,7 @@
 #include "core/data_access/db_model/postgres/postgres_data/postgres_terrains/postgres_terrains.h"
 #include "core/data_access/db_model/postgres/postgres.hpp"
 
-class Admin: public BaseUser
+class Admin: public BaseAppUser
 {
     private:
         std::shared_ptr<pqxx::connection> _connect_psql;
@@ -37,23 +37,27 @@ class Admin: public BaseUser
 
         int _connect_psql_to_db();
         int _connect_mysql_to_db();
-        int __add_user_psql(const dbUsers_t &user);
-        int _add_user_mysql(dbUsers_t &user);
+        int __add_user_psql(const servUsers_t &user);
+        int _add_user_mysql(servUsers_t &user);
 
-        int __delete_user_psql(const dbUsers_t &user);
-        int _delete_user_mysql(dbUsers_t &user);
+        int __delete_user_psql(const int &userId);
+        int _delete_user_mysql(servUsers_t &user);
 
         void show_menu();
         time_t _current_time;
         Config _config;
+
+        int __delete_user_psql(const std::string &login);
+
     public:
         Admin();
         ~Admin();
 
-        int add_user(const dbUsers_t &user);
-        int delete_user(const dbUsers_t &user);
-        int lock_user(const dbUsers_t &user);
-        int unlock_user(const dbUsers_t &user);
+        int add_user(const servUsers_t &user);
+        int delete_user(const int &userId);
+        int delete_user(const std::string &login);
+        int lock_user(const servUsers_t &user);
+        int unlock_user(const servUsers_t &user);
         int disconnect_db();
         int check_connection();
 

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 
+#include "core/config/base_config.hpp"
 #include "config_struct.h"
 
 class Config

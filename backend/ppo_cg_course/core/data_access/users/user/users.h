@@ -2,12 +2,12 @@
 #define _USERS_H_
 
 #include <iostream>
-#include "../base_user.h"
-#include "../../../entry/entry.h"
-#include "../../../entry/app_command/app_command.h"
-#include "../../../entry/app_facade/app_facade.h"
+#include "core/data_access/users/base_user.h"
+#include "core/entry/entry.h"
+#include "core/entry/app_command/app_command.h"
+#include "core/entry/app_facade/app_facade.h"
 
-class User: public BaseUser
+class User: public BaseAppUser
 {
     private:
         std::shared_ptr<AppFacade> _app_facade;

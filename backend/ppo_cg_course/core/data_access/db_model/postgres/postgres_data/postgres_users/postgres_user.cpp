@@ -49,13 +49,18 @@ int UserPostgres::add(const dbUsers_t &user)
     }
     try{
         pqxx::work worker(*__conn_psql);
-        query = "SELECT * from terrain_project.users.info where login like '%" \
+        query = "SELECT deleted, blocked from terrain_project.users.info where login like '%" \
                  + user.login + "';";
         response = worker.exec(query);
 
         if (!response.empty()){
-            query = "UPDATE terrain_project.users.info SET deleted = false \
+            if (response[0][0].as<bool>() != false){
+                query = "UPDATE terrain_project.users.info SET deleted = false \
                      WHERE login like '%" + user.login + "';";
+            }
+            else{
+                return CONFLICT;
+            }
         }
         else
         {
@@ -111,6 +116,35 @@ int UserPostgres::delete_user(const int &id)
     }
 
     return success;
+}
+
+int UserPostgres::delete_user(const std::string &login)
+{
+    //нет удаления проекта -- только для тестов
+    int ret_code = SUCCESS;
+    std::string query;
+
+    if (!__conn_psql){
+        std::cout << "Нет подключения к БД." << std::endl;
+        ret_code = CONNECTION_FAILED;
+    }
+    else{
+        try{
+            pqxx::work worker(*__conn_psql);
+            query = "DELETE \
+                     FROM terrain_project.users.info \
+                     WHERE login = '" + login + "';";
+            worker.exec(query);
+            worker.commit();
+            std::cout << "\nПользователь успешно.\n";
+        }
+        catch(std::exception const &e){
+            std::cerr << e.what() << '\n';
+            ret_code = BAD_REQUEST;
+        }
+    }
+
+    return ret_code;
 }
 
 int UserPostgres::update(const int &id, const dbUsers_t &user)

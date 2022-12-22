@@ -5,6 +5,7 @@
 #include "error_codes.h"
 #include "core/data_access/db_model/postgres/postgres.hpp"
 
+
 void api::v1::UsersController::set_dbModel(std::shared_ptr<DbModel> dbModel){
     __users_service->set_dbModel(dbModel);
 }
@@ -18,7 +19,6 @@ void api::v1::UsersController::set_dbModel(std::shared_ptr<DbModel> dbModel){
 
 api::v1::UsersController::UsersController()
 {
-    std::cerr << "UsersControllerContructor\n";
     __users_service = std::make_shared<UsersService>();
     config_t config = __config.read_config_postgres();
 
@@ -47,15 +47,16 @@ void api::v1::UsersController::get_info(const HttpRequestPtr &req,
                                         std::string userId)
 {
     int user_id, ret_code, uuid;
-    dbUsers_t user;
+    servUsers_t user;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    UserSessions usrSessions;
 
     try {
         token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
-        ret_code = __sessions.check_usr_authorization(token, uuid);
+        ret_code = usrSessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -78,37 +79,42 @@ void api::v1::UsersController::get_info(const HttpRequestPtr &req,
 void api::v1::UsersController::add_new(const HttpRequestPtr &req,
                                        std::function<void (const HttpResponsePtr &)> &&callback)
 {
-    dbUsers_t user;
+    servUsers_t user;
     int ret_code, uuid;
     std::string token;
     drogon::HttpResponsePtr resp;
     std::shared_ptr<Json::Value> json;
     Json::Value jsonBody;
+    UserSessions usrSessions;
 
     try
     {
-        token = req.get()->getHeader("Authorization");
+
+        /*token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
-        ret_code = __sessions.check_usr_authorization(token, uuid);
+        ret_code = usrSessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
         else
-        {
+        {*/
             json = req.get()->getJsonObject();
 
             user.login = (*json)["login"].asString();
+            std::cerr << "login: " << user.login << "\n";
             user.password = (*json)["password"].asString();
             user.perm_level = (*json)["perm_level"].asInt();
 
             ret_code = __users_service->add(user);
+            std::cerr << "ret_code: " << ret_code << "\n";
             resp = form_http_response(ret_code, jsonBody);
-        }
+        //}
         callback(resp);
     }
     catch (std::exception &e) {
         std::cerr << e.what();
         ret_code = BAD_REQUEST;
+        std::cerr << "ret_code: " << ret_code << "\n";
         resp = form_http_response(ret_code, jsonBody);
         callback(resp);
     }
@@ -118,16 +124,16 @@ void api::v1::UsersController::delete_usr(const HttpRequestPtr &req, std::functi
                                 std::string userId)
 {
     int user_id, ret_code, uuid;
-    dbUsers_t user;
     std::string token;
     drogon::HttpResponsePtr resp;
     Json::Value jsonBody;
+    UserSessions usrSessions;
 
     try
     {
         token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
-        ret_code = __sessions.check_usr_authorization(token, uuid);
+        ret_code = usrSessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -152,16 +158,17 @@ void api::v1::UsersController::change_usr_login(const HttpRequestPtr &req,
 {
     std::string new_login, token;
     json j_complete;
-    dbUsers_t user;
+    servUsers_t user;
     int uuid, ret_code;
     drogon::HttpResponsePtr resp;
     Json::Value jsonBody;
+    UserSessions usrSessions;
 
     try
     {
         token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
-        ret_code = __sessions.check_usr_authorization(token, uuid);
+        ret_code = usrSessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -191,10 +198,9 @@ void api::v1::UsersController::login(
     int ret_code, uuid;
     std::shared_ptr<Json::Value> json;
     servUsers_t user;
-    std::string access_token;
-    JWTUser jwt_user;
     Json::Value jsonBody;
     drogon::HttpResponsePtr resp;
+    std::string access_token;
 
     try
     {
@@ -202,13 +208,13 @@ void api::v1::UsersController::login(
         user.login = (*json)["login"].asString();
         user.password = (*json)["password"].asString();
         ret_code = __users_service->validate((const servUsers_t)user, uuid);
+        std::cerr << "ret_code: " << ret_code << "\n";
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
         else
         {
-            access_token = jwt_user.create_token();
-            __sessions.add(uuid, access_token);
+            ret_code = __users_service->login(access_token, uuid);
             jsonBody = form_json_response(access_token, uuid);
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -222,24 +228,4 @@ void api::v1::UsersController::login(
     }
 }
 
-int api::v1::UserSessions::check_usr_authorization(std::string &token, int &uuid)
-{
-    int success = SUCCESS;
 
-    try{
-        if (!token.empty()){
-            success = this->check_access_token(uuid, token);
-        }
-        else{
-            success = BAD_REQUEST;
-        }
-    }
-    catch (std::exception const &e){
-        std::cerr << e.what() << '\n';
-        success = BAD_REQUEST;
-        return success;
-    }
-
-    std::cerr << "success_check: " << success << "\n";
-    return success;
-}

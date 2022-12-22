@@ -4,6 +4,7 @@
 drogon::HttpResponsePtr form_http_response(int &response_code, Json::Value &jsonBody)
 {
     drogon::HttpResponsePtr resp;
+    std::cerr << "responseCodeFORMHTTP: " << response_code << "\n";
 
     if (response_code == BAD_REQUEST){
         jsonBody["status"] = "error";
@@ -31,6 +32,11 @@ drogon::HttpResponsePtr form_http_response(int &response_code, Json::Value &json
     else if (response_code == SUCCESS_CREATED){
         resp = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
         resp.get()->setStatusCode(drogon::HttpStatusCode::k201Created);
+    }
+    else if (response_code == CONFLICT){
+        std::cerr << "here_conflict\n";
+        resp = drogon::HttpResponse::newHttpJsonResponse(jsonBody);
+        resp.get()->setStatusCode(drogon::HttpStatusCode::k409Conflict);
     }
 
     return resp;

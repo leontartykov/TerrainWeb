@@ -45,32 +45,85 @@ void Postgres::set_psql_connection(std::shared_ptr<pqxx::connection> &connection
     __connection = connection;
 }
 
-int Postgres::get_user(const int &id, dbUsers_t &user){
-    return __users.get()->get(id, user);
+int Postgres::get_user(const int &id, servUsers_t &servUser){
+    dbUsers_t dbUser;
+    int ret_code = BAD_REQUEST;
+
+    if (id > 0){
+        ret_code = __users.get()->get(id, dbUser);
+        __convertDbToServModel(dbUser, servUser);
+    }
+
+    return ret_code;
 }
 
-int Postgres::add_user(const dbUsers_t &user){
-    return __users.get()->add(user);
+int Postgres::add_user(const servUsers_t &servUser){
+    dbUsers_t dbUser;
+    int ret_code = BAD_REQUEST;
+
+    if (!servUser.login.empty() && !servUser.password.empty() && servUser.perm_level >= 0){
+        __convertServToDbModel(servUser, dbUser);
+        ret_code = __users.get()->add(dbUser);
+    }
+    return ret_code;
 }
 
-int Postgres::update_user(const int &id, const dbUsers_t &user){
-    return __users.get()->update(user.id, user);
+int Postgres::update_user(const int &id, const servUsers_t &servUser){
+    dbUsers_t dbUser;
+    int ret_code = BAD_REQUEST;
+
+    if (id >= 0 && id < __nUsers){
+        __convertServToDbModel(servUser, dbUser);
+        ret_code = __users.get()->update(dbUser.id, dbUser);
+    }
+    return ret_code;
 }
 
 int Postgres::delete_user(const int &id){
-    return __users.get()->delete_user(id);
+    int ret_code = BAD_REQUEST;
+
+    if (id >= 0 && id < __nUsers){
+        ret_code = __users.get()->delete_user(id);
+    }
+    return ret_code;
+}
+
+int Postgres::delete_user(const std::string &login)
+{
+    int ret_code = BAD_REQUEST;
+
+    if (!login.empty()){
+        ret_code = __users->delete_user(login);
+    }
+
+    return ret_code;
 }
 
 int Postgres::block_user(const int &id){
-    return __users.get()->block(id);
+    int ret_code = BAD_REQUEST;
+
+    if (id >= 0 && id < __nUsers){
+        ret_code = __users->block(id);
+    }
+    return ret_code;
 }
 
 int Postgres::unlock_user(const int &id){
-    return __users.get()->unlock(id);
+    int ret_code = BAD_REQUEST;
+
+    if (id >= 0 && id < __nUsers){
+        ret_code = __users.get()->unlock(id);
+    }
+    return ret_code;
 }
 
 int Postgres::add_new_terrain_project(const int &userId, const std::string &terProjName){
-    return __terrains.get()->add_new_terrain_project(userId, terProjName);
+    int ret_code = BAD_REQUEST;
+
+    if (userId >= 0 && userId < __nUsers){
+        ret_code = __terrains.get()->add_new_terrain_project(userId, terProjName);
+    }
+    return ret_code;
 }
 
 int Postgres::get_terrain_params(const int &userId, const int &terId, servTerrain_t &terParams)
@@ -85,14 +138,15 @@ int Postgres::get_terrain_params(const int &userId, const int &terId, servTerrai
     return ret_code;
 }
 
-int Postgres::delete_terrain_project(const int &userId, const int &terId)
+int Postgres::delete_terrain_project(const int &userId, const std::string &projName)
 {
     int ret_code = BAD_REQUEST;
-    int dbUserId, dbTerId;
+    int dbUserId;
+    std::string dbProjName;
 
-    if (userId >= 0 && userId <= __nUsers && terId > 0 && terId <= __nTerrains){
-        dbUserId = userId, dbTerId = terId;
-        ret_code = __terrains.get()->delete_terrain_project(dbUserId, dbTerId);
+    if (userId >= 0 && userId <= __nUsers){
+        dbUserId = userId;
+        ret_code = __terrains.get()->delete_terrain_project(dbUserId, projName);
     }
 
     return ret_code;
@@ -123,21 +177,52 @@ int Postgres::set_terrain_project_rating(const int &terId, const int &rating)
     return ret_code;
 }
 
-int Postgres::get_terrain_projects(const int &userId,
+int Postgres::get_terrain_projects(const int &userId, int &page,
                                    std::vector<servTerrainProject_t> &servTerProjects)
 {
     int ret_code = NOT_FOUND;
     std::vector<dbTerrainProject_t> dbTerProjects;
 
-    if (userId > 0)
+    if (userId > 0 && page > 0)
     {
-        ret_code = __terrains.get()->get_terrain_projects(userId, dbTerProjects);
+        ret_code = __terrains.get()->get_terrain_projects(userId, page, dbTerProjects);
         if (ret_code == SUCCESS){
             __convertDbToServModel(dbTerProjects, servTerProjects);
         }
     }
 
     return ret_code;
+}
+
+int Postgres::get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &servTerProj)
+{
+    dbTerrainProject_t dbTerProj;
+    int ret_code = NOT_FOUND;
+    if (userId > 0 && !projName.empty()){
+        ret_code = __terrains->get_terrain_project(userId, projName, dbTerProj);
+        if (ret_code == SUCCESS){
+            __convertDbToServModel(dbTerProj, servTerProj);
+        }
+    }
+
+    return ret_code;
+}
+
+void Postgres::__convertDbToServModel(const dbUsers_t &dbUser, servUsers_t &servUser)
+{
+    servUser.id = dbUser.id;
+    servUser.login = dbUser.login;
+    servUser.password = dbUser.password;
+    servUser.perm_level = dbUser.perm_level;
+    servUser.is_blocked = dbUser.is_blocked;
+    servUser.is_deleted = dbUser.is_deleted;
+}
+
+void Postgres::__convertServToDbModel(const servUsers_t &servUser, dbUsers_t &dbUser)
+{
+    dbUser.login = servUser.login;
+    dbUser.password = servUser.password;
+    dbUser.perm_level = servUser.perm_level;
 }
 
 void Postgres::__convertDbToServModel(const dbTerrain_t &dbTerParams, servTerrain_t &terParams){
@@ -157,16 +242,23 @@ void Postgres::__convertDbToServModel(
         servTerProjs.resize(nProjs);
 
         for (int i = 0; i < nProjs; ++i){
-            servTerProjs[i].id = dbTerProjs[i].id;
-            servTerProjs[i].last_edit = dbTerProjs[i].last_edit;
             servTerProjs[i].name = dbTerProjs[i].name;
+            servTerProjs[i].last_edit = dbTerProjs[i].last_edit;
         }
     }
 }
 
+void Postgres::__convertDbToServModel(const dbTerrainProject_t &dbTerProj, servTerrainProject_t &servTerProj)
+{
+    servTerProj.name = dbTerProj.name;
+    servTerProj.last_edit = dbTerProj.last_edit;
+    servTerProj.rating = dbTerProj.rating;
+    servTerProj.n_rates = dbTerProj.n_rates;
+    servTerProj.exhibited = dbTerProj.exhibited;
+}
+
 int Postgres::login(const std::string &login, const std::string &password, int &uuid)
 {
-    std::cerr << "LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL\n";
     int success = SUCCESS;
     dbUsers_t dbUser;
 
@@ -185,4 +277,9 @@ int Postgres::login(const std::string &login, const std::string &password, int &
     }
 
     return success;
+}
+
+int Postgres::login(const std::string &login, const std::string &password){
+    int uuid = 0;
+    return this->login(login, password, uuid);
 }

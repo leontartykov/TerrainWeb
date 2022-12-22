@@ -45,14 +45,19 @@ class Postgres: public DbModel
         void __convertDbToServModel(const dbTerrain_t &dbTerParams, servTerrain_t &terParams);
         int __nUsers, __nTerrains;
 
+        void __convertServToDbModel(const servUsers_t &servUser, dbUsers_t &dbUser);
+        void __convertDbToServModel(const dbUsers_t &dbUser, servUsers_t &servUser);
+        void __convertDbToServModel(const dbTerrainProject_t &dbTerProj, servTerrainProject_t &servTerProj);
+
     public:
         Postgres();
         virtual ~Postgres() override {}
 
-        virtual int get_user(const int &id, dbUsers_t &user) override;
-        virtual int add_user(const dbUsers_t &user) override;
-        virtual int update_user(const int &id, const dbUsers_t &user) override;
+        virtual int get_user(const int &id, servUsers_t &servUser) override;
+        virtual int add_user(const servUsers_t &servUser) override;
+        virtual int update_user(const int &id, const servUsers_t &servUser) override;
         virtual int delete_user(const int &id) override;
+        virtual int delete_user(const std::string &login) override;
         virtual int block_user(const int &id) override;
         virtual int unlock_user(const int &id) override;
 
@@ -63,13 +68,15 @@ class Postgres: public DbModel
 
         virtual int add_new_terrain_project(const int &userId, const std::string &terProjName) override;
         virtual int get_terrain_params(const int &userId, const int &terId, servTerrain_t &terParams) override;
-        virtual int get_terrain_projects(const int &userId,
+        virtual int get_terrain_projects(const int &userId, int &page,
                                          std::vector<servTerrainProject_t> &servTerProjects) override;
-        virtual int delete_terrain_project(const int &terId, const int &userId) override;
+        virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &servTerProj) override;
+        virtual int delete_terrain_project(const int &userId, const std::string &projName) override;
         virtual int get_terrain_project_rating(const int &terId, double &rating) override;
         virtual int set_terrain_project_rating(const int &terId, const int &rating) override;
 
         virtual int login(const std::string &login, const std::string &password, int &uuid) override;
+        virtual int login(const std::string &login, const std::string &password) override;
 };
 
 #endif

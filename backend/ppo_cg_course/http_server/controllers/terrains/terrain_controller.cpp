@@ -1,12 +1,16 @@
 #include "http_server/controllers/http_controllers.hpp"
 #include "http_server/controllers/form_http_response.hpp"
+#include "core/config/config.h"
 #include "error_codes.h"
 
 api::v1::TerrainsController::TerrainsController(){
     __terrains_service = std::make_shared<TerrainsService>();
+    //__config = std::make_shared<Config>();
+
     config_t config = __config.read_config_postgres();
 
     __terrains_service->set_dbModel(create_db_model(config));
+
 }
 
 /*void api::v1::TerrainsController::set_dbModel(std::shared_ptr<DbModel> dbModel){
@@ -15,33 +19,38 @@ api::v1::TerrainsController::TerrainsController(){
 
 void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId)
+     std::string userId, std::string page)
 {
-    int user_id, uuid, ret_code;
+    int user_id, uuid, ret_code, pageBlock;
     std::vector<servTerrainProject_t> terProjects;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    std::cerr <<"get_all_ter_projs\n";
+    std::cerr <<"page: " << page << "\n";
 
     try{
-        token = req.get()->getHeader("Authorization");
+        /*token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
         ret_code = __sessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
         else{
+        */
             user_id = std::stoi(userId);
-            ret_code = __terrains_service->get_terrain_projects(user_id, terProjects);
+            pageBlock = std::stoi(page);
+            std::cerr << "pageBlock: " << pageBlock << "\n";
+            ret_code = __terrains_service->get_terrain_projects(user_id, pageBlock, terProjects);
             jsonBody = form_json_response(terProjects);
 
             resp = form_http_response(ret_code, jsonBody);
-        }
+        //}
         callback(resp);
     }
     catch (std::exception &e) {
         std::cout << e.what();
-        ret_code = BAD_REQUEST;;
+        ret_code = FORBIDDEN;;
         resp = form_http_response(ret_code, jsonBody);
         callback(resp);
     }
@@ -57,23 +66,25 @@ void api::v1::TerrainsController::add_new_project(const HttpRequestPtr &req,
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    std::cerr << "here_add_params\n";
 
     try
     {
-        token = req.get()->getHeader("Authorization");
+        /*token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
         ret_code = __sessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
-        else{
+        else{*/
             user_id = std::stoi(userId);
             json_get = json::parse(req->bodyData());
             terProjName = json_get["name"];
+            std::cerr << "terProjName: " << terProjName << "\n";
             ret_code = __terrains_service->add_terrain_project(user_id, terProjName);
 
             resp = form_http_response(ret_code, jsonBody);
-        }
+        //}
         callback(resp);
     }
     catch (std::exception &e){
@@ -94,7 +105,9 @@ void api::v1::TerrainsController::get_terrain_params(const HttpRequestPtr &req,
     std::string token;
     drogon::HttpResponsePtr resp;
 
+
     try {
+        std::cerr << "here_get_params\n";
         token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
         ret_code = __sessions.check_usr_authorization(token, uuid);
@@ -120,29 +133,55 @@ void api::v1::TerrainsController::get_terrain_params(const HttpRequestPtr &req,
     }
 }
 
+void api::v1::TerrainsController::find_project(
+        const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback,
+        std::string userId, std::string projName)
+{
+    int user_id, ret_code;
+    drogon::HttpResponsePtr resp;
+    servTerrainProject_t project;
+    std::cerr << "FIND_PROJECT\n";
+
+    Json::Value jsonBody;
+    try{
+        user_id = std::stoi(userId);
+        ret_code = __terrains_service->get_terrain_project(user_id, projName, project);
+        std::cerr << "SERV_RET_CODE: " << ret_code << "\n";
+        jsonBody = form_json_response(project);
+        resp = form_http_response(ret_code, jsonBody);
+        callback(resp);
+    }
+    catch (std::exception &e) {
+        std::cerr << e.what();
+        ret_code = BAD_REQUEST;;
+        resp = form_http_response(ret_code, jsonBody);
+        callback(resp);
+    }
+}
+
 void api::v1::TerrainsController::delete_terrain_project(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId, std::string terrainId)
+     std::string userId, std::string projName)
 {
     int user_id, terrain_id, ret_code, uuid;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    std::cerr << "DELETE\n";
 
     try{
-        token = req.get()->getHeader("Authorization");
+        std::cerr << "here_del_params\n";
+        /*token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
         ret_code = __sessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
-        else{
+        else{*/
             user_id = std::stoi(userId);
-            terrain_id = std::stoi(terrainId);
-
-            ret_code = __terrains_service->delete_terrain_project(user_id, terrain_id);
+            ret_code = __terrains_service->delete_terrain_project(user_id, projName);
             resp = form_http_response(ret_code, jsonBody);
-        }
+        //}
 
         callback(resp);
     }
@@ -234,20 +273,22 @@ void api::v1::TerrainsController::get_render_image(
     std::pair<dbTerrain_t, light_t> scene_info;
     std::shared_ptr<Json::Value> jsonBodyIn;
     std::string filename = "images/fee.png";
+    std::cerr << "RENDER_JOBS\n";
 
     try{
-        token = req.get()->getHeader("Authorization");
+        /*token = req.get()->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("UUID"));
         ret_code = __sessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBodyout);
         }
-        else{
+        else{*/
             jsonBodyIn = req.get()->getJsonObject();
             scene_info = __handle_json_body(jsonBodyIn);
             ret_code = __terrains_service->get_render_png_image(scene_info.first, scene_info.second);
+            std::cerr << "ret_code: " << ret_code << "\n";
             resp = form_http_response(ret_code, filename);
-        }
+        //}
         callback(resp);
     }
     catch (std::exception &e) {
@@ -264,7 +305,9 @@ std::pair<dbTerrain_t, light_t>
     dbTerrain_t terrain;
     light_t light;
 
+    std::cerr << "width: " << (*jsonBodyIn)["terrain"]["size"]["width"] <<"\n";
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
+    std::cerr << "terrain.width: " << terrain.width << "\n";
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
@@ -275,9 +318,11 @@ std::pair<dbTerrain_t, light_t>
     terrain.rotate_angles.angle_x = (*jsonBodyIn)["terrain"]["rotate"]["angle_x"].asInt();
     terrain.rotate_angles.angle_y = (*jsonBodyIn)["terrain"]["rotate"]["angle_y"].asInt();
     terrain.rotate_angles.angle_z = (*jsonBodyIn)["terrain"]["rotate"]["angle_z"].asInt();
+    std::cerr << "terrain.rotate_angles.angle_z: " << terrain.rotate_angles.angle_z << "\n";
     light.x = (*jsonBodyIn)["light"]["x"].asInt();
     light.y = (*jsonBodyIn)["light"]["y"].asInt();
     light.z = (*jsonBodyIn)["light"]["z"].asInt();
+
 
     return {terrain, light};
 }

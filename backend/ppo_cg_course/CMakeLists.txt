@@ -67,6 +67,7 @@ set(
     core/object/terrain/terrain.hpp
     core/object/terrain/terrain.cpp
 
+    core/scene/base_scene.hpp
     core/scene/scene_struct.h
     core/scene/scene.h
     core/scene/scene.cpp
@@ -180,6 +181,7 @@ add_executable(
     core/exceptions/base_error.h
     core/exceptions/errors.h
 
+    core/config/base_config.hpp
     core/config/config_struct.h
     core/config/config.h
     core/config/config.cpp
@@ -249,7 +251,7 @@ add_executable(
   tests/unit_tests/mocks.hpp
   tests/unit_tests/data_builders/user_builder.hpp
   tests/unit_tests/data_builders/point3D_builder.hpp
-  tests/unit_tests/data_builders/plain_builder.hpp
+  tests/unit_tests/data_builders/vector3D_builder.hpp
 
   tests/unit_tests/tests_point_3d.cpp
   tests/unit_tests/tests_vector_3d.cpp
@@ -300,6 +302,7 @@ add_executable(
   core/scene/scene_facade/scene_facade.h
   core/scene/scene_facade/scene_facade.cpp
 
+  core/scene/base_scene.hpp
   core/scene/scene.h
   core/scene/scene.cpp
 
@@ -400,6 +403,8 @@ set (
     http_server/controllers/terrains/terrain_controller.cpp
     http_server/controllers/users/user_controller.cpp
 
+    http_server/services/base_terrain_service.hpp
+    http_server/services/base_user_service.hpp
     http_server/services/user/struct_users_service.hpp
     http_server/services/user/users_service.cpp
     http_server/services/user/users_service.hpp

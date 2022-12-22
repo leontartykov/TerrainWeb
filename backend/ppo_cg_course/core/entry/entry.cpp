@@ -1,8 +1,9 @@
 # include "entry.h"
 #include <QDebug>
-#include "../exceptions/base_error.h"
+#include "core/exceptions/base_error.h"
 
 EntrySystem::EntrySystem(){
+    __dbModel = std::make_shared<Postgres>();
     _current_time = time(NULL);
 }
 
@@ -66,47 +67,55 @@ int EntrySystem::_verify_user(user_info_t &user){
     return error;
 }
 
+servUsers_t EntrySystem::__input_user_info()
+{
+    servUsers_t user;
+
+    std::cout << "Вход в систему." << "\n";
+
+    std::cout << "Логин: ";
+    std::cin >> user.login;
+
+    std::cout << "Пароль: ";
+    std::cin >> user.password;
+
+    return user;
+}
+
 int EntrySystem::enter_system(){
-    user_info_t user_info;
-    int error = 1;
+    servUsers_t userInfo;
+    int ret_code = 1;
+    log_info_t log_info_exception;
+    LogApp log_app;
 
-    while (error >= 0)
+    while (ret_code >= SUCCESS)
     {
-        std::cout << "Вход в систему." << std::endl;
+        userInfo = __input_user_info();
+        ret_code = __dbModel->login(userInfo.login, userInfo.password);
 
-        std::cout << "Логин: ";
-        std::cin >> user_info.login;
-
-        std::cout << "Пароль: ";
-        std::cin >> user_info.password;
-
-        error = this->_verify_user(user_info);
-
-        if (error == 0)
+        if (ret_code == SUCCESS)
         {
-            log_info_t log_info_exception;
             log_info_exception.type_log = "info";
             log_info_exception.message_error = "подключение пользователя.";
-            log_info_exception.user_login = user_info.login;
+            log_info_exception.user_login = userInfo.login;
             log_info_exception.time_error = ctime(&_current_time);
 
-            LogApp log_app;
             log_app.write_log_info(log_info_exception);
 
-            if (user_info.login.compare("admin") == 0){
+            if (userInfo.login.compare("admin") == 0){
                 std::shared_ptr<Admin> admin(new Admin());
-                std::shared_ptr<BaseUser> user = admin;
-                user->set_user_login(user_info.login);
-                error = user->do_action();
+                std::shared_ptr<BaseAppUser> user = admin;
+                user->set_user_login(userInfo.login);
+                ret_code = user->do_action();
             }
             else{
                 std::shared_ptr<User> con_user(new User());
-                std::shared_ptr<BaseUser> user = con_user;
-                user->set_user_login(user_info.login);
-                error = user->do_action();
+                std::shared_ptr<BaseAppUser> user = con_user;
+                user->set_user_login(userInfo.login);
+                ret_code = user->do_action();
             }
         }
     }
 
-    return error;
+    return ret_code;
 }

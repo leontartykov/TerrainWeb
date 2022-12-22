@@ -2,16 +2,16 @@
 #define _BUILDERS_HPP_
 
 #include <memory>
-#include "core/data_access/db_model/postgres/postgres_data/postgres_users/postgres_user.h"
+#include "http_server/services/user/struct_users_service.hpp"
 
 class UserBuilder
 {
     private:
-        dbUsers_t __user;
+        servUsers_t __user;
 
     public:
         UserBuilder() = default;
-        UserBuilder(dbUsers_t user)
+        UserBuilder(servUsers_t user)
         {
             __user.login = user.login;
             __user.password = user.password;
@@ -21,7 +21,7 @@ class UserBuilder
 
         std::unique_ptr<UserBuilder> BuildDefault()
         {
-            dbUsers_t user;
+            servUsers_t user;
             user.login = "default";
             user.password = "default";
             user.perm_level = 2;
@@ -29,7 +29,7 @@ class UserBuilder
             return std::make_unique<UserBuilder>(user);
         };
 
-        dbUsers_t getUser() const{
+        servUsers_t getUser() const{
             return __user;
         }
 };

@@ -2,9 +2,7 @@
 #include "png.hpp"
 
 
-int PNGImage::create(std::string &path, std::vector<std::vector<QColor> > &color_buffer)
-{
-}
+int PNGImage::create(std::string &path, std::vector<std::vector<QColor> > &color_buffer) {}
 
 int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_buffer,
                      scene_win_t win_boards)
@@ -98,6 +96,7 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
       }
     free(row_pointers);
 
+    std::cerr << "success: " << success << "\n";
     return success;
 }
 

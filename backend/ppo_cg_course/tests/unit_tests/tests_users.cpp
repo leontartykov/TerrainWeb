@@ -17,7 +17,7 @@ struct usersTest: public testing::Test
 //test fixture с AAA подходом
 TEST_F(usersTest, test_get_user_login_postgres_db)
 {
-    dbUsers_t user;
+    servUsers_t user;
 
     //Act
     dbModel->get_user(1, user);
@@ -51,7 +51,7 @@ TEST(tests_users_add_user, positive)
     //Act
     ret_code = admin->add_user(user->getUser());
     //Assert
-    EXPECT_EQ(ret_code, SUCCESS);
+    EXPECT_EQ(ret_code, SUCCESS_CREATED);
 }
 
 TEST(tests_users_delete_user, positive)
@@ -63,7 +63,7 @@ TEST(tests_users_delete_user, positive)
     //Arrange
     user = UserBuilder().BuildDefault();
     //Act
-    ret_code = admin->delete_user(user->getUser());
+    ret_code = admin->delete_user(user->getUser().login);
     //Assert
     EXPECT_EQ(ret_code, SUCCESS);
 }

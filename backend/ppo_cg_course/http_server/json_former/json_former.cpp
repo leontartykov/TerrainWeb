@@ -1,6 +1,6 @@
 #include "http_server/json_former/json_former.hpp"
 
-Json::Value form_json_response(dbUsers_t &user)
+Json::Value form_json_response(servUsers_t &user)
 {
     Json::Value json_ret;
     json_ret["login"] = user.login;
@@ -31,13 +31,24 @@ Json::Value form_json_response(std::vector<servTerrainProject_t> &ter_projs)
     count_ter_projs = ter_projs.size();
     for(int i = 0; i < count_ter_projs; ++i)
     {
-        jsonObj["id"] = ter_projs[i].id;
-        jsonObj["name"] = ter_projs[i].name;
         jsonObj["last_edited"] = ter_projs[i].last_edit;
+        jsonObj["name"] = ter_projs[i].name;
         jsonObjects.append(jsonObj);
     }
 
     return jsonObjects;
+}
+
+Json::Value form_json_response(const servTerrainProject_t &ter_proj)
+{
+    Json::Value jsonObj;
+    jsonObj["exhibited"] = ter_proj.exhibited;
+    jsonObj["n_rates"] = ter_proj.n_rates;
+    jsonObj["rating"] = ter_proj.rating;
+    jsonObj["last_edited"] = ter_proj.last_edit;
+    jsonObj["name"] = ter_proj.name;
+
+    return jsonObj;
 }
 
 Json::Value form_json_response(const servTerrain_t &terrain)

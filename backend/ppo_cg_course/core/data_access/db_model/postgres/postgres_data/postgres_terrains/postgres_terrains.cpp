@@ -46,35 +46,38 @@ void TerrainProjectsPostgres::set_terrain_params(std::string &project_name, dbTe
 }
 
 ///Return all user terrain projects
-int TerrainProjectsPostgres::get_terrain_projects(const int &user_id,
+int TerrainProjectsPostgres::get_terrain_projects(const int &user_id, int &page,
                                                   std::vector<dbTerrainProject_t> &dbTerProjs)
 {
-    std::string id_user = std::to_string(user_id);
+    std::string id_user = std::to_string(user_id), pageCard = std::to_string(page);
     pqxx::work worker(*__conn_psql);
     pqxx::result response;
     int ret_code = SUCCESS;
     int count_ter_projs;
     std::string query;
+    std::cerr << "get_terrain_projects\n";
 
-    query = "SELECT ter_projs.id, ter_projs.name, ter_projs.last_edited \
+    query = "SELECT ter_projs.name, ter_projs.last_edited \
                         FROM terrain_project.terrains.projects as ter_projs \
-                        JOIN terrain_project.terrains.terrains_users as ter_user \
-                             on ter_projs.id = ter_user.id_terrain \
+                        JOIN terrain_project.terrains.users_projs as ter_user \
+                             on ter_projs.name = ter_user.proj_name \
                         JOIN terrain_project.users.info as info \
-                             on info.id = ter_user.id_user where id_user = " + id_user + ";";
+                             on info.id = ter_user.id_user where id_user = " + id_user +
+                        " ORDER BY ter_projs.last_edited DESC, ter_projs.id_terrain DESC \
+                        LIMIT 3 OFFSET "+ std::to_string((page-1)*3) + ";";
     try{
         response = worker.exec(query);
+        std::cerr << "response.size: " << response.size() << "\n";
 
         if (response.empty()){
-            ret_code = NOT_FOUND;
+            ret_code = SUCCESS;
         }
         else{
             count_ter_projs = response.size();
             dbTerProjs.resize(count_ter_projs);
             for (int i = 0; i < count_ter_projs; ++i){
-                dbTerProjs[i].id = response[i][0].as<int>();
-                dbTerProjs[i].name = response[i][1].c_str();
-                dbTerProjs[i].last_edit = response[i][2].c_str();
+                dbTerProjs[i].name = response[i][0].c_str();
+                dbTerProjs[i].last_edit = response[i][1].c_str();
             }
         }
     }
@@ -82,6 +85,44 @@ int TerrainProjectsPostgres::get_terrain_projects(const int &user_id,
         std::cerr << e.what();
         return BAD_REQUEST;
     }
+    std::cerr << "ret_code: " << ret_code << "\n";
+    return ret_code;
+}
+
+int TerrainProjectsPostgres::get_terrain_project(const int userId, const std::string &projName,
+                                                 dbTerrainProject_t &dbTerProj)
+{
+    std::string id_user = std::to_string(userId);
+    pqxx::work worker(*__conn_psql);
+    pqxx::result response;
+    int ret_code = SUCCESS;
+    std::string query;
+
+    query = "SELECT name, last_edited, rating, n_rates, exhibited\
+             FROM terrain_project.terrains.projects as ter_projs \
+             JOIN terrain_project.terrains.users_projs as user_proj\
+                  on ter_projs.name = user_proj.proj_name \
+             WHERE ter_projs.name ='" + projName + "';";
+
+    try{
+        response = worker.exec(query);
+        std::cerr << "response_size: " << response.size() << "\n";
+        if (!response.size()){
+            ret_code = NOT_FOUND;
+        }
+        else{
+            dbTerProj.name = response[0][0].c_str();
+            dbTerProj.last_edit = response[0][1].c_str();
+            dbTerProj.rating = response[0][2].is_null() ? 0 : response[0][2].as<double>();
+            dbTerProj.n_rates = response[0][3].is_null() ? 0 : response[0][3].as<int>();
+            dbTerProj.exhibited = response[0][4].is_null() ? false : response[0][4].as<bool>();
+        }
+    }
+    catch(std::exception &e){
+        std::cerr << e.what();
+        return BAD_REQUEST;
+    }
+
     return ret_code;
 }
 
@@ -91,7 +132,9 @@ int TerrainProjectsPostgres::get_count_terrain_projects(){
 
 int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const std::string &terProjName)
 {
-    int new_ter_id = __count_terrain_projs + 1;
+    std::string query, newTerId;
+    int success = SUCCESS_CREATED;
+    pqxx::result response;
     if (!__conn_psql){
         std::cout << "Ошибка: нет подключения к БД." << std::endl;
         return CONNECTION_FAILED;
@@ -99,32 +142,49 @@ int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const s
 
     pqxx::work worker(*__conn_psql);
     try{
-        std::string query = "INSERT INTO terrain_project.terrains.terrains VALUES (" +
-                            std::to_string(new_ter_id) + ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);";
+        query = "SELECT COUNT(*) \
+                 FROM terrain_project.terrains.users_projs \
+                 WHERE proj_name='" + terProjName + "';";
+        response = worker.exec(query);
+        std::cerr << "response[0][0].as<int>(): " << response[0][0].as<int>() << "\n";
+        if (response[0][0].as<int>() == 1){
+            success = CONFLICT;
+        }
+        else{
+            query = "SELECT MAX(id) from terrain_project.terrains.terrains;";
+            response = worker.exec(query);
 
-        __count_terrain_projs++;
+            std::cerr << "response[0][0].c_str(): " << response[0][0].c_str() << "\n";
+            std::cerr << "response[0][0].c_str() is NULL: " << (response[0][0].is_null()) << "\n";
+            newTerId = (response[0][0].is_null()) ? "1" : std::to_string(response[0][0].as<int>() + 1);
 
-        worker.exec(query);
+            std::cerr << "newTerId: " << newTerId << "\n";
 
-        query = "INSERT INTO terrain_project.terrains.projects VALUES (" +
-                std::to_string(new_ter_id) + ", '" + terProjName + "', " + "'2022-01-01', " +
-                std::to_string(new_ter_id) + ");";
+            query = "INSERT INTO terrain_project.terrains.terrains VALUES (" +
+                                newTerId + ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);";
 
-        worker.exec(query);
+            __count_terrain_projs++;
 
-        query = "INSERT INTO terrain_project.terrains.terrains_users VALUES (" +
-                std::to_string(user_id) + ", " + std::to_string(new_ter_id) + ");";
+            worker.exec(query);
 
-        worker.exec(query);
-        worker.commit();
-        std::cerr << "success_created\n";
+            query = "INSERT INTO terrain_project.terrains.projects VALUES ('"
+                    + terProjName + "', " + "'today', null, null, null, " + newTerId + ");";
+
+            worker.exec(query);
+
+            query = "INSERT INTO terrain_project.terrains.users_projs VALUES (" +
+                    std::to_string(user_id) + ", '" + terProjName + "');";
+
+            worker.exec(query);
+            worker.commit();
+        }
     }
     catch (std::exception &e){
         std::cerr << e.what();
         return BAD_REQUEST;
     }
 
-    return SUCCESS_CREATED;
+    return success;
 }
 
 int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const int &terId, dbTerrain_t &ter)
@@ -132,6 +192,7 @@ int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const int &t
     pqxx::result response;
     std::string query;
     int ret_code = SUCCESS;
+    std::cerr << "here\n";
 
     if (!__conn_psql){
         std::cout << "Ошибка: нет подключения к БД." << std::endl;
@@ -149,7 +210,7 @@ int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const int &t
                       JOIN terrain_project.terrains.terrains as ter on \
                            proj.id_terrain = ter.id \
                       JOIN terrain_project.terrains.terrains_users as ter_usr \
-                           on ter_usr.id_terrain = proj.id_terrain \
+                           on ter_usr.id_project = proj.id_terrain \
                  WHERE ter_usr.id_user = " + std::to_string(user_id) + " AND proj.id_terrain = " +
                   std::to_string(terId) + ";";
 
@@ -179,7 +240,7 @@ int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const int &t
     return ret_code;
 }
 
-int TerrainProjectsPostgres::delete_terrain_project(const int &userId, const int &terId)
+int TerrainProjectsPostgres::delete_terrain_project(const int &userId, const std::string &projName)
 {
     pqxx::result response;
     std::string query, ter_id;
@@ -190,24 +251,32 @@ int TerrainProjectsPostgres::delete_terrain_project(const int &userId, const int
     }
 
     try {
-        ter_id = std::to_string(terId);
         pqxx::work worker(*__conn_psql);
         query = "DELETE \
-                FROM terrain_project.terrains.terrains_users \
-                WHERE id_user = " + std::to_string(userId) + " ;" +
-
-                "DELETE \
-                FROM terrain_project.terrains.projects \
-                WHERE id = " + ter_id + " ;" +
-
-                "DELETE \
-                FROM terrain_project.terrains.terrains \
-                WHERE id = " + ter_id + " ; ";
+                FROM terrain_project.terrains.users_projs \
+                WHERE proj_name = '" + projName + "' ;";
 
         response = worker.exec(query);
+        query = "SELECT id \
+                 FROM terrain_project.terrains.terrains \
+                 WHERE terrains.id = (select id_terrain \
+                                      from terrain_project.terrains.projects \
+                                      WHERE projects.name = '"+projName+"');";
+
+        response = worker.exec(query);
+        ter_id = response[0][0].c_str();
+        std::cerr << "proj_id: " << ter_id << "\n";
+        query = "DELETE \
+                FROM terrain_project.terrains.projects \
+                WHERE name = '" + projName + "' ;";
+        response = worker.exec(query);
+
+        query = "DELETE FROM terrain_project.terrains.terrains WHERE terrains.id=" + ter_id + ";";
+        response = worker.exec(query);
+
         worker.commit();
 
-        std::cout << "Удаление проекта с ландшафтом выполнено успешно.\n";
+        std::cerr << "Удаление проекта с ландшафтом выполнено успешно.\n";
     }
     catch (std::exception &e) {
         std::cerr << e.what();

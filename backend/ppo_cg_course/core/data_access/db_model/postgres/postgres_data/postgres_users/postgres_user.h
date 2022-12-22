@@ -25,6 +25,7 @@ class UserPostgres: public IUsersDb
         virtual int get(const int &id, dbUsers_t &user) override;
         virtual int add(const dbUsers_t &user) override;
         virtual int delete_user(const int &id) override;
+        virtual int delete_user(const std::string &login) override;
         virtual int update(const int &id, const dbUsers_t &user) override;
         virtual int block(const int &id) override;
         virtual int unlock(const int &id) override;
