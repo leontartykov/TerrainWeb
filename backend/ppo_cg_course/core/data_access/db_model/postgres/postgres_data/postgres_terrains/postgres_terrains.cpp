@@ -187,32 +187,26 @@ int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const s
     return success;
 }
 
-int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const int &terId, dbTerrain_t &ter)
+int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const std::string &projName, dbTerrain_t &ter)
 {
     pqxx::result response;
     std::string query;
     int ret_code = SUCCESS;
-    std::cerr << "here\n";
+    std::cerr << "GET_TERRAIN_PARAMS\n";
 
     if (!__conn_psql){
         std::cout << "Ошибка: нет подключения к БД." << std::endl;
         return CONNECTION_FAILED;
-    }
-    else if (terId > __count_terrain_projs){
-        return NOT_FOUND;
     }
 
     try{
         pqxx::work worker(*__conn_psql);
         query = "SELECT ter.width, ter.height, ter.scale, ter.octaves, ter.gain, ter.lacunarity, \
                         ter.seed, ter.frequency, ter.angle_x, ter.angle_y, ter.angle_z \
-                 FROM terrain_project.terrains.projects as proj\
-                      JOIN terrain_project.terrains.terrains as ter on \
-                           proj.id_terrain = ter.id \
-                      JOIN terrain_project.terrains.terrains_users as ter_usr \
-                           on ter_usr.id_project = proj.id_terrain \
-                 WHERE ter_usr.id_user = " + std::to_string(user_id) + " AND proj.id_terrain = " +
-                  std::to_string(terId) + ";";
+                 FROM terrain_project.terrains.terrains as ter\
+                 JOIN terrain_project.terrains.projects as terProj on terProj.id_terrain = ter.id \
+                 JOIN terrain_project.terrains.users_projs as usrProj on usrProj.proj_name = terProj.name \
+                 WHERE usrProj.id_user = "+std::to_string(user_id)+" AND usrProj.proj_name='"+projName+"';";
 
         response = worker.exec(query);
         if (response.empty()){

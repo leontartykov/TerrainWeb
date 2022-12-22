@@ -67,7 +67,7 @@ class Postgres: public DbModel
         int get_count_terrains();
 
         virtual int add_new_terrain_project(const int &userId, const std::string &terProjName) override;
-        virtual int get_terrain_params(const int &userId, const int &terId, servTerrain_t &terParams) override;
+        virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &terParams) override;
         virtual int get_terrain_projects(const int &userId, int &page,
                                          std::vector<servTerrainProject_t> &servTerProjects) override;
         virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &servTerProj) override;

@@ -14,7 +14,7 @@ class ITerrainService
     public:
     virtual ~ITerrainService() {};
     virtual int get_terrain_projects(const int &userId, int &page, std::vector<servTerrainProject_t> &terProjects) = 0;
-    virtual int get_terrain_params(const int &userId, const int &terId, servTerrain_t &servTer) = 0;
+    virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &servTer) = 0;
     virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &project) = 0;
     virtual int add_terrain_project(const int &userId, const std::string &terProjName) = 0;
     virtual int delete_terrain_project(int &userId, const std::string &projName) = 0;

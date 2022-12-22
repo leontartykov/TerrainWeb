@@ -21,12 +21,12 @@ int TerrainsService::get_terrain_projects(const int &userId, int &page,
     return ret_code;
 }
 
-int TerrainsService::get_terrain_params(const int &userId, const int &terId,
+int TerrainsService::get_terrain_params(const int &userId, const std::string &projName,
                                         servTerrain_t &servTer){
     int ret_code = BAD_REQUEST;
 
-    if (userId && terId){
-        ret_code = __dbModel->get_terrain_params(userId, terId, servTer);
+    if (userId && !projName.empty()){
+        ret_code = __dbModel->get_terrain_params(userId, projName, servTer);
     }
 
     return ret_code;

@@ -126,13 +126,13 @@ int Postgres::add_new_terrain_project(const int &userId, const std::string &terP
     return ret_code;
 }
 
-int Postgres::get_terrain_params(const int &userId, const int &terId, servTerrain_t &terParams)
+int Postgres::get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &terParams)
 {
     int ret_code = BAD_REQUEST;
 
     dbTerrain_t dbTerParams;
-    if (userId > 0 && userId < __nUsers && terId > 0 && terId <= __nTerrains){
-        ret_code = __terrains.get()->get_terrain_params(userId, terId, dbTerParams);
+    if (userId > 0 && userId < __nUsers && !projName.empty()){
+        ret_code = __terrains.get()->get_terrain_params(userId, projName, dbTerParams);
         __convertDbToServModel((const dbTerrain_t)dbTerParams, terParams);
     }
     return ret_code;

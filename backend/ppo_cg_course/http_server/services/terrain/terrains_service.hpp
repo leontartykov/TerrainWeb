@@ -26,7 +26,7 @@ class TerrainsService: public ITerrainService
         TerrainsService();
 
         virtual int get_terrain_projects(const int &userId, int &page, std::vector<servTerrainProject_t> &terProjects) override;
-        virtual int get_terrain_params(const int &userId, const int &terId, servTerrain_t &servTer) override;
+        virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &servTer) override;
         virtual int add_terrain_project(const int &userId, const std::string &terProjName) override ;
         virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &project) override;
         virtual int delete_terrain_project(int &userId, const std::string &projName) override;
