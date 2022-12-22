@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:7000/iu7_web_labs_2022/api/v1"
+      "url": "http://localhost/api/v1"
     }
   ],
   "tags": [
@@ -15,12 +15,19 @@
       "description": "information about users"
     },
     {
-      "name": "terrains",
+      "name": "projects",
       "description": "information about terrain projects"
     },
     {
-      "name": "authorization",
-      "description": "authorize users"
+      "name": "ratingJobs",
+      "description": "information about terrains rating"
+    },
+    {
+      "name": "renderJobs"
+    },
+    {
+      "name": "accounts",
+      "description": "users accounts"
     }
   ],
   "components": {
@@ -31,10 +38,10 @@
         "name": "Authorization",
         "in": "header"
       },
-      "Id": {
+      "UUID": {
         "type": "apiKey",
         "description": "API key to authorize requests. If you don't have an OpenWeatherMap API key, please login.",
-        "name": "Id",
+        "name": "UUID",
         "in": "header"
       }
     },
@@ -177,15 +184,105 @@
             }
           }
         }
+      },
+      "TerrainProjectRating": {
+        "type": "object",
+        "description": "rating terrain projects",
+        "properties": {
+          "rating": {
+            "type": "number",
+            "format": "double",
+            "description": "scale terrain by value"
+          }
+        }
+      },
+      "Scene": {
+        "type": "object",
+        "description": "forming terrain scene",
+        "properties": {
+          "terrain": {
+            "$ref": "#/components/schemas/TerrainSubmit"
+          },
+          "light": {
+            "type": "object",
+            "description": "scene light position",
+            "properties": {
+              "x": {
+                "type": "integer"
+              },
+              "y": {
+                "type": "integer"
+              },
+              "z": {
+                "type": "integer"
+              }
+            }
+          }
+        }
       }
     }
   },
   "paths": {
-    "/users": {
+    "/accounts/login": {
+      "post": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "authorize user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "login": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "login",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "authorization is successfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "authorization is forbidden"
+          },
+          "404": {
+            "description": "user is not found"
+          }
+        }
+      }
+    },
+    "/accounts/register": {
       "post": {
         "summary": "add new user (registration)",
         "tags": [
-          "users"
+          "accounts"
         ],
         "description": "add new user",
         "requestBody": {
@@ -213,14 +310,6 @@
             }
           }
         },
-        "security": [
-          {
-            "Authorization": []
-          },
-          {
-            "Id": []
-          }
-        ],
         "responses": {
           "200": {
             "description": "success"
@@ -256,7 +345,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "responses": {
@@ -271,14 +360,7 @@
             }
           },
           "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              }
-            }
+            "description": "Bad Request"
           },
           "404": {
             "description": "user is not found"
@@ -322,7 +404,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "responses": {
@@ -355,7 +437,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "responses": {
@@ -368,16 +450,24 @@
         }
       }
     },
-    "/users/{id}/terrains": {
+    "/users/{id}/projects": {
       "get": {
         "tags": [
-          "terrains"
+          "projects"
         ],
         "summary": "returns a list of terrain projects.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer"
@@ -389,7 +479,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "responses": {
@@ -421,7 +511,7 @@
       "post": {
         "summary": "add new terrain",
         "tags": [
-          "terrains"
+          "projects"
         ],
         "description": "add new terrain",
         "parameters": [
@@ -439,7 +529,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "requestBody": {
@@ -472,10 +562,10 @@
         }
       }
     },
-    "/users/{id}/terrains/{terrain_id}": {
+    "/users/{id}/projects/{terrain_id}": {
       "get": {
         "tags": [
-          "terrains"
+          "projects"
         ],
         "summary": "get config values for this terrain",
         "parameters": [
@@ -501,7 +591,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "responses": {
@@ -529,10 +619,12 @@
             "description": "user is not available"
           }
         }
-      },
+      }
+    },
+    "/users/{id}/projects/{name_proj}": {
       "delete": {
         "tags": [
-          "terrains"
+          "projects"
         ],
         "summary": "delete terrain by terrain id and user id",
         "security": [
@@ -540,7 +632,7 @@
             "Authorization": []
           },
           {
-            "Id": []
+            "UUID": []
           }
         ],
         "parameters": [
@@ -553,7 +645,88 @@
             }
           },
           {
-            "name": "terrain_id",
+            "name": "name_proj",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "terrain was deleted successful"
+          },
+          "403": {
+            "description": "forbidden"
+          },
+          "404": {
+            "description": "not found"
+          }
+        }
+      }
+    },
+    "/renderJobs/terrains/image": {
+      "post": {
+        "tags": [
+          "renderJobs"
+        ],
+        "summary": "render terrain picture",
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "UUID": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Scene"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "success",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "authorization is denied"
+          },
+          "404": {
+            "description": "terrain is not found"
+          }
+        }
+      }
+    },
+    "/ratingJobs/terrain/{id}/rate": {
+      "get": {
+        "tags": [
+          "ratingJobs"
+        ],
+        "summary": "get terrain rating",
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "UUID": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -563,36 +736,53 @@
         ],
         "responses": {
           "200": {
-            "description": "terrain was deleted successful"
-          },
-          "404": {
-            "description": "not found"
+            "description": "success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerrainProjectRating"
+                }
+              }
+            }
           }
         }
-      }
-    },
-    "/login": {
+      },
       "post": {
         "tags": [
-          "authorization"
+          "ratingJobs"
         ],
-        "summary": "authorize user",
+        "summary": "set terrain rating",
+        "security": [
+          {
+            "Authorization": []
+          },
+          {
+            "UUID": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "login": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
+                  "rating": {
+                    "type": "integer",
+                    "example": 5
                   }
                 },
                 "required": [
-                  "login",
-                  "password"
+                  "rating"
                 ]
               }
             }
@@ -600,25 +790,13 @@
         },
         "responses": {
           "200": {
-            "description": "authorization is successfull",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "access_token": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "success"
           },
           "403": {
             "description": "authorization is denied"
+          },
+          "404": {
+            "description": "terrain is not found"
           }
         }
       }
