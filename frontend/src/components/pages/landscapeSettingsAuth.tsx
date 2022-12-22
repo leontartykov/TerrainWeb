@@ -5,11 +5,11 @@ import NavBar from "components/navbar/"
 import Button from "components/button"
 import {TerrainForm} from "components/form"
 
-export const LandscapeSettingsAuthComponent = (props: {onClickGenerate?: any, image?: string}) =>{
+export const LandscapeSettingsAuthComponent = (props: {userName?: string|null, onClickGenerate?: any, image?: string}) =>{
     return (
         console.log("IMAGE_PATH"),
         <form>
-            <NavBar main_menu="Ландшафт" icon_return_back="arrow_back" icon_my_projects="cottage" usr_name="user_11" search="Искать..." icon_logout="logout"></NavBar>
+            <NavBar main_menu="Ландшафт" icon_my_projects="cottage" usr_name={props.userName} search="Искать..." icon_logout="logout"></NavBar>
             <div className={formStyle.terrainSettingsUnion}>
                 <div className={formStyle.formSettingBlocks}>
                     <TerrainForm action="Размеры" width="Ширина" height="Длина" scale="Масштаб"></TerrainForm>

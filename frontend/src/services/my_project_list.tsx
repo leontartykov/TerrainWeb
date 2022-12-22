@@ -3,6 +3,7 @@ import {MyProjectListAuthPageComponent} from "components/pages/myProjectListAuth
 import ProjectService from "services/projects_service"
 import projectInfo from "components/types/projects"
 
+
 export default class MyProjectListAuthService extends React.Component {
     page: string = "1";
     newProjName: string = "";
@@ -12,10 +13,12 @@ export default class MyProjectListAuthService extends React.Component {
     is_projects: string = "no";
     needPageCard: string = "no";
     selectedMyProj: string = "";
+    checkedFirstProj: string = "";
+
 
     constructor(props: any){
         super(props);
-        this.getFirstPage();    
+        this.getFirstPage();   
     }
 
     async getFirstPage(){
@@ -33,6 +36,15 @@ export default class MyProjectListAuthService extends React.Component {
 
     setFoundMyProject(value: string){
         this.selectedMyProj = value;
+    }
+
+    setCheckFirstProject(value: string){
+        this.checkedFirstProj = value
+    }
+
+    async handleInputCheckboxChange(event: React.ChangeEvent<HTMLInputElement>){
+        console.log("handleInputCheckboxChange");
+        console.log("valueCheckbox: ", event.target.checked); // Not Working 
     }
 
     async handlePage(event: React.SyntheticEvent){
@@ -60,8 +72,9 @@ export default class MyProjectListAuthService extends React.Component {
         this.render();
     }
 
-    async handleDeleteSelectedProjs(event: React.SyntheticEvent){
-
+    handleDeleteSelectedProjs(event: React.SyntheticEvent){
+        event.preventDefault();
+        console.log("deleteSelectedProjects");
     }
 
     async handleAddProject(event: React.SyntheticEvent){
@@ -126,6 +139,8 @@ export default class MyProjectListAuthService extends React.Component {
                     project2={this.projects.data[1]} project3={this.projects.data[2]}
                     onChangeSearchMyProject={event => {this.setFoundMyProject(event.currentTarget.value)}}
                     onKeyPressSearchMyProject={this.handleFindMyProj.bind(this)}
+                    
+                    onClickCheckbox={event => this.handleInputCheckboxChange(event.currentTarget.value)}
                     onClickDownload={this.handleDownload.bind(this)}
                     onClickDelete={this.handleDelete.bind(this)}
                     onClickDeleteSelected={this.handleDeleteSelectedProjs.bind(this)}

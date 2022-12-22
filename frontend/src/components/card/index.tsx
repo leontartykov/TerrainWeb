@@ -14,11 +14,12 @@ export const ProjectCard = (props: {idDel?: string, idDownload?: string,
                                     download?: string, delete?: string,
                                     onClickSearchMyProject?: any, onChangeSearchMyProject?: (name: any) => void,
                                     onKeyPressSearchMyProject?: (name: any) => void,
-                                    onClickDelete?: any, onClickDownload?: any}) => {                         
+                                    onClickDelete?: any, onClickDownload?: any,
+                                    onClickCheckbox?: any, isChecked?: boolean}) => {                         
     return(
         <div className={cardStyle.card}>
             <div className={navbarStyle.group}>
-                {props.checkbox ? <input type="checkbox" id={props.id_checkbox} name="scales"></input> : null}
+                {props.checkbox ? <input type="checkbox" id={props.id_checkbox} name="scales" checked={props.isChecked} onChange={props.onClickCheckbox}></input> : null}
                 {props.project ? <Link to="/auth/myProjs/id"><Button style={buttonStyle.buttonCardProject} icon_style={buttonStyle.button__icon}>{props.project}</Button></Link>: null}
             </div>
             <div className={navbarStyle.group}>
