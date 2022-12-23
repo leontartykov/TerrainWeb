@@ -63,7 +63,17 @@ int TerrainsService::get_terrain_project(const int &userId, const std::string &p
     return ret_code;
 }
 
-int TerrainsService::delete_terrain_project(int &userId, const std::string &projName){
+int TerrainsService::save_terrain_params(const int &userId, const std::string &projName, const servTerrain_t &servTer)
+{
+    int ret_code = BAD_REQUEST;
+    if (userId && !projName.empty()){
+        ret_code = __dbModel->save_terrain_params(userId, projName, servTer);
+    }
+
+    return ret_code;
+}
+
+int TerrainsService::delete_terrain_project(const int &userId, const std::string &projName){
     int ret_code = BAD_REQUEST;
     if (userId && !projName.empty()){
         ret_code = __dbModel->delete_terrain_project(userId, projName);
@@ -89,7 +99,7 @@ bool TerrainsService::get_render_png_image(dbTerrain_t &terrain, light_t &light)
 {
     bool success;
     all_scene_info_t scene_info;
-    std::string file_name = "images/fee.png";
+    std::string file_name = "../images/fee.png";
     std::vector<std::vector<QColor>> color_matrix;
     struct scene_window win_boards;
 

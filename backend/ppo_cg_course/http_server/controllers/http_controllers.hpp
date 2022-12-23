@@ -67,13 +67,15 @@ namespace api
                 std::pair<dbTerrain_t, light_t>
                     __handle_json_body(std::shared_ptr<Json::Value> jsonBodyIn);
 
-            public:
+                servTerrain_t __handle_json_Body(std::shared_ptr<Json::Value> jsonBodyIn);
+        public:
                 TerrainsController();
                 METHOD_LIST_BEGIN
                     ADD_METHOD_TO(TerrainsController::get_all_terrain_projects, "api/v1/users/{1}/projects?page={2}", Get, Options);
                     ADD_METHOD_TO(TerrainsController::add_new_project, "api/v1/users/{1}/projects", Post, Options);
                     ADD_METHOD_TO(TerrainsController::get_terrain_params, "api/v1/users/{1}/projects/{2}/values", Get, Options);
                     ADD_METHOD_TO(TerrainsController::find_project, "api/v1/users/{1}/projects/{2}", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::save_project, "api/v1/users/{1}/projects/{2}", Put, Options);
                     ADD_METHOD_TO(TerrainsController::delete_terrain_project, "api/v1/users/{1}/projects/{2}", Delete, Options);
                     ADD_METHOD_TO(TerrainsController::get_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Get, Options);
                     ADD_METHOD_TO(TerrainsController::set_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Post, Options);
@@ -92,7 +94,9 @@ namespace api
                 void find_project(const HttpRequestPtr &req,
                                   std::function<void (const HttpResponsePtr &)> &&callback,
                                   std::string userId, std::string projName);
-
+                void save_project(const HttpRequestPtr &req,
+                                  std::function<void (const HttpResponsePtr &)> &&callback,
+                                  std::string userId, std::string projName);
                 void delete_terrain_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string userId, std::string projName);

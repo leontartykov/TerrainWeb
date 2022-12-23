@@ -208,6 +208,19 @@ int Postgres::get_terrain_project(const int &userId, const std::string &projName
     return ret_code;
 }
 
+int Postgres::save_terrain_params(const int &userId, const std::string &projName,
+                                  const servTerrain_t &servTer)
+{
+    dbTerrain_t dbTer;
+    int ret_code = NOT_FOUND;
+    if (userId > 0 && !projName.empty()){
+        __convertServToDbModel(servTer, dbTer);
+        ret_code = __terrains->set_terrain_params(userId, projName, dbTer);
+    }
+
+    return ret_code;
+}
+
 void Postgres::__convertDbToServModel(const dbUsers_t &dbUser, servUsers_t &servUser)
 {
     servUser.id = dbUser.id;
@@ -223,6 +236,15 @@ void Postgres::__convertServToDbModel(const servUsers_t &servUser, dbUsers_t &db
     dbUser.login = servUser.login;
     dbUser.password = servUser.password;
     dbUser.perm_level = servUser.perm_level;
+}
+
+void Postgres::__convertServToDbModel(const servTerrain_t &servTer, dbTerrain_t &dbTer)
+{
+    dbTer.width = servTer.width;
+    dbTer.height = servTer.height;
+    dbTer.meta_config = servTer.meta_config;
+    dbTer.scale = servTer.scale;
+    dbTer.rotate_angles = servTer.rotate_angles;
 }
 
 void Postgres::__convertDbToServModel(const dbTerrain_t &dbTerParams, servTerrain_t &terParams){

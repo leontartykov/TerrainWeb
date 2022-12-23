@@ -29,6 +29,7 @@ class TerrainProjectsPostgres
         int get_terrain_projects(const int &user_id, int &page, std::vector<dbTerrainProject_t> &dbTerProjs);
         int get_terrain_project(const int userId, const std::string &projName, dbTerrainProject_t &dbTerProj);
         int get_count_terrain_projects();
+        int set_terrain_params(const int &user_id, const std::string &projName, const dbTerrain_t &ter);
 
         int add_new_terrain_project(const int &user_id, const std::string &terProjName);
         int get_terrain_params(const int &user_id, const std::string &projName, dbTerrain_t &ter);

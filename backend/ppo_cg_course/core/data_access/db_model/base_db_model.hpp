@@ -25,6 +25,7 @@ class DbModel
         virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &terParams) = 0;
         virtual int get_terrain_projects(const int &userId, int &page, std::vector<servTerrainProject_t> &servTerProjects) = 0;
         virtual int get_terrain_project(const int &userId,  const std::string &projName, servTerrainProject_t &servTerProj) = 0;
+        virtual int save_terrain_params(const int &userId, const std::string &projName, const servTerrain_t &servTer) = 0;
         virtual int delete_terrain_project(const int &userId, const std::string &projName) = 0;
         virtual int get_terrain_project_rating(const int &terId, double &rating) = 0;
         virtual int set_terrain_project_rating(const int &terId, const int &rating) = 0;

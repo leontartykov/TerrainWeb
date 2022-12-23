@@ -29,6 +29,7 @@ class MockDb: public DbModel
         MOCK_METHOD(int, add_new_terrain_project, (const int &userId, const std::string &terProjName), (override));
         MOCK_METHOD(int, get_terrain_params, (const int &userId, const std::string &projName, servTerrain_t &terParams), (override));
         MOCK_METHOD(int, get_terrain_projects, (const int &userId, int &page, std::vector<servTerrainProject_t> &servTerProjects), (override));
+        MOCK_METHOD(int, save_terrain_params, (const int &userId, const std::string &projName, const servTerrain_t &servTer), (override));
         MOCK_METHOD(int, get_terrain_project, (const int &userId, const std::string &projName, servTerrainProject_t &servTerProjects), (override));
         MOCK_METHOD(int, delete_terrain_project, (const int &userId, const std::string &projName), (override));
         MOCK_METHOD(int, get_terrain_project_rating, (const int &terId, double &rating), (override));

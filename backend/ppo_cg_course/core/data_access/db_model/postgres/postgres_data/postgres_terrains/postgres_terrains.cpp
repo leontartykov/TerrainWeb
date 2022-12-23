@@ -130,6 +130,59 @@ int TerrainProjectsPostgres::get_count_terrain_projects(){
     return __count_terrain_projs;
 }
 
+int TerrainProjectsPostgres::set_terrain_params(
+        const int &user_id, const std::string &projName, const dbTerrain_t &ter)
+{
+    pqxx::result response;
+    std::string query;
+    int success = SUCCESS;
+    pqxx::work worker(*__conn_psql);
+    std::cerr << "GET_TERRAIN_PARAMS\n";
+    std::string id_terrain;
+
+    if (!__conn_psql){
+        std::cout << "Ошибка: нет подключения к БД." << std::endl;
+        return CONNECTION_FAILED;
+    }
+
+    query = "SELECT id_terrain \
+             FROM terrain_project.terrains.users_projs \
+             JOIN terrain_project.terrains.projects ON users_projs.proj_name = projects.name \
+             WHERE users_projs.id_user = "+std::to_string(user_id)+" AND users_projs.proj_name = '"+projName+"';";
+    try{
+        response = worker.exec(query);
+        if (!response[0][0].is_null()){
+            id_terrain = response[0][0].c_str();
+            std::cerr << "id_terrain: " << id_terrain << "\n";
+            query = "UPDATE terrain_project.terrains.terrains SET \
+                    width = "+std::to_string(ter.width)+
+                    ",height= "+ std::to_string(ter.height)+","+
+                    "scale="+std::to_string(ter.scale)+","+
+                    "octaves="+std::to_string(ter.meta_config.octaves)+","+
+                    "gain="+std::to_string(ter.meta_config.gain)+","+
+                    "lacunarity="+std::to_string(ter.meta_config.lacunarity)+","+
+                    "seed="+std::to_string(ter.meta_config.seed)+","+
+                    "frequency="+std::to_string(ter.meta_config.frequency)+","+
+                    "angle_x="+std::to_string(ter.rotate_angles.angle_x)+","+
+                    "angle_y="+std::to_string(ter.rotate_angles.angle_y)+","+
+                    "angle_z="+std::to_string(ter.rotate_angles.angle_z)+" "+
+                    "WHERE id = " + id_terrain+ ";";
+            worker.exec(query);
+            worker.commit();
+        }
+        else{
+            success = BAD_REQUEST;
+        }
+        std::cerr << "success: " << success << "\n";
+    }
+    catch (std::exception &e){
+        std::cerr << e.what();
+        return BAD_REQUEST;
+    }
+
+    return success;
+}
+
 int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const std::string &terProjName)
 {
     std::string query, newTerId;

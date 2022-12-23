@@ -157,6 +157,44 @@ void api::v1::TerrainsController::find_project(
     }
 }
 
+void api::v1::TerrainsController::save_project(const HttpRequestPtr &req,
+                                               std::function<void (const HttpResponsePtr &)> &&callback,
+                                               std::string userId, std::string projName)
+{
+    int user_id, terrain_id, ret_code, uuid;
+    Json::Value jsonBody;
+    std::string token;
+    drogon::HttpResponsePtr resp;
+    std::shared_ptr<Json::Value> jsonBodyIn;
+    std::cerr << "DELETE\n";
+    servTerrain_t terrain;
+
+    try{
+        std::cerr << "here_del_params\n";
+        /*token = req.get()->getHeader("Authorization");
+        uuid = std::stoi(req.get()->getHeader("UUID"));
+        ret_code = __sessions.check_usr_authorization(token, uuid);
+        if (ret_code != SUCCESS){
+            resp = form_http_response(ret_code, jsonBody);
+        }
+        else{*/
+            user_id = std::stoi(userId);
+            jsonBodyIn = req->getJsonObject();
+            terrain = __handle_json_Body(jsonBodyIn);
+            ret_code = __terrains_service->save_terrain_params(user_id, projName, terrain);
+            resp = form_http_response(ret_code, jsonBody);
+        //}
+
+        callback(resp);
+    }
+    catch (std::exception &e) {
+        std::cerr << e.what();
+        ret_code = BAD_REQUEST;;
+        resp = form_http_response(ret_code, jsonBody);
+        callback(resp);
+    }
+}
+
 void api::v1::TerrainsController::delete_terrain_project(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
      std::string userId, std::string projName)
@@ -270,7 +308,7 @@ void api::v1::TerrainsController::get_render_image(
     drogon::HttpResponsePtr resp;
     std::pair<dbTerrain_t, light_t> scene_info;
     std::shared_ptr<Json::Value> jsonBodyIn;
-    std::string filename = "images/fee.png";
+    std::string filename = "../images/fee.png";
     std::cerr << "RENDER_JOBS\n";
 
     try{
@@ -281,7 +319,7 @@ void api::v1::TerrainsController::get_render_image(
             resp = form_http_response(ret_code, jsonBodyout);
         }
         else{*/
-            jsonBodyIn = req.get()->getJsonObject();
+            jsonBodyIn = req->getJsonObject();
             scene_info = __handle_json_body(jsonBodyIn);
             ret_code = __terrains_service->get_render_png_image(scene_info.first, scene_info.second);
             std::cerr << "ret_code: " << ret_code << "\n";
@@ -303,9 +341,7 @@ std::pair<dbTerrain_t, light_t>
     dbTerrain_t terrain;
     light_t light;
 
-    std::cerr << "width: " << (*jsonBodyIn)["terrain"]["size"]["width"] <<"\n";
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
-    std::cerr << "terrain.width: " << terrain.width << "\n";
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
@@ -323,4 +359,23 @@ std::pair<dbTerrain_t, light_t>
 
 
     return {terrain, light};
+}
+
+servTerrain_t api::v1::TerrainsController::__handle_json_Body(std::shared_ptr<Json::Value> jsonBodyIn)
+{
+    servTerrain_t terrain;
+
+    terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
+    terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
+    terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
+    terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
+    terrain.meta_config.gain = (*jsonBodyIn)["terrain"]["config"]["gain"].asDouble();
+    terrain.meta_config.lacunarity = (*jsonBodyIn)["terrain"]["config"]["lacunarity"].asDouble();
+    terrain.meta_config.seed = (*jsonBodyIn)["terrain"]["config"]["seed"].asInt();
+    terrain.meta_config.frequency = (*jsonBodyIn)["terrain"]["config"]["frequency"].asDouble();
+    terrain.rotate_angles.angle_x = (*jsonBodyIn)["terrain"]["rotate"]["angle_x"].asInt();
+    terrain.rotate_angles.angle_y = (*jsonBodyIn)["terrain"]["rotate"]["angle_y"].asInt();
+    terrain.rotate_angles.angle_z = (*jsonBodyIn)["terrain"]["rotate"]["angle_z"].asInt();
+
+    return terrain;
 }
