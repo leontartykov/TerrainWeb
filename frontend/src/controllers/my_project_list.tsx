@@ -59,24 +59,13 @@ export default class MyProjectListAuthService extends React.Component {
         this.render();
     }
 
-    handleDownload(event: React.SyntheticEvent) {
-        event.preventDefault();
-        console.log("On handle Download.");
-        console.log("id_download: ", event.currentTarget.id);
-    }
-
     async handleDelete(event: React.SyntheticEvent) {
         event.preventDefault();
         let projName = event.currentTarget.id;
-        this.data_resp = await ProjectService.DeleteProject("2", projName);
-        this.projects = await ProjectService.GetUserProjects("2", this.page);
+        this.data_resp = await ProjectService.DeleteProject(this.userName, projName);
+        this.projects = await ProjectService.GetUserProjects(this.userName, this.page);
         this.setState({ mssg: "Hi there!" });
         this.render();
-    }
-
-    handleDeleteSelectedProjs(event: React.SyntheticEvent) {
-        event.preventDefault();
-        console.log("deleteSelectedProjects");
     }
 
     async handleAddProject(event: React.SyntheticEvent) {
@@ -84,7 +73,7 @@ export default class MyProjectListAuthService extends React.Component {
         console.log("Add project");
         console.log("this.newProjName: ", this.newProjName);
         if (this.newProjName) {
-            this.data_resp = await ProjectService.AddProject("2", this.newProjName);
+            this.data_resp = await ProjectService.AddProject(this.userName, this.newProjName);
             console.log(this.data_resp.status);
             if (this.data_resp.status == 409) {
                 let component = document.getElementById("createNewProjError");
@@ -97,7 +86,7 @@ export default class MyProjectListAuthService extends React.Component {
                 if (component) {
                     component.innerText = "";
                 }
-                this.projects = await ProjectService.GetUserProjects("2", this.page);
+                this.projects = await ProjectService.GetUserProjects(this.userName, this.page);
 
                 this.newProjName = ""
                 this.setState({ mssg: "Hi there!" });
@@ -115,11 +104,11 @@ export default class MyProjectListAuthService extends React.Component {
     async handleFindMyProj(event: KeyboardEvent) {
         if (event.key === 'Enter') {
             if (this.selectedMyProj != "") {
-                this.projects = await ProjectService.FindMyProject("2", this.selectedMyProj);
+                this.projects = await ProjectService.FindMyProject(this.userName, this.selectedMyProj);
 
             }
             else {
-                this.projects = await ProjectService.GetUserProjects("2", this.page);
+                this.projects = await ProjectService.GetUserProjects(this.userName, this.page);
             }
             this.setState({ mssg: "Hi there!" });
             this.render();
@@ -154,12 +143,11 @@ export default class MyProjectListAuthService extends React.Component {
                 onClickPage={this.handlePage.bind(this)} project1={this.projects.data[0] || this.projects.data}
                 project2={this.projects.data[1]} project3={this.projects.data[2]}
                 onChangeSearchMyProject={event => { this.setFoundMyProject(event.currentTarget.value) }}
+                onChangeAddNewProject={event => { this.setNewProjName(event.currentTarget.value) }}
                 onKeyPressSearchMyProject={this.handleFindMyProj.bind(this)}
 
                 onClickCheckbox={event => this.handleInputCheckboxChange(event.currentTarget.value)}
-                onClickDownload={this.handleDownload.bind(this)}
                 onClickDelete={this.handleDelete.bind(this)}
-                onClickDeleteSelected={this.handleDeleteSelectedProjs.bind(this)}
                 onClickAddProject={this.handleAddProject.bind(this)}
                 onClickHandleProject1={this.handleOnClickProject.bind(this)}
                 onClickHandleProject2={this.handleOnClickProject.bind(this)}
@@ -175,7 +163,8 @@ export default class MyProjectListAuthService extends React.Component {
                     isProjects={this.is_projects} userName={this.userName} activePage={+this.page} needPageCard={this.needPageCard}
                     onClickPage={this.handlePage.bind(this)}
                     onClickAddProject={this.handleAddProject.bind(this)}
-                    onChangeSearchMyProject={event => this.setNewProjName(event.currentTarget.value)}></MyProjectListAuthPageComponent>)
+                    onChangeSearchMyProject={event => this.setFoundMyProject(event.currentTarget.value)}
+                    onChangeAddNewProject={event => { this.setNewProjName(event.currentTarget.value) }}></MyProjectListAuthPageComponent>)
         }
     }
 }

@@ -5,6 +5,9 @@ import NavBar from "components/navbar/"
 import Button from "components/button"
 import { TerrainForm } from "components/form"
 import { TerrainValues } from "components/types/terrain"
+import switcherStyle from "components/switcher/style.module.scss"
+import Input from "components/input"
+import groupStyles from "components/group/style.module.scss"
 
 export const LandscapeSettingsAuthComponent = (props: {
     userName?: string | null, onClickGenerate?: any,
@@ -38,7 +41,13 @@ export const LandscapeSettingsAuthComponent = (props: {
                             onChangeTerOctaves={props.onChangeTerOctaves} onChangeTerLacunarity={props.onChangeTerLacunarity}
                             onChangeTerGain={props.onChangeTerGain} onChangeTerSeed={props.onChangeTerSeed} onChangeTerFrequency={props.onChangeTerFrequency}></TerrainForm>
                     </div>
-                    <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
+                    <div className={groupStyles.groupGenerateButtonSetToRating}>
+                        <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
+                        <div className={buttonStyle.groupLabelSwitcher}>
+                            <Input style={switcherStyle.switch} id="switch1" type="checkbox"></Input>
+                            <label className={switcherStyle.switch_for} htmlFor="switch1">Добавить в рейтинг</label>
+                        </div>
+                    </div>
                 </div>
                 {props.image ? <img width="500" height="600" src={`data:image/png;base64,${props.image}`}></img> : null}
             </div>

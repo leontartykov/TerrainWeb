@@ -100,7 +100,7 @@ export const TerrainForm = (props: {
                 {props.landscape ? <div>
                     <span>{props.landscape}</span>
                     <div className={formStyles.terrainRowCoords}>
-                        <CoordinatesForm coord="X" input="input" value={props.terVals.rotate.angle_y} onChange={props.onChangeTerRotateX}></CoordinatesForm>
+                        <CoordinatesForm coord="X" input="input" value={props.terVals.rotate.angle_x} onChange={props.onChangeTerRotateX}></CoordinatesForm>
                         <CoordinatesForm coord="Y" input="input" value={props.terVals.rotate.angle_y} onChange={props.onChangeTerRotateY}></CoordinatesForm>
                         <CoordinatesForm coord="Z" input="input" value={props.terVals.rotate.angle_z} onChange={props.onChangeTerRotateZ}></CoordinatesForm>
                     </div>
@@ -108,9 +108,9 @@ export const TerrainForm = (props: {
                 {props.light ? <div>
                     <span>{props.light}</span>
                     <div className={formStyles.terrainRowCoords}>
-                        <CoordinatesForm coord="X" input="input"></CoordinatesForm>
-                        <CoordinatesForm coord="Y" input="input"></CoordinatesForm>
-                        <CoordinatesForm coord="Z" input="input"></CoordinatesForm>
+                        <CoordinatesForm coord="X" value={100} input="input"></CoordinatesForm>
+                        <CoordinatesForm coord="Y" value={100} input="input"></CoordinatesForm>
+                        <CoordinatesForm coord="Z" value={100} input="input"></CoordinatesForm>
                     </div>
                 </div> : null}
             </div>

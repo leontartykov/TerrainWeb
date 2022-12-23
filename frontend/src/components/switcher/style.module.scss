@@ -1,0 +1,43 @@
+@import "index.css";
+
+.switch_for{
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 25px;
+    position: relative;
+}
+
+.switch_for::after{
+    content: "";
+    width: 50px;
+    height: 25px;
+    background-color: var(--StrokeColor);
+    border: 1px solid var(--FontColor2);
+    border-radius: var(--BorderRadius);
+    position: absolute;
+    top: -4px;
+    right: -62px;
+}
+
+.switch_for::before{
+    content: "";
+    width: 21px;
+    height: 21px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    right: -35px;
+    top: -1px;
+    z-index: 1;
+    transition-duration: 300ms;
+}
+
+
+.switch{
+    display: none;
+}
+
+.switch:checked ~ .switch_for::before{
+    right: -58px;
+    background-color: #a86d2d;
+}

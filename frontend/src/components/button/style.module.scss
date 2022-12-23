@@ -69,6 +69,8 @@
     background:var(--SettingsBackgroundColor);
     font-size: var(--TitleText);
     border: none;
+    color: var(--FontColor1);
+    text-decoration: none;
 
     &:hover {
         background: var(--HoverColor);

@@ -47,15 +47,14 @@ export const ProjectCard = (props: {
 
 export const SearchCard = (props: {
     placeholder?: string, deleteProjIcon?: string, addProjIcon?: string,
-    onClickAddProject?: any, onClickDeleteSelected?: any, onKeyPressSearchMyProject?: any,
-    onChangeSearchMyProject?: any
+    onClickAddProject?: any, onKeyPressSearchMyProject?: any,
+    onChangeSearchMyProject?: any, onChangeAddNewProject?: (name: any) => void
 }) => {
     return (
         <div className={cardStyle.searchCard}>
             {props.placeholder ? <Input style={inputStyle.searchProject} placeholder={props.placeholder}
                 onKeyPress={props.onKeyPressSearchMyProject} onChange={props.onChangeSearchMyProject}></Input> : null}
-            {props.deleteProjIcon ? <Button icon_style={buttonStyle.button__icon_settings} style={buttonStyle.buttonProject} icon={props.deleteProjIcon}
-                onClick={props.onClickDeleteSelected}></Button> : null}
+            {props.deleteProjIcon ? <Button icon_style={buttonStyle.button__icon_settings} style={buttonStyle.buttonProject} icon={props.deleteProjIcon}></Button> : null}
             {props.addProjIcon ? <Button icon_style={buttonStyle.button__icon_settings} style={buttonStyle.buttonProject} icon={props.addProjIcon}
                 onClick={props.onClickAddProject}></Button> : null}
         </div>
