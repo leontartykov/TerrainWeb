@@ -1,12 +1,12 @@
 import {Routes, Route} from "react-router-dom"
 
-import {SignInPage} from "components/pages/signInPage"
-import {RegistrationPage} from "components/pages/registrationPage"
+import {SignInPage} from "controllers/sign_in_page"
+import {RegistrationPage} from "controllers/registration_page"
 import {AllProjectsAuthSelectedFirstPage} from "components/pages/allProjectsAuthSelectedFirstPage"
-import MyProjectListAuthPageService from "services/my_project_list"
-import LandscapeSettingsAuthService from "services/landscape_setting_auth_service"
-import MainPageUnauth from "services/main_page_unauth"
-import MainPageAuthService from "services/main_page_auth"
+import MyProjectListAuthPageService from "controllers/my_project_list"
+import LandscapeSettingsAuthService from "controllers/landscape_setting_auth_service"
+import MainPageUnauth from "controllers/main_page_unauth"
+import MainPageAuthService from "controllers/main_page_auth"
 
 export default function App() {
   return(

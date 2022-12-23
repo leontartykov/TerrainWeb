@@ -6,7 +6,8 @@ export default Axios.create(
         headers:{
             'Access-Control-Allow-Methods': 'OPTIONS, POST, Get, Delete, Put, Patch',
             'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json, image/png',
+            'Content-Type': ['application/json', 'image/png'],
+            responseType: "arraybuffer",
         }
     }
 )

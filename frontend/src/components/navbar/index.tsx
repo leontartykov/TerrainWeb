@@ -8,7 +8,8 @@ import {Link} from "react-router-dom"
 
 export default (props: {main_menu?: string, icon_return_back?: string, icon_my_projects?: string,
                         usr_name?: string|null, search?: string, signIn_info?: string,
-                        register?: string, icon_logout?: string}) => {
+                        register?: string, icon_logout?: string, icon_saveProj?: string,
+                        onClickSaveproj?: (name: any) => void}) => {
     return(
         <div className={navbarStyles.navbar}>
             <div className={navbarStyles.group}>
@@ -17,6 +18,7 @@ export default (props: {main_menu?: string, icon_return_back?: string, icon_my_p
                 {props.icon_my_projects ? <Link to="/auth/myProjs"><Button icon_style={buttonStyle.button__icon} style={buttonStyle.button} icon={props.icon_my_projects}></Button></Link> : null}
             </div>
             <div className={navbarStyles.group}>
+                {props.icon_saveProj ? <Button icon_style={buttonStyle.button__icon} style={buttonStyle.button} icon={props.icon_saveProj} onClick={props.onClickSaveproj}></Button>: null}
                 {props.usr_name ? <span id="usrName" className={fontStyles.middleText}>{props.usr_name}</span>: null}
                 {props.search ? <Input style={inputStyles.seacrhProjectNavBar} placeholder={props.search}></Input>: null}
                 {props.signIn_info ? <Link to="/signIn"><Button icon_style={buttonStyle.button__icon} style={buttonStyle.button}>{props.signIn_info}</Button></Link>: null}

@@ -1,20 +1,25 @@
 @import "index.css";
 
-.form{
+.form {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 30px;
 }
 
-.formSettingBlocks{
+.formBlockAndImage{
+    display: flex;
+    flex-direction: row;
+}
+
+.formSettingBlocks {
     display: flex;
     flex-direction: column;
     align-items: left;
     gap: 30px;
 }
 
-.terrainSettingsUnion{
+.terrainSettingsUnion {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -25,13 +30,13 @@
     background: var(--SettingsBackgroundColor);
 }
 
-.terrainSettingsName{
+.terrainSettingsName {
     background: var(--AppBackgroundColor2);
     border-radius: 5px 5px 0px 0px;
     padding: 0px 20px;
 }
 
-.terrainSettingsForm{
+.terrainSettingsForm {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -42,55 +47,56 @@
     border-radius: 0px 0px 10px 10px;
 }
 
-.terrainFormWidth{
+.terrainFormWidth {
     display: flex;
     flex-direction: row;
     gap: 20px;
 }
 
-.terrainFormHeight{
+.terrainFormHeight {
     display: flex;
     flex-direction: row;
     gap: 32px;
 }
 
-.terrainFormScale{
+.terrainFormScale {
     display: flex;
     flex-direction: row;
     gap: 12px;
 }
 
-.terrainFormOctaves{
+.terrainFormOctaves {
     display: flex;
     flex-direction: row;
     gap: 60px;
 }
 
-.terrainFormGain{
+.terrainFormGain {
     display: flex;
     flex-direction: row;
     gap: 22px;
 }
 
-.terrainFormLacunarity{
+.terrainFormLacunarity {
     display: flex;
     flex-direction: row;
     gap: 12px;
 }
 
-.terrainFormSeed{
+.terrainFormSeed {
     display: flex;
     flex-direction: row;
     gap: 73px;
 }
 
-.terrainFormFrequency{
+.terrainFormFrequency {
     display: flex;
     flex-direction: row;
     gap: 60px;
 }
 
-.terrainRowCoords{
+.terrainRowCoords {
     display: flex;
     flex-direction: row;
+    gap: 5px;
 }

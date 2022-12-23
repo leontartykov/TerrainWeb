@@ -3,6 +3,6 @@ export default (props: {style?: string, placeholder?: string, id?: string, type?
     return (
         <input className={props.style} placeholder={props.placeholder} id={props.id}
                type={props.type} name={props.name} onChange={props.onChange} onKeyDown={props.onKeyPress}
-               onClick={props.onClick} defaultValue={props.value}></input>
+               onClick={props.onClick} defaultValue={props.value} ></input>
     )
 }
