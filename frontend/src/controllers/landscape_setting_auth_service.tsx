@@ -5,7 +5,11 @@ import { TerrainValues } from "components/types/terrain"
 import ProjectService from "services/projects_service"
 import { Buffer } from 'buffer';
 
-export default class LandscapeSettingAuthService extends React.Component {
+interface TerrainProject{
+    name?: string
+}
+
+export default class LandscapeSettingAuthService extends React.Component<TerrainProject> {
     data: any = "";
     userName = sessionStorage.getItem("usrName");
     data_resp: any;
@@ -16,15 +20,18 @@ export default class LandscapeSettingAuthService extends React.Component {
     };*/
     image: string = "";
     terrain: any;
+    nameProj: string = ""
     
     constructor(props: any) {
         super(props);
         this.getTerrainParams();
         console.log("brhrhr");
+        console.log("proj_name: ", localStorage.getItem("project"));
+        console.log()
     }
 
     async getTerrainParams() {
-        let data_resp = await TerrainService.getParams("2", "hohohoh");
+        let data_resp = await TerrainService.getParams("2", localStorage.getItem("project"));
         console.log("data_resp: ", data_resp);
         this.terrain = data_resp.data;
         this.setState({terrain: this.terrain});
@@ -89,7 +96,7 @@ export default class LandscapeSettingAuthService extends React.Component {
 
     async handleSaveProj(event: React.SyntheticEvent) {
         event.preventDefault();
-        let data_resp = await TerrainService.saveParams("2", "hohohoh", this.terrain);
+        let data_resp = await TerrainService.saveParams("2", localStorage.getItem("project"), this.terrain);
     }
 
     render() {

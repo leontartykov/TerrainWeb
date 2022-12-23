@@ -21,7 +21,8 @@ export const MyProjectListAuthPageComponent = (props: {activePage: number, onCli
                                                         onKeyPressSearchMyProject?: (name: any) => void,
                                                         onClickCheckbox?: (name: any) => void,
                                                         onClickDownload?: any, onClickDelete?: any, 
-                                                        onClickAddProject?:any, onClickDeleteSelected?: any}) =>
+                                                        onClickAddProject?:any, onClickDeleteSelected?: any,
+                                                        onClickHandleProject1?: any, onClickHandleProject2?: any, onClickHandleProject3?: any}) =>
 {
     const { isOpen, toggle } = useModal();
     return (
@@ -56,6 +57,7 @@ export const MyProjectListAuthPageComponent = (props: {activePage: number, onCli
                                                 onClickDelete={props.onClickDelete}
                                                 isChecked={props.isChecked}
                                                 onClickCheckbox={props.onClickCheckbox}
+                                                onClickHandleProject={props.onClickHandleProject1}
                                                 ></ProjectCard>: null}
                     {props.project2 ? <ProjectCard idDel={props.project2.name} idDownload={props.project2.name} //checkbox="y"
                                                 project={props.project2.name}
@@ -66,7 +68,8 @@ export const MyProjectListAuthPageComponent = (props: {activePage: number, onCli
                                                 download="download" delete="delete"
                                                 onClickDownload={props.onClickDownload} onClickDelete={props.onClickDelete}
                                                 isChecked={props.isChecked}
-                                                onClickCheckbox={props.onClickCheckbox}></ProjectCard>: null}
+                                                onClickCheckbox={props.onClickCheckbox}
+                                                onClickHandleProject={props.onClickHandleProject2}></ProjectCard>: null}
                     {props.project3 ? <ProjectCard idDel={props.project3.name} idDownload={props.project3.name}// checkbox="y"
                                                 project={props.project3.name}
                                                 set_rating={props.project3.rate ? props.project3.rate: null}
@@ -76,7 +79,8 @@ export const MyProjectListAuthPageComponent = (props: {activePage: number, onCli
                                                 download="download" delete="delete"
                                                 onClickDownload={props.onClickDownload} onClickDelete={props.onClickDelete}
                                                 isChecked={props.isChecked}
-                                                onClickCheckbox={props.onClickCheckbox}></ProjectCard>: null}
+                                                onClickCheckbox={props.onClickCheckbox}
+                                                onClickHandleProject={props.onClickHandleProject3}></ProjectCard>: null}
                     {props.needPageCard=="yes"? <PageCard cur_page={props.activePage} onClickPage={props.onClickPage}></PageCard>: null}
                 </div>
                 

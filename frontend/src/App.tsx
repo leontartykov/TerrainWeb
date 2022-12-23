@@ -17,7 +17,7 @@ export default function App() {
       <Route path="/auth" element={<MainPageAuthService />}/>
       <Route path="/auth/allProjs" element={<AllProjectsAuthSelectedFirstPage/>}/>
       <Route path="/auth/myProjs" element={<MyProjectListAuthPageService/>}/>
-      <Route path="/auth/myProjs/id" element={<LandscapeSettingsAuthService/>}/>
+      <Route path="/auth/myProjs/id" element={<LandscapeSettingsAuthService/>} />
     </Routes>
       
   );

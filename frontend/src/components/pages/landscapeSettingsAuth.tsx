@@ -47,10 +47,7 @@ export const LandscapeSettingsAuthComponent = (props: {
                             onChangeTerOctaves={props.onChangeTerOctaves} onChangeTerLacunarity={props.onChangeTerLacunarity}
                             onChangeTerGain={props.onChangeTerGain} onChangeTerSeed={props.onChangeTerSeed} onChangeTerFrequency={props.onChangeTerFrequency}></TerrainForm>
                     </div>
-                    <div className={buttonStyle.buttonsGroup}>
-                        <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
-                        <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} icon="download"></Button>
-                    </div>
+                    <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
                 </div>
                 {props.image ? <img width="500" height="600" src={"data:image/png;base64," + props.image}></img> : null}
             </div>
