@@ -209,6 +209,7 @@ int TerrainProjectsPostgres::add_new_terrain_project(const std::string &userName
             response = worker.exec(query);
 
             newTerId = (response[0][0].is_null()) ? "1" : std::to_string(response[0][0].as<int>() + 1);
+            std::cerr << "newTerId: " << newTerId << "\n";
 
             query = "INSERT INTO terrain_project.terrains.terrains VALUES (" +
                                 newTerId + ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);";
@@ -222,11 +223,14 @@ int TerrainProjectsPostgres::add_new_terrain_project(const std::string &userName
 
             worker.exec(query);
 
-            query = "SELECT id \
+            std::cerr << "userName: " << userName << "\n";
+            query = "SELECT info.id \
                      FROM terrain_project.users.info \
                      WHERE info.login='" + userName + "';";
-            worker.exec(query);
+            response = worker.exec(query);
+            std::cerr << "response[0][0].c_str(): " << response[0][0].c_str() << "\n";
             userId = (response[0][0].is_null()) ? throw : response[0][0].c_str();
+            std::cerr << "userId: " << userId << "\n";
 
             query = "INSERT INTO terrain_project.terrains.users_projs VALUES (" +
                     userId + ", '" + terProjName + "');";
