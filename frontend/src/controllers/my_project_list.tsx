@@ -24,7 +24,7 @@ export default class MyProjectListAuthService extends React.Component {
     }
 
     async getFirstPage() {
-        this.projects = await ProjectService.GetUserProjects("2", "1");
+        this.projects = await ProjectService.GetUserProjects(sessionStorage.getItem("usrName"), "1");
         this.setState({ projects: this.projects });
     }
 
@@ -53,7 +53,7 @@ export default class MyProjectListAuthService extends React.Component {
         event.preventDefault();
         this.page = event.currentTarget.innerHTML;
         console.log("page: ", this.page);
-        this.projects = await ProjectService.GetUserProjects("2", this.page);
+        this.projects = await ProjectService.GetUserProjects(sessionStorage.getItem("usrName"), this.page);
 
         this.setState({ mssg: "Hi there!" });
         this.render();
@@ -129,8 +129,8 @@ export default class MyProjectListAuthService extends React.Component {
     handleOnClickProject(value:any){
         console.log("ClickProject1");
         console.log("value: ", value.target.innerText);
-        localStorage.removeItem("project");
-        localStorage.setItem("project", value.target.innerText);
+        sessionStorage.removeItem("project");
+        sessionStorage.setItem("project", value.target.innerText);
     }
 
     render() {
@@ -142,11 +142,11 @@ export default class MyProjectListAuthService extends React.Component {
             this.needPageCard = "yes";
 
             if (this.projects.data[0] || this.projects.data){
-                localStorage.setItem("project_1", this.projects.data[0] || this.projects.data);
+                sessionStorage.setItem("project_1", this.projects.data[0] || this.projects.data);
             }else if (this.projects.data[1]){
-                localStorage.setItem("project_2", this.projects.data[1]);
+                sessionStorage.setItem("project_2", this.projects.data[1]);
             }else if (this.projects.data[2]){
-                localStorage.setItem("project_3", this.projects.data[2]);
+                sessionStorage.setItem("project_3", this.projects.data[2]);
             }
 
             return (<MyProjectListAuthPageComponent

@@ -22,15 +22,6 @@ export const LandscapeSettingsAuthComponent = (props: {
     onChangeTerRotateZ?: (name: any) => void,
     onClickSaveproj?: (name: any) => void
 }) => {
-    console.log("IMAGE_PATH");
-    console.log("image_binary: ", props.image);
-
-    /*console.log("TER_VALS: ", props.terVals);
-    if (props.terVals.data){
-        terVals = props.terVals.data;}
-    else{
-        terVals = props.terVals;
-    }*/
     return (
         <form>
             <NavBar main_menu="Ландшафт" icon_my_projects="cottage" usr_name={props.userName} search="Искать..."
@@ -49,7 +40,7 @@ export const LandscapeSettingsAuthComponent = (props: {
                     </div>
                     <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
                 </div>
-                {props.image ? <img width="500" height="600" src={"data:image/png;base64," + props.image}></img> : null}
+                {props.image ? <img width="500" height="600" src={`data:image/png;base64,${props.image}`}></img> : null}
             </div>
         </form>
     )

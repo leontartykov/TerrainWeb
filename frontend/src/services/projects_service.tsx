@@ -6,12 +6,12 @@ async function RenderImage(terrain: TerrainValues) {
         console.log("terrain: ", terrain);
         const json = {
             terrain,
-            light: { x: 500, y: 400, z: 500 }
+            light: { x: 100, y: 100, z: 100 }
         };
     
         const response = await
             http.post("api/v1/renderJobs/terrains/image",
-                json)
+                json, {responseType: "arraybuffer"})
                 .then((response) => {
                     console.log(response.status);
                     return {
@@ -24,9 +24,10 @@ async function RenderImage(terrain: TerrainValues) {
     }
 }
 
-async function GetUserProjects(id_user: string, pageList: string) {
+async function GetUserProjects(userName: string|null, pageList: string) {
+    console.log("userNameGetUserProjects: ", userName);
     const response = await
-        http.get("api/v1/users/" + id_user + "/projects?page=" + pageList).then((response) => {
+        http.get("api/v1/users/" + userName + "/projects?page=" + pageList).then((response) => {
             return {
                 data: response?.data
             }
@@ -37,9 +38,9 @@ async function GetUserProjects(id_user: string, pageList: string) {
     }
 }
 
-async function DeleteProject(id_user: string, id_project: string) {
+async function DeleteProject(userName: string|null, id_project: string) {
     const response = await
-        http.delete("api/v1/users/" + id_user + "/projects/" + id_project).then((response) => {
+        http.delete("api/v1/users/" + userName + "/projects/" + id_project).then((response) => {
             return {
                 status: response?.status
             }
@@ -49,9 +50,9 @@ async function DeleteProject(id_user: string, id_project: string) {
     }
 }
 
-async function AddProject(id_user: string, proj_name: string) {
+async function AddProject(userName: string|null, proj_name: string) {
     const response = await
-        http.post("api/v1/users/" + id_user + "/projects", { name: proj_name }).then((response) => {
+        http.post("api/v1/users/" + userName + "/projects", { name: proj_name }).then((response) => {
             console.log("statusTHEN: ", response?.status);
             return {
                 status: response?.status
@@ -67,9 +68,9 @@ async function AddProject(id_user: string, proj_name: string) {
     }
 }
 
-async function FindMyProject(id_user: string, proj_name: string) {
+async function FindMyProject(userName: string|null, proj_name: string) {
     const response = await
-        http.get("api/v1/users/" + id_user + "/projects/"+proj_name).then((response) => {
+        http.get("api/v1/users/" + userName + "/projects/"+proj_name).then((response) => {
             console.log("statusTHEN: ", response?.status);
             return {
                 data: response?.data
