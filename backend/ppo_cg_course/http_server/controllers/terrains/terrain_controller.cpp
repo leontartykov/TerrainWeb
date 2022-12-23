@@ -19,7 +19,7 @@ api::v1::TerrainsController::TerrainsController(){
 
 void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId, std::string page)
+     std::string userName, std::string page)
 {
     int user_id, uuid, ret_code, pageBlock;
     std::vector<servTerrainProject_t> terProjects;
@@ -38,10 +38,9 @@ void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr 
         }
         else{
         */
-            user_id = std::stoi(userId);
             pageBlock = std::stoi(page);
             std::cerr << "pageBlock: " << pageBlock << "\n";
-            ret_code = __terrains_service->get_terrain_projects(user_id, pageBlock, terProjects);
+            ret_code = __terrains_service->get_terrain_projects(userName, pageBlock, terProjects);
             jsonBody = form_json_response(terProjects);
 
             resp = form_http_response(ret_code, jsonBody);
@@ -58,7 +57,7 @@ void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr 
 
 void api::v1::TerrainsController::add_new_project(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId)
+     std::string userName)
 {
     int ret_code, user_id, uuid;
     json json_get;
@@ -77,11 +76,10 @@ void api::v1::TerrainsController::add_new_project(const HttpRequestPtr &req,
             resp = form_http_response(ret_code, jsonBody);
         }
         else{*/
-            user_id = std::stoi(userId);
             json_get = json::parse(req->bodyData());
             terProjName = json_get["name"];
             std::cerr << "terProjName: " << terProjName << "\n";
-            ret_code = __terrains_service->add_terrain_project(user_id, terProjName);
+            ret_code = __terrains_service->add_terrain_project(userName, terProjName);
 
             resp = form_http_response(ret_code, jsonBody);
         //}
@@ -97,7 +95,7 @@ void api::v1::TerrainsController::add_new_project(const HttpRequestPtr &req,
 
 void api::v1::TerrainsController::get_terrain_params(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId, std::string projName)
+     std::string userName, std::string projName)
 {
     int user_id, terrain_id, ret_code, uuid;
     servTerrain_t terrain;
@@ -114,9 +112,7 @@ void api::v1::TerrainsController::get_terrain_params(const HttpRequestPtr &req,
             resp = form_http_response(ret_code, jsonBody);
         }
         else{*/
-            user_id = std::stoi(userId);
-
-            ret_code = __terrains_service->get_terrain_params(user_id, projName, terrain);
+            ret_code = __terrains_service->get_terrain_params(userName, projName, terrain);
             jsonBody = form_json_response(terrain);
             resp = form_http_response(ret_code, jsonBody);
         //}
@@ -133,7 +129,7 @@ void api::v1::TerrainsController::get_terrain_params(const HttpRequestPtr &req,
 
 void api::v1::TerrainsController::find_project(
         const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback,
-        std::string userId, std::string projName)
+        std::string userName, std::string projName)
 {
     int user_id, ret_code;
     drogon::HttpResponsePtr resp;
@@ -142,8 +138,7 @@ void api::v1::TerrainsController::find_project(
 
     Json::Value jsonBody;
     try{
-        user_id = std::stoi(userId);
-        ret_code = __terrains_service->get_terrain_project(user_id, projName, project);
+        ret_code = __terrains_service->get_terrain_project(userName, projName, project);
         std::cerr << "SERV_RET_CODE: " << ret_code << "\n";
         jsonBody = form_json_response(project);
         resp = form_http_response(ret_code, jsonBody);
@@ -159,14 +154,13 @@ void api::v1::TerrainsController::find_project(
 
 void api::v1::TerrainsController::save_project(const HttpRequestPtr &req,
                                                std::function<void (const HttpResponsePtr &)> &&callback,
-                                               std::string userId, std::string projName)
+                                               std::string userName, std::string projName)
 {
     int user_id, terrain_id, ret_code, uuid;
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
     std::shared_ptr<Json::Value> jsonBodyIn;
-    std::cerr << "DELETE\n";
     servTerrain_t terrain;
 
     try{
@@ -178,10 +172,10 @@ void api::v1::TerrainsController::save_project(const HttpRequestPtr &req,
             resp = form_http_response(ret_code, jsonBody);
         }
         else{*/
-            user_id = std::stoi(userId);
+            std::cerr << "Name project: " << projName << "\n";
             jsonBodyIn = req->getJsonObject();
             terrain = __handle_json_Body(jsonBodyIn);
-            ret_code = __terrains_service->save_terrain_params(user_id, projName, terrain);
+            ret_code = __terrains_service->save_terrain_params(userName, projName, terrain);
             resp = form_http_response(ret_code, jsonBody);
         //}
 
@@ -197,7 +191,7 @@ void api::v1::TerrainsController::save_project(const HttpRequestPtr &req,
 
 void api::v1::TerrainsController::delete_terrain_project(const HttpRequestPtr &req,
      std::function<void (const HttpResponsePtr &)> &&callback,
-     std::string userId, std::string projName)
+     std::string userName, std::string projName)
 {
     int user_id, terrain_id, ret_code, uuid;
     Json::Value jsonBody;
@@ -214,8 +208,7 @@ void api::v1::TerrainsController::delete_terrain_project(const HttpRequestPtr &r
             resp = form_http_response(ret_code, jsonBody);
         }
         else{*/
-            user_id = std::stoi(userId);
-            ret_code = __terrains_service->delete_terrain_project(user_id, projName);
+            ret_code = __terrains_service->delete_terrain_project(userName, projName);
             resp = form_http_response(ret_code, jsonBody);
         //}
 
@@ -344,6 +337,8 @@ std::pair<dbTerrain_t, light_t>
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
+    std::cerr << "width: " << terrain.width << "\n";
+    std::cerr << "width: " << terrain.height << "\n";
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
     terrain.meta_config.gain = (*jsonBodyIn)["terrain"]["config"]["gain"].asDouble();
     terrain.meta_config.lacunarity = (*jsonBodyIn)["terrain"]["config"]["lacunarity"].asDouble();
@@ -356,6 +351,9 @@ std::pair<dbTerrain_t, light_t>
     light.x = (*jsonBodyIn)["light"]["x"].asInt();
     light.y = (*jsonBodyIn)["light"]["y"].asInt();
     light.z = (*jsonBodyIn)["light"]["z"].asInt();
+    std::cerr << "light.x: " << light.x << "\n";
+    std::cerr << "light.y: " << light.y << "\n";
+    std::cerr << "light.z: " << light.z << "\n";
 
 
     return {terrain, light};
@@ -365,8 +363,10 @@ servTerrain_t api::v1::TerrainsController::__handle_json_Body(std::shared_ptr<Js
 {
     servTerrain_t terrain;
 
+
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
+
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
     terrain.meta_config.gain = (*jsonBodyIn)["terrain"]["config"]["gain"].asDouble();

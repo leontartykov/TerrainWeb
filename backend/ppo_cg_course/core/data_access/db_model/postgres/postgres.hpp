@@ -67,13 +67,13 @@ class Postgres: public DbModel
         int get_count_users();
         int get_count_terrains();
 
-        virtual int add_new_terrain_project(const int &userId, const std::string &terProjName) override;
-        virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &terParams) override;
-        virtual int get_terrain_projects(const int &userId, int &page,
+        virtual int add_new_terrain_project(const std::string &userName, const std::string &terProjName) override;
+        virtual int get_terrain_params(const std::string &userName, const std::string &projName, servTerrain_t &terParams) override;
+        virtual int get_terrain_projects(const std::string &userName, int &page,
                                          std::vector<servTerrainProject_t> &servTerProjects) override;
-        virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &servTerProj) override;
-        virtual int save_terrain_params(const int &userId, const std::string &projName, const servTerrain_t &servTer) override;
-        virtual int delete_terrain_project(const int &userId, const std::string &projName) override;
+        virtual int get_terrain_project(const std::string &userName, const std::string &projName, servTerrainProject_t &servTerProj) override;
+        virtual int save_terrain_params(const std::string &userName, const std::string &projName, const servTerrain_t &servTer) override;
+        virtual int delete_terrain_project(const std::string &userName, const std::string &projName) override;
         virtual int get_terrain_project_rating(const int &terId, double &rating) override;
         virtual int set_terrain_project_rating(const int &terId, const int &rating) override;
 

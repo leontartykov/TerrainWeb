@@ -117,36 +117,35 @@ int Postgres::unlock_user(const int &id){
     return ret_code;
 }
 
-int Postgres::add_new_terrain_project(const int &userId, const std::string &terProjName){
+int Postgres::add_new_terrain_project(const std::string &userName, const std::string &terProjName){
     int ret_code = BAD_REQUEST;
 
-    if (userId >= 0 && userId < __nUsers){
-        ret_code = __terrains.get()->add_new_terrain_project(userId, terProjName);
+    if (!userName.empty()){
+        ret_code = __terrains.get()->add_new_terrain_project(userName, terProjName);
     }
     return ret_code;
 }
 
-int Postgres::get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &terParams)
+int Postgres::get_terrain_params(const std::string &userName, const std::string &projName, servTerrain_t &terParams)
 {
     int ret_code = BAD_REQUEST;
 
     dbTerrain_t dbTerParams;
-    if (userId > 0 && userId < __nUsers && !projName.empty()){
-        ret_code = __terrains.get()->get_terrain_params(userId, projName, dbTerParams);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __terrains.get()->get_terrain_params(userName, projName, dbTerParams);
         __convertDbToServModel((const dbTerrain_t)dbTerParams, terParams);
     }
     return ret_code;
 }
 
-int Postgres::delete_terrain_project(const int &userId, const std::string &projName)
+int Postgres::delete_terrain_project(const std::string &userName, const std::string &projName)
 {
     int ret_code = BAD_REQUEST;
-    int dbUserId;
-    std::string dbProjName;
+    std::string dbProjName, dbUserName;
 
-    if (userId >= 0 && userId <= __nUsers){
-        dbUserId = userId;
-        ret_code = __terrains.get()->delete_terrain_project(dbUserId, projName);
+    if (!userName.empty()){
+        dbUserName = userName;
+        ret_code = __terrains.get()->delete_terrain_project(dbUserName, projName);
     }
 
     return ret_code;
@@ -177,15 +176,15 @@ int Postgres::set_terrain_project_rating(const int &terId, const int &rating)
     return ret_code;
 }
 
-int Postgres::get_terrain_projects(const int &userId, int &page,
+int Postgres::get_terrain_projects(const std::string &userName, int &page,
                                    std::vector<servTerrainProject_t> &servTerProjects)
 {
     int ret_code = NOT_FOUND;
     std::vector<dbTerrainProject_t> dbTerProjects;
 
-    if (userId > 0 && page > 0)
+    if (!userName.empty() && page > 0)
     {
-        ret_code = __terrains.get()->get_terrain_projects(userId, page, dbTerProjects);
+        ret_code = __terrains.get()->get_terrain_projects(userName, page, dbTerProjects);
         if (ret_code == SUCCESS){
             __convertDbToServModel(dbTerProjects, servTerProjects);
         }
@@ -194,12 +193,12 @@ int Postgres::get_terrain_projects(const int &userId, int &page,
     return ret_code;
 }
 
-int Postgres::get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &servTerProj)
+int Postgres::get_terrain_project(const std::string &userName, const std::string &projName, servTerrainProject_t &servTerProj)
 {
     dbTerrainProject_t dbTerProj;
     int ret_code = NOT_FOUND;
-    if (userId > 0 && !projName.empty()){
-        ret_code = __terrains->get_terrain_project(userId, projName, dbTerProj);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __terrains->get_terrain_project(userName, projName, dbTerProj);
         if (ret_code == SUCCESS){
             __convertDbToServModel(dbTerProj, servTerProj);
         }
@@ -208,14 +207,14 @@ int Postgres::get_terrain_project(const int &userId, const std::string &projName
     return ret_code;
 }
 
-int Postgres::save_terrain_params(const int &userId, const std::string &projName,
+int Postgres::save_terrain_params(const std::string &userName, const std::string &projName,
                                   const servTerrain_t &servTer)
 {
     dbTerrain_t dbTer;
     int ret_code = NOT_FOUND;
-    if (userId > 0 && !projName.empty()){
+    if (!userName.empty() && !projName.empty()){
         __convertServToDbModel(servTer, dbTer);
-        ret_code = __terrains->set_terrain_params(userId, projName, dbTer);
+        ret_code = __terrains->set_terrain_params(userName, projName, dbTer);
     }
 
     return ret_code;

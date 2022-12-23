@@ -25,12 +25,12 @@ class TerrainsService: public ITerrainService
     public:
         TerrainsService();
 
-        virtual int get_terrain_projects(const int &userId, int &page, std::vector<servTerrainProject_t> &terProjects) override;
-        virtual int get_terrain_params(const int &userId, const std::string &projName, servTerrain_t &servTer) override;
-        virtual int add_terrain_project(const int &userId, const std::string &terProjName) override ;
-        virtual int get_terrain_project(const int &userId, const std::string &projName, servTerrainProject_t &project) override;
-        virtual int save_terrain_params(const int &userId, const std::string &projName, const servTerrain_t &servTer) override;
-        virtual int delete_terrain_project(const int &userId, const std::string &projName) override;
+        virtual int get_terrain_projects(const std::string &userName, int &page, std::vector<servTerrainProject_t> &terProjects) override;
+        virtual int get_terrain_params(const std::string &userName, const std::string &projName, servTerrain_t &servTer) override;
+        virtual int add_terrain_project(const std::string &userName, const std::string &terProjName) override ;
+        virtual int get_terrain_project(const std::string &userName, const std::string &projName, servTerrainProject_t &project) override;
+        virtual int save_terrain_params(const std::string &userName, const std::string &projName, const servTerrain_t &servTer) override;
+        virtual int delete_terrain_project(const std::string &userName, const std::string &projName) override;
         virtual int get_terrain_project_rating(const int &terId, double &rating) override;
         virtual int set_terrain_project_rating(int &terId, int &rating) override;
         virtual bool get_render_png_image(dbTerrain_t &terrain, light_t &light) override;

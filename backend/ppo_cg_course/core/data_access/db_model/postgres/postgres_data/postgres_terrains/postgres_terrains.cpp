@@ -46,10 +46,10 @@ void TerrainProjectsPostgres::set_terrain_params(std::string &project_name, dbTe
 }
 
 ///Return all user terrain projects
-int TerrainProjectsPostgres::get_terrain_projects(const int &user_id, int &page,
+int TerrainProjectsPostgres::get_terrain_projects(const std::string &userName, int &page,
                                                   std::vector<dbTerrainProject_t> &dbTerProjs)
 {
-    std::string id_user = std::to_string(user_id), pageCard = std::to_string(page);
+    std::string pageCard = std::to_string(page);
     pqxx::work worker(*__conn_psql);
     pqxx::result response;
     int ret_code = SUCCESS;
@@ -62,8 +62,9 @@ int TerrainProjectsPostgres::get_terrain_projects(const int &user_id, int &page,
                         JOIN terrain_project.terrains.users_projs as ter_user \
                              on ter_projs.name = ter_user.proj_name \
                         JOIN terrain_project.users.info as info \
-                             on info.id = ter_user.id_user where id_user = " + id_user +
-                        " ORDER BY ter_projs.last_edited DESC, ter_projs.id_terrain DESC \
+                             on info.id = ter_user.id_user \
+                        WHERE info.login = '" + userName +
+                        "' ORDER BY ter_projs.last_edited DESC, ter_projs.id_terrain DESC \
                         LIMIT 3 OFFSET "+ std::to_string((page-1)*3) + ";";
     try{
         response = worker.exec(query);
@@ -89,10 +90,9 @@ int TerrainProjectsPostgres::get_terrain_projects(const int &user_id, int &page,
     return ret_code;
 }
 
-int TerrainProjectsPostgres::get_terrain_project(const int userId, const std::string &projName,
+int TerrainProjectsPostgres::get_terrain_project(const std::string &userName, const std::string &projName,
                                                  dbTerrainProject_t &dbTerProj)
 {
-    std::string id_user = std::to_string(userId);
     pqxx::work worker(*__conn_psql);
     pqxx::result response;
     int ret_code = SUCCESS;
@@ -131,7 +131,7 @@ int TerrainProjectsPostgres::get_count_terrain_projects(){
 }
 
 int TerrainProjectsPostgres::set_terrain_params(
-        const int &user_id, const std::string &projName, const dbTerrain_t &ter)
+        const std::string &userName, const std::string &projName, const dbTerrain_t &ter)
 {
     pqxx::result response;
     std::string query;
@@ -148,7 +148,8 @@ int TerrainProjectsPostgres::set_terrain_params(
     query = "SELECT id_terrain \
              FROM terrain_project.terrains.users_projs \
              JOIN terrain_project.terrains.projects ON users_projs.proj_name = projects.name \
-             WHERE users_projs.id_user = "+std::to_string(user_id)+" AND users_projs.proj_name = '"+projName+"';";
+             JOIN terrain_project.users.info ON users_projs.id = info.id \
+             WHERE info.login = '"+userName+"' AND users_projs.proj_name = '"+projName+"';";
     try{
         response = worker.exec(query);
         if (!response[0][0].is_null()){
@@ -183,9 +184,9 @@ int TerrainProjectsPostgres::set_terrain_params(
     return success;
 }
 
-int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const std::string &terProjName)
+int TerrainProjectsPostgres::add_new_terrain_project(const std::string &userName, const std::string &terProjName)
 {
-    std::string query, newTerId;
+    std::string query, newTerId, userId;
     int success = SUCCESS_CREATED;
     pqxx::result response;
     if (!__conn_psql){
@@ -207,11 +208,7 @@ int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const s
             query = "SELECT MAX(id) from terrain_project.terrains.terrains;";
             response = worker.exec(query);
 
-            std::cerr << "response[0][0].c_str(): " << response[0][0].c_str() << "\n";
-            std::cerr << "response[0][0].c_str() is NULL: " << (response[0][0].is_null()) << "\n";
             newTerId = (response[0][0].is_null()) ? "1" : std::to_string(response[0][0].as<int>() + 1);
-
-            std::cerr << "newTerId: " << newTerId << "\n";
 
             query = "INSERT INTO terrain_project.terrains.terrains VALUES (" +
                                 newTerId + ", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);";
@@ -225,8 +222,14 @@ int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const s
 
             worker.exec(query);
 
+            query = "SELECT id \
+                     FROM terrain_project.users.info \
+                     WHERE info.login='" + userName + "';";
+            worker.exec(query);
+            userId = (response[0][0].is_null()) ? throw : response[0][0].c_str();
+
             query = "INSERT INTO terrain_project.terrains.users_projs VALUES (" +
-                    std::to_string(user_id) + ", '" + terProjName + "');";
+                    userId + ", '" + terProjName + "');";
 
             worker.exec(query);
             worker.commit();
@@ -240,7 +243,7 @@ int TerrainProjectsPostgres::add_new_terrain_project(const int &user_id, const s
     return success;
 }
 
-int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const std::string &projName, dbTerrain_t &ter)
+int TerrainProjectsPostgres::get_terrain_params(const std::string &userName, const std::string &projName, dbTerrain_t &ter)
 {
     pqxx::result response;
     std::string query;
@@ -259,7 +262,8 @@ int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const std::s
                  FROM terrain_project.terrains.terrains as ter\
                  JOIN terrain_project.terrains.projects as terProj on terProj.id_terrain = ter.id \
                  JOIN terrain_project.terrains.users_projs as usrProj on usrProj.proj_name = terProj.name \
-                 WHERE usrProj.id_user = "+std::to_string(user_id)+" AND usrProj.proj_name='"+projName+"';";
+                 JOIN terrain_project.users.info ON info.id = usrProj.id_user \
+                 WHERE info.login = '"+userName+"' AND usrProj.proj_name='"+projName+"';";
 
         response = worker.exec(query);
         if (response.empty()){
@@ -287,7 +291,7 @@ int TerrainProjectsPostgres::get_terrain_params(const int &user_id, const std::s
     return ret_code;
 }
 
-int TerrainProjectsPostgres::delete_terrain_project(const int &userId, const std::string &projName)
+int TerrainProjectsPostgres::delete_terrain_project(const std::string &userName, const std::string &projName)
 {
     pqxx::result response;
     std::string query, ter_id;

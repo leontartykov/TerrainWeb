@@ -9,24 +9,24 @@ void TerrainsService::set_dbModel(std::shared_ptr<DbModel> dbModel){
     __dbModel = dbModel;
 }
 
-int TerrainsService::get_terrain_projects(const int &userId, int &page,
+int TerrainsService::get_terrain_projects(const std::string &userName, int &page,
                                           std::vector<servTerrainProject_t> &terProjects)
 {
     int ret_code = BAD_REQUEST;
 
-    if (userId){
-        ret_code = __dbModel->get_terrain_projects(userId, page, terProjects);
+    if (!userName.empty() && page > 0){
+        ret_code = __dbModel->get_terrain_projects(userName, page, terProjects);
     }
 
     return ret_code;
 }
 
-int TerrainsService::get_terrain_params(const int &userId, const std::string &projName,
+int TerrainsService::get_terrain_params(const std::string &userName, const std::string &projName,
                                         servTerrain_t &servTer){
     int ret_code = BAD_REQUEST;
 
-    if (userId && !projName.empty()){
-        ret_code = __dbModel->get_terrain_params(userId, projName, servTer);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __dbModel->get_terrain_params(userName, projName, servTer);
     }
 
     return ret_code;
@@ -41,10 +41,10 @@ void TerrainsService::__convertDbToServModel(const dbTerrain_t &dbTer, servTerra
     servTer.scale = dbTer.scale;
 }
 
-int TerrainsService::add_terrain_project(const int &userId, const std::string &terProjName){
+int TerrainsService::add_terrain_project(const std::string &userName, const std::string &terProjName){
     int ret_code = BAD_REQUEST;
-    if (userId && !terProjName.empty()){
-        ret_code = __dbModel->add_new_terrain_project(userId, terProjName);
+    if (!userName.empty() && !terProjName.empty()){
+        ret_code = __dbModel->add_new_terrain_project(userName, terProjName);
     }
 
     std::cerr << "ADDret_code_return: "<< ret_code << "\n";
@@ -52,31 +52,31 @@ int TerrainsService::add_terrain_project(const int &userId, const std::string &t
 
 }
 
-int TerrainsService::get_terrain_project(const int &userId, const std::string &projName,
+int TerrainsService::get_terrain_project(const std::string &userName, const std::string &projName,
                                          servTerrainProject_t &project)
 {
     int ret_code = BAD_REQUEST;
-    if (userId && !projName.empty()){
-        ret_code = __dbModel->get_terrain_project(userId, projName, project);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __dbModel->get_terrain_project(userName, projName, project);
     }
 
     return ret_code;
 }
 
-int TerrainsService::save_terrain_params(const int &userId, const std::string &projName, const servTerrain_t &servTer)
+int TerrainsService::save_terrain_params(const std::string &userName, const std::string &projName, const servTerrain_t &servTer)
 {
     int ret_code = BAD_REQUEST;
-    if (userId && !projName.empty()){
-        ret_code = __dbModel->save_terrain_params(userId, projName, servTer);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __dbModel->save_terrain_params(userName, projName, servTer);
     }
 
     return ret_code;
 }
 
-int TerrainsService::delete_terrain_project(const int &userId, const std::string &projName){
+int TerrainsService::delete_terrain_project(const std::string &userName, const std::string &projName){
     int ret_code = BAD_REQUEST;
-    if (userId && !projName.empty()){
-        ret_code = __dbModel->delete_terrain_project(userId, projName);
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __dbModel->delete_terrain_project(userName, projName);
     }
 
     return ret_code;

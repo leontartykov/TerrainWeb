@@ -356,6 +356,8 @@ void Terrain::set_rotate_angles(rotate_t &rotate_angles)
 void Terrain::form_terrain()
 {
     PerlinNoise map(_meta_config.seed);
+    std::cerr << "_width: " << _width << "\n";
+    std::cerr << "_height: " << _height << "\n";
     double fx = _width / _meta_config.frequency;
     double fy = _height / _meta_config.frequency;
 

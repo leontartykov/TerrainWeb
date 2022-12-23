@@ -44,6 +44,7 @@ class Terrain
 
         int get_height();
         int get_width();
+        //void set_ter_size(const int &width, const int&)
 
         Point3D<double> get_center_figure();
         void set_center_figure(Point3D<double> &point);

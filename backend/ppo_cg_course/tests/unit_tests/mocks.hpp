@@ -26,12 +26,12 @@ class MockDb: public DbModel
         MOCK_METHOD(int, block_user, (const int &id), (override));
         MOCK_METHOD(int, unlock_user, (const int &id), (override));
 
-        MOCK_METHOD(int, add_new_terrain_project, (const int &userId, const std::string &terProjName), (override));
-        MOCK_METHOD(int, get_terrain_params, (const int &userId, const std::string &projName, servTerrain_t &terParams), (override));
-        MOCK_METHOD(int, get_terrain_projects, (const int &userId, int &page, std::vector<servTerrainProject_t> &servTerProjects), (override));
-        MOCK_METHOD(int, save_terrain_params, (const int &userId, const std::string &projName, const servTerrain_t &servTer), (override));
-        MOCK_METHOD(int, get_terrain_project, (const int &userId, const std::string &projName, servTerrainProject_t &servTerProjects), (override));
-        MOCK_METHOD(int, delete_terrain_project, (const int &userId, const std::string &projName), (override));
+        MOCK_METHOD(int, add_new_terrain_project, (const std::string &userName, const std::string &terProjName), (override));
+        MOCK_METHOD(int, get_terrain_params, (const std::string &userName, const std::string &projName, servTerrain_t &terParams), (override));
+        MOCK_METHOD(int, get_terrain_projects, (const std::string &userName, int &page, std::vector<servTerrainProject_t> &servTerProjects), (override));
+        MOCK_METHOD(int, save_terrain_params, (const std::string &userName, const std::string &projName, const servTerrain_t &servTer), (override));
+        MOCK_METHOD(int, get_terrain_project, (const std::string &userName, const std::string &projName, servTerrainProject_t &servTerProjects), (override));
+        MOCK_METHOD(int, delete_terrain_project, (const std::string &userName, const std::string &projName), (override));
         MOCK_METHOD(int, get_terrain_project_rating, (const int &terId, double &rating), (override));
         MOCK_METHOD(int, set_terrain_project_rating, (const int &terId, const int &rating), (override));
 };

@@ -84,22 +84,22 @@ namespace api
 
                 void get_all_terrain_projects(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string userId, std::string page);
+                              std::string userName, std::string page);
                 void add_new_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string userId);
                 void get_terrain_params(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string userId, std::string projName);
+                              std::string userName, std::string projName);
                 void find_project(const HttpRequestPtr &req,
                                   std::function<void (const HttpResponsePtr &)> &&callback,
-                                  std::string userId, std::string projName);
+                                  std::string userName, std::string projName);
                 void save_project(const HttpRequestPtr &req,
                                   std::function<void (const HttpResponsePtr &)> &&callback,
-                                  std::string userId, std::string projName);
+                                  std::string userName, std::string projName);
                 void delete_terrain_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string userId, std::string projName);
+                              std::string userName, std::string projName);
                 void get_rating_terrain_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string terrainId);

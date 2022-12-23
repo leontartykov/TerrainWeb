@@ -50,6 +50,8 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     std::vector<std::vector<QColor>> color_matrix = _zbuffer->get_color_matrix();
 
     int width = color_matrix[0].size(), height = color_matrix.size();
+    std::cerr << "width: " << width << "\n";
+    std::cerr << "height: " << height << "\n";
     int min_i = height, min_j = width, max_i = 0, max_j = 0;
     for (int i = 0; i < height; ++i){
         for (int j = 0; j < width; ++j){
