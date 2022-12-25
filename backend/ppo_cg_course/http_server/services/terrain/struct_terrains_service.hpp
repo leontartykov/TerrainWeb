@@ -15,12 +15,12 @@ struct servTerrain
 typedef struct servTerrainProject servTerrainProject_t;
 struct servTerrainProject
 {
+    std::string userName;
     std::string name;
     std::string last_edit;
     double rating;
     int n_rates;
     bool exhibited;
-    servTerrain_t terrain;
 };
 
 typedef struct servLight servLight_t;

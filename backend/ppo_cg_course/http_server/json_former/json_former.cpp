@@ -31,8 +31,10 @@ Json::Value form_json_response(std::vector<servTerrainProject_t> &ter_projs)
     count_ter_projs = ter_projs.size();
     for(int i = 0; i < count_ter_projs; ++i)
     {
+        jsonObj["rating"] = ter_projs[i].rating;
         jsonObj["last_edited"] = ter_projs[i].last_edit;
         jsonObj["name"] = ter_projs[i].name;
+        jsonObj["userName"] = ter_projs[i].userName;
         jsonObjects.append(jsonObj);
     }
 
@@ -47,6 +49,7 @@ Json::Value form_json_response(const servTerrainProject_t &ter_proj)
     jsonObj["rating"] = ter_proj.rating;
     jsonObj["last_edited"] = ter_proj.last_edit;
     jsonObj["name"] = ter_proj.name;
+    jsonObj["userName"] = ter_proj.userName;
 
     return jsonObj;
 }

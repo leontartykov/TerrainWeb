@@ -216,6 +216,7 @@ void api::v1::UsersController::login(
         {
             ret_code = __users_service->login(access_token, uuid);
             jsonBody = form_json_response(access_token, uuid);
+            std::cerr << "access_token: " << access_token << "\n";
             resp = form_http_response(ret_code, jsonBody);
         }
         callback(resp);

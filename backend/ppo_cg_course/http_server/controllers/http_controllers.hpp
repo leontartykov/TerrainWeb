@@ -71,15 +71,18 @@ namespace api
         public:
                 TerrainsController();
                 METHOD_LIST_BEGIN
-                    ADD_METHOD_TO(TerrainsController::get_all_terrain_projects, "api/v1/users/{1}/projects?page={2}", Get, Options);
-                    ADD_METHOD_TO(TerrainsController::add_new_project, "api/v1/users/{1}/projects", Post, Options);
-                    ADD_METHOD_TO(TerrainsController::get_terrain_params, "api/v1/users/{1}/projects/{2}/values", Get, Options);
-                    ADD_METHOD_TO(TerrainsController::find_project, "api/v1/users/{1}/projects/{2}", Get, Options);
-                    ADD_METHOD_TO(TerrainsController::save_project, "api/v1/users/{1}/projects/{2}", Put, Options);
-                    ADD_METHOD_TO(TerrainsController::delete_terrain_project, "api/v1/users/{1}/projects/{2}", Delete, Options);
-                    ADD_METHOD_TO(TerrainsController::get_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Get, Options);
-                    ADD_METHOD_TO(TerrainsController::set_rating_terrain_project, "api/v1/ratingJobs/terrain/{id}/rate", Post, Options);
+                    ADD_METHOD_TO(TerrainsController::get_all_terrain_projects, "api/v1/users/{1}/myProjects?page={2}", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::add_new_project, "api/v1/users/{1}/myProjects", Post, Options);
+                    ADD_METHOD_TO(TerrainsController::get_terrain_params, "api/v1/users/{1}/myProjects/{2}/values", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::find_my_project, "api/v1/users/{1}/myProjects/{2}", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::save_project, "api/v1/users/{1}/myProjects/{2}", Put, Options);
+                    ADD_METHOD_TO(TerrainsController::delete_terrain_project, "api/v1/users/{1}/myProjects/{2}", Delete, Options);
+                    ADD_METHOD_TO(TerrainsController::get_rating_terrain_project, "api/v1/ratingJobs/projects/{projName}/rate", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::set_rating_terrain_project, "api/v1/ratingJobs/projects/{projName}/rate", Post, Options);
                     ADD_METHOD_TO(TerrainsController::get_render_image, "api/v1/renderJobs/terrains/image", Post, Options);
+                    ADD_METHOD_TO(TerrainsController::add_project_for_rating, "api/v1/ratingJobs/users/{1}/myProjects/{2}/addToRating", Post, Options);
+                    ADD_METHOD_TO(TerrainsController::get_all_rating_projects, "api/v1/allProjects?page={1}", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::find_rating_project, "api/v1/allProjects/{1}", Get, Options);
                 METHOD_LIST_END
 
                 void get_all_terrain_projects(const HttpRequestPtr &req,
@@ -91,7 +94,7 @@ namespace api
                 void get_terrain_params(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string userName, std::string projName);
-                void find_project(const HttpRequestPtr &req,
+                void find_my_project(const HttpRequestPtr &req,
                                   std::function<void (const HttpResponsePtr &)> &&callback,
                                   std::string userName, std::string projName);
                 void save_project(const HttpRequestPtr &req,
@@ -102,12 +105,22 @@ namespace api
                               std::string userName, std::string projName);
                 void get_rating_terrain_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string terrainId);
+                              std::string projName);
                 void set_rating_terrain_project(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback,
-                              std::string terrainId);
+                              std::string projName);
                 void get_render_image(const HttpRequestPtr &req,
                               std::function<void (const HttpResponsePtr &)> &&callback);
+                void add_project_for_rating(const HttpRequestPtr &req,
+                                            std::function<void (const HttpResponsePtr &)> &&callback,
+                                            std::string userName, std::string projName);
+                void get_all_rating_projects(const HttpRequestPtr &req,
+                              std::function<void (const HttpResponsePtr &)> &&callback,
+                              std::string page);
+                void find_rating_project(const HttpRequestPtr &req,
+                                         std::function<void (const HttpResponsePtr &)> &&callback,
+                                         std::string projName);
+
                 void set_dbModel(std::shared_ptr<DbModel> dbModel);
 
         };

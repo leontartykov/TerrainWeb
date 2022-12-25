@@ -27,15 +27,17 @@ class TerrainProjectsPostgres
 
         void set_terrain_params(std::string &project_name, dbTerrain_t &terrain_params);
         int get_terrain_projects(const std::string &userName, int &page, std::vector<dbTerrainProject_t> &dbTerProjs);
-        int get_terrain_project(const std::string &userName, const std::string &projName, dbTerrainProject_t &dbTerProj);
+        int get_terrain_project(const std::string &userName, dbTerrainProject_t &dbTerProj,const std::string &projName="");
         int get_count_terrain_projects();
         int set_terrain_params(const std::string &userName, const std::string &projName, const dbTerrain_t &ter);
 
         int add_new_terrain_project(const std::string &userName, const std::string &terProjName);
         int get_terrain_params(const std::string &userName, const std::string &projName, dbTerrain_t &ter);
         int delete_terrain_project(const std::string &userName, const std::string &projName);
-        double get_terrain_project_rating(const int &terId, double &dbRating);
-        int set_terrain_project_rating(const int &terId, const int &rating);
+        double get_terrain_project_rating(const std::string &projName, double &dbRating);
+        int set_terrain_project_rating(const std::string &projName, const std::string &userName);
+        int add_project_for_rating(const std::string &userName, const std::string &projName);
+        int get_all_rating_projects(const std::string &page, std::vector<dbTerrainProject_t> &dbTerProjs);
 };
 
 #endif

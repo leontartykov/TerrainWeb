@@ -30,10 +30,12 @@ class MockDb: public DbModel
         MOCK_METHOD(int, get_terrain_params, (const std::string &userName, const std::string &projName, servTerrain_t &terParams), (override));
         MOCK_METHOD(int, get_terrain_projects, (const std::string &userName, int &page, std::vector<servTerrainProject_t> &servTerProjects), (override));
         MOCK_METHOD(int, save_terrain_params, (const std::string &userName, const std::string &projName, const servTerrain_t &servTer), (override));
-        MOCK_METHOD(int, get_terrain_project, (const std::string &userName, const std::string &projName, servTerrainProject_t &servTerProjects), (override));
+        MOCK_METHOD(int, get_terrain_project, (const std::string &projName, servTerrainProject_t &servTerProjects, const std::string &userName), (override));
         MOCK_METHOD(int, delete_terrain_project, (const std::string &userName, const std::string &projName), (override));
-        MOCK_METHOD(int, get_terrain_project_rating, (const int &terId, double &rating), (override));
-        MOCK_METHOD(int, set_terrain_project_rating, (const int &terId, const int &rating), (override));
+        MOCK_METHOD(int, get_terrain_project_rating, (const std::string &projName, double &rating), (override));
+        MOCK_METHOD(int, set_terrain_project_rating, (const std::string &projName, const std::string &userName), (override));
+        MOCK_METHOD(int, add_project_for_rating, (const std::string &userName, const std::string &projName), (override));
+        MOCK_METHOD(int, get_all_rating_projects, (const std::string &page, std::vector<servTerrainProject_t> &terProjects), (override));
 };
 struct MyDatabase
 {

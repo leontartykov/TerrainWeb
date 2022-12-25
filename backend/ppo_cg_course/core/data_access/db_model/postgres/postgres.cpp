@@ -151,12 +151,12 @@ int Postgres::delete_terrain_project(const std::string &userName, const std::str
     return ret_code;
 }
 
-int Postgres::get_terrain_project_rating(const int &terId, double &rating){
+int Postgres::get_terrain_project_rating(const std::string &projName, double &rating){
     int ret_code = BAD_REQUEST;
     double dbRating;
 
-    if (terId > 0 && terId <= __nTerrains){
-        ret_code = __terrains.get()->get_terrain_project_rating(terId, dbRating);
+    if (!projName.empty()){
+        ret_code = __terrains.get()->get_terrain_project_rating(projName, dbRating);
         if (ret_code == SUCCESS){
             rating = dbRating;
         }
@@ -164,15 +164,36 @@ int Postgres::get_terrain_project_rating(const int &terId, double &rating){
     return ret_code;
 }
 
-int Postgres::set_terrain_project_rating(const int &terId, const int &rating)
+int Postgres::set_terrain_project_rating(const std::string &projName, const std::string &userName)
 {
     int ret_code = BAD_REQUEST;
     int dbRating;
 
-    if (terId > 0 && terId <= __nTerrains && rating > 0){
-        dbRating = rating;
-        ret_code = __terrains.get()->set_terrain_project_rating(terId, dbRating);
+    if (!projName.empty() && !userName.empty()){
+        ret_code = __terrains->set_terrain_project_rating(projName, userName);
     }
+    return ret_code;
+}
+
+int Postgres::add_project_for_rating(const std::string &userName, const std::string &projName)
+{
+    int ret_code = BAD_REQUEST;
+
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __terrains->add_project_for_rating(userName, projName);
+    }
+    return ret_code;
+}
+
+int Postgres::get_all_rating_projects(const std::string &page, std::vector<servTerrainProject_t> &terProjects)
+{
+    std::vector<dbTerrainProject_t> dbTerProjs;
+    int ret_code = BAD_REQUEST;
+    if (!page.empty()){
+        ret_code = __terrains->get_all_rating_projects(page, dbTerProjs);
+        __convertDbToServModel(dbTerProjs, terProjects);
+    }
+
     return ret_code;
 }
 
@@ -193,12 +214,13 @@ int Postgres::get_terrain_projects(const std::string &userName, int &page,
     return ret_code;
 }
 
-int Postgres::get_terrain_project(const std::string &userName, const std::string &projName, servTerrainProject_t &servTerProj)
+int Postgres::get_terrain_project(const std::string &projName, servTerrainProject_t &servTerProj,
+                                  const std::string &userName)
 {
     dbTerrainProject_t dbTerProj;
     int ret_code = NOT_FOUND;
     if (!userName.empty() && !projName.empty()){
-        ret_code = __terrains->get_terrain_project(userName, projName, dbTerProj);
+        ret_code = __terrains->get_terrain_project(projName, dbTerProj, userName);
         if (ret_code == SUCCESS){
             __convertDbToServModel(dbTerProj, servTerProj);
         }
@@ -263,14 +285,17 @@ void Postgres::__convertDbToServModel(
         servTerProjs.resize(nProjs);
 
         for (int i = 0; i < nProjs; ++i){
-            servTerProjs[i].name = dbTerProjs[i].name;
-            servTerProjs[i].last_edit = dbTerProjs[i].last_edit;
+            servTerProjs[i].userName = !dbTerProjs[i].userName.empty() ? dbTerProjs[i].userName : "";
+            servTerProjs[i].name = !dbTerProjs[i].name.empty() ? dbTerProjs[i].name : "";
+            servTerProjs[i].last_edit = !dbTerProjs[i].last_edit.empty() ? dbTerProjs[i].last_edit : "";
+            servTerProjs[i].rating = dbTerProjs[i].rating ? dbTerProjs[i].rating : 0;
         }
     }
 }
 
 void Postgres::__convertDbToServModel(const dbTerrainProject_t &dbTerProj, servTerrainProject_t &servTerProj)
 {
+    servTerProj.userName = dbTerProj.userName;
     servTerProj.name = dbTerProj.name;
     servTerProj.last_edit = dbTerProj.last_edit;
     servTerProj.rating = dbTerProj.rating;

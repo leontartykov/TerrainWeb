@@ -52,12 +52,12 @@ int TerrainsService::add_terrain_project(const std::string &userName, const std:
 
 }
 
-int TerrainsService::get_terrain_project(const std::string &userName, const std::string &projName,
-                                         servTerrainProject_t &project)
+int TerrainsService::get_terrain_project(const std::string &projName, servTerrainProject_t &project,
+                                         const std::string &userName)
 {
     int ret_code = BAD_REQUEST;
     if (!userName.empty() && !projName.empty()){
-        ret_code = __dbModel->get_terrain_project(userName, projName, project);
+        ret_code = __dbModel->get_terrain_project(projName, project, userName);
     }
 
     return ret_code;
@@ -82,17 +82,17 @@ int TerrainsService::delete_terrain_project(const std::string &userName, const s
     return ret_code;
 }
 
-int TerrainsService::get_terrain_project_rating(const int &terId, double &rating){
+int TerrainsService::get_terrain_project_rating(const std::string &projName, double &rating){
     int ret_code = BAD_REQUEST;
 
-    if (terId){
-        ret_code = __dbModel->get_terrain_project_rating(terId, rating);
+    if (!projName.empty()){
+        ret_code = __dbModel->get_terrain_project_rating(projName, rating);
     }
     return ret_code;
 }
 
-int TerrainsService::set_terrain_project_rating(int &terId, int &rating){
-    return __dbModel->set_terrain_project_rating(terId, rating);
+int TerrainsService::set_terrain_project_rating(const std::string &projName, const std::string &userName){
+    return __dbModel->set_terrain_project_rating(projName, userName);
 }
 
 bool TerrainsService::get_render_png_image(dbTerrain_t &terrain, light_t &light)
@@ -113,6 +113,36 @@ bool TerrainsService::get_render_png_image(dbTerrain_t &terrain, light_t &light)
     success = __image->create(file_name, color_matrix, win_boards);
 
     return success;
+}
+
+int TerrainsService::add_project_for_rating(const std::string &userName, const std::string &projName)
+{
+    int ret_code = BAD_REQUEST;
+
+    if (!userName.empty() && !projName.empty()){
+        ret_code = __dbModel->add_project_for_rating(userName, projName);
+    }
+    return ret_code;
+}
+
+int TerrainsService::get_all_rating_projects(
+        const std::string &page, std::vector<servTerrainProject_t> &terProjects)
+{
+    int ret_code = BAD_REQUEST;
+    if (!page.empty()){
+        ret_code = __dbModel->get_all_rating_projects(page, terProjects);
+    }
+    return ret_code;
+}
+
+int TerrainsService::find_rating_project(const std::string &projName, servTerrainProject_t &project)
+{
+    int ret_code = BAD_REQUEST;
+    if (!projName.empty()){
+        ret_code = __dbModel->get_terrain_project(projName, project);
+    }
+
+    return ret_code;
 }
 
 all_scene_info_t TerrainsService::__fill_scene_info(dbTerrain_t &terrain, light_t &light)

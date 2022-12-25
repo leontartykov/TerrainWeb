@@ -18,6 +18,7 @@ struct dbTerrain
 typedef struct dbTerrainProject dbTerrainProject_t;
 struct dbTerrainProject
 {
+    std::string userName;
     std::string name;
     std::string last_edit;
     double rating;

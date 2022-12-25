@@ -24,11 +24,13 @@ class DbModel
         virtual int add_new_terrain_project(const std::string &userName, const std::string &terProjName) = 0;
         virtual int get_terrain_params(const std::string &userName, const std::string &projName, servTerrain_t &terParams) = 0;
         virtual int get_terrain_projects(const std::string &userName, int &page, std::vector<servTerrainProject_t> &servTerProjects) = 0;
-        virtual int get_terrain_project(const std::string &userName,  const std::string &projName, servTerrainProject_t &servTerProj) = 0;
+        virtual int get_terrain_project(const std::string &projName, servTerrainProject_t &servTerProj, const std::string &userName="----") = 0;
         virtual int save_terrain_params(const std::string &userName, const std::string &projName, const servTerrain_t &servTer) = 0;
         virtual int delete_terrain_project(const std::string &userName, const std::string &projName) = 0;
-        virtual int get_terrain_project_rating(const int &terId, double &rating) = 0;
-        virtual int set_terrain_project_rating(const int &terId, const int &rating) = 0;
+        virtual int get_terrain_project_rating(const std::string &projName, double &rating) = 0;
+        virtual int set_terrain_project_rating(const std::string &projName, const std::string &userName) = 0;
+        virtual int add_project_for_rating(const std::string &userName, const std::string &projName) = 0;
+        virtual int get_all_rating_projects(const std::string &page, std::vector<servTerrainProject_t> &terProjects) = 0;
 
         virtual int login(const std::string &login, const std::string &password, int &uuid) = 0;
         virtual int login(const std::string &login, const std::string &password) = 0;
