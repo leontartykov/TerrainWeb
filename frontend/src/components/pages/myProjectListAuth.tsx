@@ -14,8 +14,7 @@ import modalStyle from "components/modal/style.module.scss"
 
 export const MyProjectListAuthPageComponent = (props: {
     activePage: number, onClickPage: any, isProjects?: string
-    project1?: projectInfo,
-    project2?: projectInfo, project3?: projectInfo,
+    project1?: projectInfo, project2?: projectInfo, project3?: projectInfo,
     userName?: string | null, needPageCard?: string,
     onChangeSearchMyProject?: (name: any) => void,
     onChangeAddNewProject?: (name: any) => void,
@@ -27,6 +26,7 @@ export const MyProjectListAuthPageComponent = (props: {
     onClickHandleProject1?: any, onClickHandleProject2?: any, onClickHandleProject3?: any
 }) => {
     const { isOpen, toggle } = useModal();
+
     return (
         <>
             <Modal isOpen={isOpen} toggle={toggle}>
@@ -49,8 +49,8 @@ export const MyProjectListAuthPageComponent = (props: {
                     {props.isProjects == "no" ? <span className={fontstyle.middleText}>Нет проектов.</span> : null}
                     {props.project1 ? <ProjectCard idDel={props.project1.name} idDownload={props.project1.name} //checkbox="y" 
                         project={props.project1.name}
-                        set_rating={props.project1.rate ? props.project1.rate : null}
-                        star_icon={props.project1.rate ? "star" : null}
+                        set_rating={props.project1.rating ? props.project1.rating : null}
+                        star_icon={props.project1.rating ? "star" : null}
                         id_checkbox={props.project1.name}
                         last_edited={props.project1.last_edited}
                         delete="delete"
@@ -61,8 +61,8 @@ export const MyProjectListAuthPageComponent = (props: {
                     ></ProjectCard> : null}
                     {props.project2 ? <ProjectCard idDel={props.project2.name} idDownload={props.project2.name} //checkbox="y"
                         project={props.project2.name}
-                        set_rating={props.project2.rate ? props.project2.rate : null}
-                        star_icon={props.project2.rate ? "star" : null}
+                        set_rating={props.project2.rating ? props.project2.rating : null}
+                        star_icon={props.project2.rating ? "star" : null}
                         id_checkbox={props.project2.name}
                         last_edited={props.project2.last_edited}
                         delete="delete"
@@ -72,8 +72,8 @@ export const MyProjectListAuthPageComponent = (props: {
                         onClickHandleProject={props.onClickHandleProject2}></ProjectCard> : null}
                     {props.project3 ? <ProjectCard idDel={props.project3.name} idDownload={props.project3.name}// checkbox="y"
                         project={props.project3.name}
-                        set_rating={props.project3.rate ? props.project3.rate : null}
-                        star_icon={props.project3.rate ? "star" : null}
+                        set_rating={props.project3.rating ? props.project3.rating : null}
+                        star_icon={props.project3.rating ? "star" : null}
                         id_checkbox={props.project3.name}
                         last_edited={props.project3.last_edited}
                         delete="delete"

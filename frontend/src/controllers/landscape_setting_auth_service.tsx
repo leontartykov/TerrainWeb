@@ -11,11 +11,13 @@ interface TerrainProject {
 
 export default class LandscapeSettingAuthService extends React.Component<TerrainProject> {
     data: any = "";
-    userName = sessionStorage.getItem("usrName");
+    userName: string|null = sessionStorage.getItem("usrName");
+    type_project: string|null = sessionStorage.getItem("type_project");
     data_resp: any;
     image: string = "";
     terrain: any;
-    nameProj: string = ""
+    nameProj: string = "";
+    is_my_project: boolean = false;
 
     constructor(props: any) {
         super(props);
@@ -81,17 +83,41 @@ export default class LandscapeSettingAuthService extends React.Component<Terrain
         }
     }
 
-    async handleSaveProj(event: React.SyntheticEvent) {
+    handleSaveProj(event: React.SyntheticEvent) {
         event.preventDefault();
-        let data_resp = await TerrainService.saveParams(this.userName, sessionStorage.getItem("project"), this.terrain);
+        TerrainService.saveParams(this.userName, sessionStorage.getItem("project"), this.terrain);
+    }
+
+    async handleAddToRating(event: React.SyntheticEvent){
+        event.preventDefault();
+        console.log("handleAddToRating");
+        console.log("event: ", event);
+        await ProjectService.AddProjectToRating(this.userName, sessionStorage.getItem("project"));
+    }
+
+    handleLogout(){
+        sessionStorage.removeItem("access_token");
+        sessionStorage.removeItem("uuid");
+        sessionStorage.removeItem("project");
+        sessionStorage.removeItem("usrName");
+    }
+
+    async handleRateProject(event: React.SyntheticEvent){
+        event.preventDefault();
+        console.log("rateProject");
+        console.log("this.userName: ", this.userName);
+        await ProjectService.RateProject(sessionStorage.getItem("project"), this.userName);
     }
 
     render() {
+        this.type_project == "my" ? this.is_my_project = true :  this.is_my_project = false;
+        console.log("this.is_my_project: ", this.is_my_project);
+
         if (this.data.data) {
             let base64ImageString = Buffer.from(this.data.data, 'binary').toString('base64');
             console.log("base64ImageString: ", base64ImageString);
             return (<LandscapeSettingsAuthComponent
-                terVals={this.terrain}
+                terVals={this.terrain} is_my_project={this.is_my_project}
                 userName={this.userName} image={base64ImageString}
                 onClickGenerate={this.handleGenerate.bind(this)}
                 onChangeTerWidth={event => this.setTerWidth(event.currentTarget.value)}
@@ -105,10 +131,12 @@ export default class LandscapeSettingAuthService extends React.Component<Terrain
                 onChangeTerRotateX={event => this.setTerRotateX(event.currentTarget.value)}
                 onChangeTerRotateY={event => this.setTerRotateY(event.currentTarget.value)}
                 onChangeTerRotateZ={event => this.setTerRotateZ(event.currentTarget.value)}
-                onClickSaveproj={event => this.handleSaveProj(event.currentTarget.value)} />)
+                onClickSaveproj={event => this.handleSaveProj(event.currentTarget.value)}
+                onClickAddToRating={this.handleAddToRating.bind(this)}
+                onClickRateProject={this.handleRateProject.bind(this)} />)
         } else if (this.terrain) {
             return (<LandscapeSettingsAuthComponent
-                userName={this.userName} terVals={this.terrain}
+                userName={this.userName} terVals={this.terrain} is_my_project={this.is_my_project}
                 onClickGenerate={this.handleGenerate.bind(this)}
                 onChangeTerWidth={event => this.setTerWidth(event.currentTarget.value)}
                 onChangeTerHeight={event => this.setTerHeight(event.currentTarget.value)}
@@ -121,7 +149,8 @@ export default class LandscapeSettingAuthService extends React.Component<Terrain
                 onChangeTerRotateX={event => this.setTerRotateX(event.currentTarget.value)}
                 onChangeTerRotateY={event => this.setTerRotateY(event.currentTarget.value)}
                 onChangeTerRotateZ={event => this.setTerRotateZ(event.currentTarget.value)}
-                onClickSaveproj={this.handleSaveProj.bind(this)}></LandscapeSettingsAuthComponent>)
+                onClickSaveproj={this.handleSaveProj.bind(this)}
+                onClickRateProject={this.handleRateProject.bind(this)}></LandscapeSettingsAuthComponent>)
         }
     }
 }

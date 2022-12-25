@@ -58,7 +58,6 @@ export const TerrainForm = (props: {
     onChangeTerRotateY?: (name: any) => void,
     onChangeTerRotateZ?: (name: any) => void
 }) => {
-    console.log("TER_VALS_NEW: ", props.terVals);
     return (
         <div>
             <div className={formStyles.terrainSettingsName}>

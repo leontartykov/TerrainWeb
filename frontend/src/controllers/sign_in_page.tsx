@@ -18,8 +18,12 @@ export class SignInPage extends React.Component {
     }
 
     async handleSubmit(event: React.SyntheticEvent){      
-        let data = await AccountService.Login(this.account.login, this.account.password);
+        let data = (await AccountService.Login(this.account.login, this.account.password)).response;
+        console.log("data: ", data);
         if (data.status == 200){
+            console.log("data.data: ", data.data);
+            sessionStorage.setItem("access_token", data.data.access_token);
+            sessionStorage.setItem("uuid", data.data.uuid);
             window.location.href="/auth";
             sessionStorage.setItem("usrName", this.account.login);
         }

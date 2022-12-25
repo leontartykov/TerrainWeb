@@ -13,12 +13,14 @@ export const ProjectCard = (props: {
     set_rating?: string | null,
     star_icon?: string | null, last_edited?: string, user_name?: string,
     download?: string, delete?: string,
-    onClickSearchMyProject?: any, onChangeSearchMyProject?: (name: any) => void,
+    onClickSearchMyProject?: any,
+    onChangeSearchMyProject?: (name: any) => void,
     onKeyPressSearchMyProject?: (name: any) => void,
     onClickDelete?: any, onClickDownload?: any,
     onClickCheckbox?: any, isChecked?: boolean,
     onClickHandleProject?: any
 }) => {
+    console.log("set_rating: ", props.set_rating);
     return (
         <div className={cardStyle.card}>
             <div className={navbarStyle.group}>
@@ -26,7 +28,7 @@ export const ProjectCard = (props: {
                 {props.project ? <Link to="/auth/myProjs/id" className={buttonStyle.buttonCardProject} onClick={props.onClickHandleProject}>{props.project}</Link> : null}
             </div>
             <div className={navbarStyle.group}>
-                {props.set_rating ? <span className={fontStyle.middleText}>{props.set_rating}</span> : null}
+                {props.set_rating != undefined ? <span className={fontStyle.middleText}>{props.set_rating}</span> : null}
                 {props.star_icon ? <span className={["material-symbols-outlined", buttonStyle.button_star_icon].join(' ')}>{props.star_icon}</span> : null}
             </div>
             <div>

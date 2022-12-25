@@ -23,12 +23,14 @@ export const LandscapeSettingsAuthComponent = (props: {
     onChangeTerRotateX?: (name: any) => void,
     onChangeTerRotateY?: (name: any) => void,
     onChangeTerRotateZ?: (name: any) => void,
-    onClickSaveproj?: (name: any) => void
+    onClickSaveproj?: (name: any) => void,
+    onClickRateProject?: (name: any) => void,
+    onClickAddToRating?: any, onClickLogout?: any, is_my_project?: boolean
 }) => {
     return (
         <form>
-            <NavBar main_menu="Ландшафт" icon_my_projects="cottage" usr_name={props.userName} search="Искать..."
-                icon_logout="logout" icon_saveProj="save" onClickSaveproj={props.onClickSaveproj}></NavBar>
+            <NavBar is_my_project={props.is_my_project} main_menu="Ландшафт" icon_my_projects="cottage" usr_name={props.userName} search="Искать..."
+                icon_logout="logout" icon_saveProj="save" onClickSaveproj={props.onClickSaveproj} onClickLogout={props.onClickLogout}></NavBar>
             <div className={formStyle.formBlockAndImage}>
                 <div className={formStyle.terrainSettingsUnion}>
                     <div className={formStyle.formSettingBlocks}>
@@ -41,12 +43,14 @@ export const LandscapeSettingsAuthComponent = (props: {
                             onChangeTerOctaves={props.onChangeTerOctaves} onChangeTerLacunarity={props.onChangeTerLacunarity}
                             onChangeTerGain={props.onChangeTerGain} onChangeTerSeed={props.onChangeTerSeed} onChangeTerFrequency={props.onChangeTerFrequency}></TerrainForm>
                     </div>
+                    
                     <div className={groupStyles.groupGenerateButtonSetToRating}>
                         <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
-                        <div className={buttonStyle.groupLabelSwitcher}>
-                            <Input style={switcherStyle.switch} id="switch1" type="checkbox"></Input>
+                        {props.is_my_project == true ?<div className={buttonStyle.groupLabelSwitcher}>
+                            <Input style={switcherStyle.switch} id="switch1" type="checkbox" onClick={props.onClickAddToRating}></Input>
                             <label className={switcherStyle.switch_for} htmlFor="switch1">Добавить в рейтинг</label>
-                        </div>
+                        </div>: null}
+                        {props.is_my_project == false ? <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} icon="star" onClick={props.onClickRateProject}></Button>: null}
                     </div>
                 </div>
                 {props.image ? <img width="500" height="600" src={`data:image/png;base64,${props.image}`}></img> : null}

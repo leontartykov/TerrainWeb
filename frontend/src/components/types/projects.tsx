@@ -1,8 +1,8 @@
 interface projectInfo{
-    id: number,
+    userName: string,
     name: string,
     last_edited: string,
-    rate: string
+    rating: string,
 }
 
 export default projectInfo;

@@ -11,7 +11,7 @@ export const MainPageAuthComponent = (props: {linkMyProjects: string, linkAllPro
                 <MyProjectsButton img_path_my={"images/my_projects.png"} 
                                   myProjsActionText="Мои проекты" linkMyProjects={props.linkMyProjects}></MyProjectsButton>
                 <AllProjectsButton img_path_all={"images/my_projects.png"}
-                                  allProjsActionText="Другие проекты" linkAllProjects={props.linkMyProjects}></AllProjectsButton>   
+                                  allProjsActionText="Другие проекты" linkAllProjects={props.linkAllProjects}></AllProjectsButton>   
             </div>
         </div>
     )

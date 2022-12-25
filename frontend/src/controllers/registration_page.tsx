@@ -9,6 +9,7 @@ import {Account} from "components/types/account"
 export class RegistrationPage extends React.Component{
     account: Account = {login: "", password: ""}
     repeatPassword: string = "";
+    component: any;
 
     setLogin(value: string){
         this.account.login = value;
@@ -28,9 +29,9 @@ export class RegistrationPage extends React.Component{
             window.location.href="/auth";
         }
         else{
-            var component = document.getElementById("errorSign")
-            if (component){
-                component.innerText = "Такой пользователь уже существует!"
+            this.component = document.getElementById("errorSign")
+            if (this.component){
+                this.component.innerText = "Такой пользователь уже существует!"
             }
         }
     }

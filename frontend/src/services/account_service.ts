@@ -5,19 +5,16 @@ async function Login(login: string, password: string) {
     const response = await http.post('api/v1/accounts/login', { login, password })
         .then(
             (response) => {
-                status = response.status;
-                return {
-                    status: response?.status,
-                };
+                console.log("responseLogin: ", response);
+                return response;
             })
         .catch((error) => {
-            return {
-                status: error.response?.status,
-            };
+            return error.response;
         }
         )
+    console.log("responseLogin: ", response);
     return {
-        status: response?.status,
+        response
     };
 }
 
@@ -26,13 +23,10 @@ async function Register(login: string, password: string, perm_level: number) {
     const response = await http.post('api/v1/accounts/register', { login, password, perm_level })
         .then(
             (response) => {
-                status = response.status;
-                return {
-                    status: response?.status,
-                };
+                return response;
             })
         .catch((error) => {
-            let status = error.response.status;
+            
             return {
                 status: error.response?.status,
             };
