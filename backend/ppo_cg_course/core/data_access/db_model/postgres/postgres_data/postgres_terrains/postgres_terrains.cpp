@@ -96,8 +96,7 @@ int TerrainProjectsPostgres::get_terrain_project(const std::string &projName, db
     pqxx::result response;
     int ret_code = SUCCESS;
     std::string query;
-
-    std::cerr << "get_terrain_project\n";
+    std::cerr << "userName: " << userName << "\n";
 
     if (userName != "----"){
         query = "SELECT login, name, last_edited, rating, n_rates, exhibited \
@@ -117,7 +116,6 @@ int TerrainProjectsPostgres::get_terrain_project(const std::string &projName, db
 
     try{
         response = worker.exec(query);
-        std::cerr << "response_size: " << response.size() << "\n";
         if (!response.size()){
             ret_code = NOT_FOUND;
         }
@@ -129,12 +127,13 @@ int TerrainProjectsPostgres::get_terrain_project(const std::string &projName, db
             dbTerProj.exhibited = response[0][4].is_null() ? false : response[0][4].as<bool>();
         }
         else{
+            std::cerr << "response[0][0].c_str(): " << response[0][0].c_str() << "\n";
             dbTerProj.userName = response[0][0].c_str();
             dbTerProj.name = response[0][1].c_str();
             dbTerProj.last_edit = response[0][2].c_str();
-            dbTerProj.rating = response[0][3].is_null() ? 0 : response[0][2].as<double>();
-            dbTerProj.n_rates = response[0][4].is_null() ? 0 : response[0][3].as<int>();
-            dbTerProj.exhibited = response[0][5].is_null() ? false : response[0][4].as<bool>();
+            dbTerProj.rating = response[0][3].is_null() ? 0 : response[0][3].as<double>();
+            dbTerProj.n_rates = response[0][4].is_null() ? 0 : response[0][4].as<int>();
+            dbTerProj.exhibited = response[0][5].is_null() ? false : response[0][5].as<bool>();
         }
     }
     catch(std::exception &e){
