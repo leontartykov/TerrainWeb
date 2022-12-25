@@ -11,7 +11,13 @@ async function RenderImage(terrain: TerrainValues) {
 
         const response = await
             http.post("api/v1/renderJobs/terrains/image",
-                json, { responseType: "arraybuffer" })
+                json, {
+                    responseType: "arraybuffer",
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
                 .then((response) => {
                     console.log(response.status);
                     return {
@@ -25,17 +31,19 @@ async function RenderImage(terrain: TerrainValues) {
 }
 
 async function GetUserProjects(userName: string | null, pageList: string) {
-    console.log("userNameGetUserProjects: ", userName);
-    //console.log("access_token: ", sessionStorage.getItem("access_token"));
     const response = await
-        http.get("api/v1/users/" + userName + "/myProjects?page=" + pageList, 
-                { headers: {'Authorization': sessionStorage.getItem("access_token"),
-                            'uuid': sessionStorage.getItem("uuid")}}).then((response) => {
-            return {
-                data: response?.data
+        http.get("api/v1/users/" + userName + "/myProjects?page=" + pageList,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            }).then((response) => {
+                return {
+                    data: response?.data
+                }
             }
-        }
-        )
+            )
     return {
         data: response?.data
     }
@@ -43,7 +51,14 @@ async function GetUserProjects(userName: string | null, pageList: string) {
 
 async function DeleteProject(userName: string | null, id_project: string) {
     const response = await
-        http.delete("api/v1/users/" + userName + "/myProjects/" + id_project).then((response) => {
+        http.delete("api/v1/users/" + userName + "/myProjects/" + id_project,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            }
+        ).then((response) => {
             return {
                 status: response?.status
             }
@@ -55,8 +70,15 @@ async function DeleteProject(userName: string | null, id_project: string) {
 
 async function AddProject(userName: string | null, proj_name: string) {
     const response = await
-        http.post("api/v1/users/" + userName + "/myProjects", { name: proj_name }).then((response) => {
-            console.log("statusTHEN: ", response?.status);
+        http.post("api/v1/users/" + userName + "/myProjects",
+            { name: proj_name },
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            }
+        ).then((response) => {
             return {
                 status: response?.status
             }
@@ -73,16 +95,24 @@ async function AddProject(userName: string | null, proj_name: string) {
 
 async function FindMyProject(userName: string | null, proj_name: string) {
     const response = await
-        http.get("api/v1/users/" + userName + "/myProjects/" + proj_name).then((response) => {
-            console.log("statusTHEN: ", response?.status);
-            return {
-                data: response?.data
-            }
-        }).catch((error) => {
-            return {
-                data: error.response?.status
-            }
-        })
+        http.get("api/v1/users/" + userName + "/myProjects/" + proj_name,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
+            .then((response) => {
+                console.log("statusTHEN: ", response?.status);
+                return {
+                    data: response?.data
+                }
+            })
+            .catch((error) => {
+                return {
+                    data: error.response?.status
+                }
+            })
     return {
         data: response?.data
     }
@@ -90,16 +120,23 @@ async function FindMyProject(userName: string | null, proj_name: string) {
 
 async function AddProjectToRating(userName: string | null, proj_name: string | null) {
     const response = await
-        http.get("api/v1/users/" + userName + "/myProjects/" + proj_name).then((response) => {
-            console.log("statusTHEN: ", response?.status);
-            return {
-                status: response?.status
-            }
-        }).catch((error) => {
-            return {
-                status: error.response?.status
-            }
-        })
+        http.get("api/v1/users/" + userName + "/myProjects/" + proj_name,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
+            .then((response) => {
+                return {
+                    status: response?.status
+                }
+            })
+            .catch((error) => {
+                return {
+                    status: error.response?.status
+                }
+            })
     return {
         status: response?.status
     }
@@ -107,12 +144,18 @@ async function AddProjectToRating(userName: string | null, proj_name: string | n
 
 async function GetAllRatingProjects(page: string) {
     const response = await
-        http.get("api/v1/allProjects?page="+page).then((response) => {
-            return {
-                data: response?.data
-            }
-        }
-        )
+        http.get("api/v1/allProjects?page=" + page,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
+            .then((response) => {
+                return {
+                    data: response?.data
+                }
+            })
     return {
         data: response?.data
     }
@@ -120,33 +163,48 @@ async function GetAllRatingProjects(page: string) {
 
 async function FindProject(proj_name: string) {
     const response = await
-        http.get("api/v1/allProjects/"+proj_name).then((response) => {
-            console.log("statusTHEN: ", response?.status);
-            return {
-                data: response?.data
-            }
-        }).catch((error) => {
-            return {
-                data: error.response?.status
-            }
-        })
+        http.get("api/v1/allProjects/" + proj_name,
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
+            .then((response) => {
+                console.log("statusTHEN: ", response?.status);
+                return {
+                    data: response?.data
+                }
+            }).catch((error) => {
+                return {
+                    data: error.response?.status
+                }
+            })
     return {
         data: response?.data
     }
 }
 
-async function RateProject(proj_name: string|null, user_name: string|null){
+async function RateProject(proj_name: string | null, user_name: string | null) {
     const response = await
-        http.post("api/v1/ratingJobs/projects/"+proj_name+"/rate", { userName: user_name }).then((response) => {
-            console.log("statusTHEN: ", response?.status);
-            return {
-                data: response?.data
-            }
-        }).catch((error) => {
-            return {
-                data: error.response?.status
-            }
-        })
+        http.post("api/v1/ratingJobs/projects/" + proj_name + "/rate", { userName: user_name },
+            {
+                headers: {
+                    'Authorization': sessionStorage.getItem("access_token"),
+                    'uuid': sessionStorage.getItem("uuid")
+                }
+            })
+            .then((response) => {
+                console.log("statusTHEN: ", response?.status);
+                return {
+                    data: response?.data
+                }
+            })
+            .catch((error) => {
+                return {
+                    data: error.response?.status
+                }
+            })
     return {
         data: response?.data
     }
