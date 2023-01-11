@@ -22,6 +22,8 @@ export class SignInPage extends React.Component {
         console.log("data: ", data);
         if (data.status == 200){
             console.log("data.data: ", data.data);
+            sessionStorage.removeItem("access_token");
+            sessionStorage.removeItem("uuid");
             sessionStorage.setItem("access_token", data.data.access_token);
             sessionStorage.setItem("uuid", data.data.uuid);
             window.location.href="/auth";

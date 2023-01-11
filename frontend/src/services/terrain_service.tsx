@@ -56,9 +56,36 @@ async function saveParams(userName: string | null, proj_name: any, terrain: any)
     };
 }
 
+async function getRatingProjectParams(proj_name: string | null)
+{
+    const response = await http.get('api/v1/valueJobs/allProjects/'+proj_name,
+        {
+            headers: {
+                'Authorization': sessionStorage.getItem("access_token"),
+                'uuid': sessionStorage.getItem("uuid")
+            }
+        })
+        .then((response) => {
+            console.log("get_data: ", response.data);
+            return {
+                data: response.data
+            };
+        }).catch((error) => {
+            console.log("status", error.response?.status);
+            return {
+                data: error.response?.status
+            }
+        })
+    console.log("retur_data: ", response);
+    return {
+        data: response.data
+    };
+}
+
 const TerrainService = {
     getParams,
-    saveParams
+    saveParams,
+    getRatingProjectParams
 };
 
 export default TerrainService;

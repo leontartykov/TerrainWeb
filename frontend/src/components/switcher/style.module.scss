@@ -37,7 +37,7 @@
     display: none;
 }
 
-.switch:checked ~ .switch_for::before{
+.switch:checked + .switch_for::before{
     right: -58px;
     background-color: #a86d2d;
 }

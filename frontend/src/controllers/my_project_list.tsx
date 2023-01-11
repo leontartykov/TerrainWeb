@@ -37,6 +37,7 @@ export default class MyProjectListAuthService extends React.Component {
     }
 
     setMyProjectToFind(value: string) {
+        console.log("setMyProjectTofind: ", value);
         this.selectedMyProj = value;
     }
 
@@ -102,10 +103,12 @@ export default class MyProjectListAuthService extends React.Component {
     }
 
     async handleFindMyProj(event: KeyboardEvent) {
+        console.log("eventKey:");
         if (event.key === 'Enter') {
+            console.log("this.selectedMyProj: ", this.selectedMyProj);
             if (this.selectedMyProj != "") {
+                console.log("this.projects: ");
                 this.projects = await ProjectService.FindMyProject(this.userName, this.selectedMyProj);
-
             }
             else {
                 this.projects = await ProjectService.GetUserProjects(this.userName, this.page);
@@ -125,13 +128,18 @@ export default class MyProjectListAuthService extends React.Component {
     render() {
         console.log("nnedpage: ", this.page);
         console.log("this.projects_render: ", this.projects);
-        if (this.projects && this.projects.data) {
+        if (this.projects && this.projects.data && this.projects.data != 404) {
             console.log("neww");
             this.is_projects = "yes";
-            this.needPageCard = "yes";
+            //this.needPageCard = "yes";
+
+            
+            
+            //this.needPageCard = "yes";
+            
 
             return (<MyProjectListAuthPageComponent
-                isProjects={this.is_projects} userName={this.userName} activePage={+this.page} needPageCard={this.needPageCard}
+                isProjects={this.is_projects} userName={this.userName} activePage={+this.page} needPageCard="yes"
                 onClickPage={this.handlePage.bind(this)} project1={this.projects.data[0] || this.projects.data}
                 project2={this.projects.data[1]} project3={this.projects.data[2]}
                 onChangeSearchMyProject={event => { this.setMyProjectToFind(event.currentTarget.value) }}
@@ -146,9 +154,12 @@ export default class MyProjectListAuthService extends React.Component {
                 onClickHandleProject3={this.handleOnClickProject.bind(this)}></MyProjectListAuthPageComponent>)
         }
 
+        console.log("this.pageCard: ", this.page);
         if (this.page != "1") {
             this.needPageCard = "yes";
         }
+        this.is_projects = "no";
+        console.log("this.needPageCard=", this.needPageCard);
 
         return (
             <MyProjectListAuthPageComponent
@@ -156,7 +167,9 @@ export default class MyProjectListAuthService extends React.Component {
                 onClickPage={this.handlePage.bind(this)}
                 onClickAddProject={this.handleAddProject.bind(this)}
                 onChangeSearchMyProject={event => this.setMyProjectToFind(event.currentTarget.value)}
-                onChangeAddNewProject={event => { this.setNewProjName(event.currentTarget.value) }}></MyProjectListAuthPageComponent>)
+                onChangeAddNewProject={event => { this.setNewProjName(event.currentTarget.value) }}
+                
+                onKeyPressSearchMyProject={this.handleFindMyProj.bind(this)}></MyProjectListAuthPageComponent>)
 
     }
 }

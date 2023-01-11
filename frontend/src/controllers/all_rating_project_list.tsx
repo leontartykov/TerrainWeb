@@ -29,6 +29,7 @@ export default class AllProjectListService extends React.Component {
         event.preventDefault();
         this.page = event.currentTarget.innerHTML;
         console.log("page: ", this.page);
+        console.log("PAPGEPAGEPAGE");
         this.projects = await ProjectService.GetAllRatingProjects(this.page);
 
         this.setState({ mssg: "Hi there!" });
@@ -49,11 +50,15 @@ export default class AllProjectListService extends React.Component {
         }
     }
 
-    handleOnClickProject(value: any) {
+    async handleOnClickProject(value: any) {
+        console.log("HANDLEONCLICK");
         sessionStorage.removeItem("type_project");
         sessionStorage.setItem("type_project", "all");
-        //sessionStorage.setItem("all_userName: ", this.projects.data.);
         console.log("propject: ", value.target.innerText);
+        this.projects = await ProjectService.FindProject(value.target.innerText);
+        console.log("projectsHANDLEONCCLICK: ", this.projects);
+        sessionStorage.removeItem("checked_allProject");
+        sessionStorage.setItem("checked_allProject: ", this.projects.data.userName);
         sessionStorage.removeItem("project");
         sessionStorage.setItem("project", value.target.innerText);
     }

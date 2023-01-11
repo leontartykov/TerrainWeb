@@ -25,8 +25,10 @@ export const LandscapeSettingsAuthComponent = (props: {
     onChangeTerRotateZ?: (name: any) => void,
     onClickSaveproj?: (name: any) => void,
     onClickRateProject?: (name: any) => void,
-    onClickAddToRating?: any, onClickLogout?: any, is_my_project?: boolean
+    onClickAddToRating?: any, onClickLogout?: any, is_my_project?: boolean,
+    error_generate?: boolean
 }) => {
+    console.log("error_generate: ", props.error_generate);
     return (
         <form>
             <NavBar is_my_project={props.is_my_project} main_menu="Ландшафт" icon_my_projects="cottage" usr_name={props.userName} search="Искать..."
@@ -44,16 +46,21 @@ export const LandscapeSettingsAuthComponent = (props: {
                             onChangeTerGain={props.onChangeTerGain} onChangeTerSeed={props.onChangeTerSeed} onChangeTerFrequency={props.onChangeTerFrequency}></TerrainForm>
                     </div>
                     
+                    
                     <div className={groupStyles.groupGenerateButtonSetToRating}>
                         <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} onClick={props.onClickGenerate}>Сгенерировать</Button>
                         {props.is_my_project == true ?<div className={buttonStyle.groupLabelSwitcher}>
                             <Input style={switcherStyle.switch} id="switch1" type="checkbox" onClick={props.onClickAddToRating}></Input>
                             <label className={switcherStyle.switch_for} htmlFor="switch1">Добавить в рейтинг</label>
+                            
                         </div>: null}
+                        
                         {props.is_my_project == false ? <Button style={buttonStyle.buttonProject} icon_style={buttonStyle.button__icon_settings} icon="star" onClick={props.onClickRateProject}></Button>: null}
                     </div>
+                    <div>{props.error_generate == true ? <label>Ошибка ввода</label>: null}</div>
+                    
                 </div>
-                {props.image ? <img width="500" height="600" src={`data:image/png;base64,${props.image}`}></img> : null}
+                {props.image ? <img src={`data:image/png;base64,${props.image}`}></img> : null}
             </div>
         </form>
     )

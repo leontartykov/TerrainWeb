@@ -2,11 +2,11 @@ import http from "http_common"
 import { TerrainValues } from "components/types/terrain"
 
 async function RenderImage(terrain: TerrainValues) {
-    if (terrain) {
+    if (terrain && check_params(terrain)) {
         console.log("terrain: ", terrain);
         const json = {
             terrain,
-            light: { x: 100, y: 100, z: 100 }
+            light: { x: 500, y: 1000, z: 1000 }
         };
 
         const response = await
@@ -28,9 +28,23 @@ async function RenderImage(terrain: TerrainValues) {
             data: response?.data
         };
     }
+    return "400";
+}
+
+function check_params(terrain: TerrainValues){
+    let success = 0;
+    if (terrain.config.frequency > 0 && terrain.config.gain > 0 && terrain.config.lacunarity && terrain.config.octaves && terrain.config.seed &&
+        terrain.rotate.angle_x >= 0 && terrain.rotate.angle_y >= 0 && terrain.rotate.angle_z >= 0 &&
+        terrain.scale > 0 && terrain.size.width > 0 && terrain.size.height > 0){
+            success = 1;
+        }
+    return success;
 }
 
 async function GetUserProjects(userName: string | null, pageList: string) {
+    console.log("access_token: ", sessionStorage.getItem("access_token"));
+    console.log("uuid: ", sessionStorage.getItem("uuid"));
+    console.log("username: ", userName)
     const response = await
         http.get("api/v1/users/" + userName + "/myProjects?page=" + pageList,
             {
@@ -120,7 +134,7 @@ async function FindMyProject(userName: string | null, proj_name: string) {
 
 async function AddProjectToRating(userName: string | null, proj_name: string | null) {
     const response = await
-        http.get("api/v1/users/" + userName + "/myProjects/" + proj_name,
+        http.post("api/v1/ratingJobs/users/" + userName + "/myProjects/" + proj_name+"/addToRating",
             {
                 headers: {
                     'Authorization': sessionStorage.getItem("access_token"),
@@ -143,6 +157,7 @@ async function AddProjectToRating(userName: string | null, proj_name: string | n
 }
 
 async function GetAllRatingProjects(page: string) {
+    console.log("GetAllRatingProjects");
     const response = await
         http.get("api/v1/allProjects?page=" + page,
             {
@@ -162,6 +177,7 @@ async function GetAllRatingProjects(page: string) {
 }
 
 async function FindProject(proj_name: string) {
+    console.log("proj_nameFIND_PROJECT: ", proj_name);
     const response = await
         http.get("api/v1/allProjects/" + proj_name,
             {
@@ -176,10 +192,12 @@ async function FindProject(proj_name: string) {
                     data: response?.data
                 }
             }).catch((error) => {
+                console.log("errorFind_project: ", error.response?.status);
                 return {
                     data: error.response?.status
                 }
             })
+    
     return {
         data: response?.data
     }
