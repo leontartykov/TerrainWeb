@@ -3,6 +3,8 @@
 
 #include <drogon/HttpController.h>
 
+#include <QVBoxLayout>
+
 #include "core/config/config.h"
 #include "core/data_access/db_model/base_db_model.hpp"
 #include "http_server/services/user/users_service.hpp"
@@ -83,6 +85,7 @@ namespace api
                     ADD_METHOD_TO(TerrainsController::add_project_for_rating, "api/v1/ratingJobs/users/{1}/myProjects/{2}/addToRating", Post, Options);
                     ADD_METHOD_TO(TerrainsController::get_all_rating_projects, "api/v1/allProjects?page={1}", Get, Options);
                     ADD_METHOD_TO(TerrainsController::find_rating_project, "api/v1/allProjects/{1}", Get, Options);
+                    ADD_METHOD_TO(TerrainsController::get_rating_project_values, "api/v1/valueJobs/allProjects/{1}", Get, Options);
                 METHOD_LIST_END
 
                 void get_all_terrain_projects(const HttpRequestPtr &req,
@@ -118,6 +121,9 @@ namespace api
                               std::function<void (const HttpResponsePtr &)> &&callback,
                               std::string page);
                 void find_rating_project(const HttpRequestPtr &req,
+                                         std::function<void (const HttpResponsePtr &)> &&callback,
+                                         std::string projName);
+                void get_rating_project_values(const HttpRequestPtr &req,
                                          std::function<void (const HttpResponsePtr &)> &&callback,
                                          std::string projName);
 

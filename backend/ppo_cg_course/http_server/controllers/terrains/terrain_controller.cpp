@@ -26,11 +26,14 @@ void api::v1::TerrainsController::get_all_terrain_projects(const HttpRequestPtr 
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    std::cerr << "GET_ALL_PROJECTS\n";
 
     try{
         token = req->getHeader("Authorization");
         uuid = std::stoi(req.get()->getHeader("uuid"));
+        std::cerr << "uuid: " << uuid << "\n";
         ret_code = __sessions.check_usr_authorization(token, uuid);
+        std::cerr << "ret_code: " << ret_code << "\n";
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -140,6 +143,7 @@ void api::v1::TerrainsController::find_my_project(
         }
         else{
             ret_code = __terrains_service->get_terrain_project(projName, project, userName);
+            std::cerr << "ret_code: " << ret_code << "\n";
             jsonBody = form_json_response(project);
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -329,11 +333,14 @@ void api::v1::TerrainsController::add_project_for_rating(
     Json::Value jsonBody;
     std::string token;
     drogon::HttpResponsePtr resp;
+    std::cerr << "add_to_rating\n";
 
     try
     {
         token = req.get()->getHeader("Authorization");
+        std::cerr << "token: " << token << "\n";
         uuid = std::stoi(req.get()->getHeader("uuid"));
+        std::cerr << "uuid: " << uuid << "\n";
         ret_code = __sessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
@@ -393,6 +400,7 @@ void api::v1::TerrainsController::find_rating_project(
     drogon::HttpResponsePtr resp;
     servTerrainProject_t project;
     std::string token;
+    std::cerr << "FIND-RATING_PROJECTS\n";
 
     Json::Value jsonBody;
     try{
@@ -403,7 +411,42 @@ void api::v1::TerrainsController::find_rating_project(
             resp = form_http_response(ret_code, jsonBody);
         }
         else{
+            std::cerr << "projName: " << projName << "\n";
             ret_code = __terrains_service->find_rating_project(projName, project);
+            jsonBody = form_json_response(project);
+            resp = form_http_response(ret_code, jsonBody);
+        }
+        callback(resp);
+    }
+    catch (std::exception &e) {
+        std::cerr << e.what();
+        ret_code = BAD_REQUEST;;
+        resp = form_http_response(ret_code, jsonBody);
+        callback(resp);
+    }
+}
+
+void api::v1::TerrainsController::get_rating_project_values(
+        const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback,
+        std::string projName)
+{
+    int ret_code, uuid;
+    drogon::HttpResponsePtr resp;
+    servTerrain_t project;
+    std::string token;
+    std::cerr << "FIND-RATING_PROJECTS\n";
+
+    Json::Value jsonBody;
+    try{
+        token = req.get()->getHeader("Authorization");
+        uuid = std::stoi(req.get()->getHeader("uuid"));
+        ret_code = __sessions.check_usr_authorization(token, uuid);
+        if (ret_code != SUCCESS){
+            resp = form_http_response(ret_code, jsonBody);
+        }
+        else{
+            std::cerr << "projName: " << projName << "\n";
+            ret_code = __terrains_service->get_rating_project_values(projName, project);
             jsonBody = form_json_response(project);
             resp = form_http_response(ret_code, jsonBody);
         }
@@ -426,6 +469,8 @@ std::pair<dbTerrain_t, light_t>
 
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
+    std::cerr << "width: " << terrain.width << "\n";
+    std::cerr << "height: " << terrain.height << "\n";
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
     terrain.meta_config.gain = (*jsonBodyIn)["terrain"]["config"]["gain"].asDouble();

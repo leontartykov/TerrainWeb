@@ -37,6 +37,7 @@ class TerrainsService: public ITerrainService
         virtual int add_project_for_rating(const std::string &userName, const std::string &projName) override;
         virtual int get_all_rating_projects(const std::string &page, std::vector<servTerrainProject_t> &terProjects) override;
         virtual int find_rating_project(const std::string &projName, servTerrainProject_t &project) override;
+        virtual int get_rating_project_values(const std::string &projName, servTerrain_t &project) override;
 
         virtual void set_dbModel(std::shared_ptr<DbModel> dbModel) override;
 };

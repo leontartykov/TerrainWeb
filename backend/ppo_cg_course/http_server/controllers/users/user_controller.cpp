@@ -31,7 +31,7 @@ std::shared_ptr<DbModel> api::v1::create_db_model(config_t &config)
     std::string rdbms = config.dbms_type;
 
     if (rdbms == "postgresql"){
-        std::shared_ptr<Postgres> postgres = std::make_shared<Postgres>();
+        std::shared_ptr<Postgres> postgres = std::make_shared<Postgres>(config.db_name);
         db_model = postgres;
     }
 
@@ -55,7 +55,7 @@ void api::v1::UsersController::get_info(const HttpRequestPtr &req,
 
     try {
         token = req.get()->getHeader("Authorization");
-        uuid = std::stoi(req.get()->getHeader("UUID"));
+        uuid = std::stoi(req->getHeader("uuid"));
         ret_code = usrSessions.check_usr_authorization(token, uuid);
         if (ret_code != SUCCESS){
             resp = form_http_response(ret_code, jsonBody);
@@ -201,6 +201,7 @@ void api::v1::UsersController::login(
     Json::Value jsonBody;
     drogon::HttpResponsePtr resp;
     std::string access_token;
+    std::cerr << "login: ";
 
     try
     {

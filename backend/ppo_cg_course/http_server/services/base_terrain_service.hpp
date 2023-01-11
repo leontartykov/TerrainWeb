@@ -25,6 +25,7 @@ class ITerrainService
     virtual int add_project_for_rating(const std::string &userName, const std::string &projName) = 0;
     virtual int get_all_rating_projects(const std::string &page, std::vector<servTerrainProject_t> &terProjects) = 0;
     virtual int find_rating_project(const std::string &projName, servTerrainProject_t &project) = 0;
+    virtual int get_rating_project_values(const std::string &projName, servTerrain_t &project) = 0;
 
     virtual void set_dbModel(std::shared_ptr<DbModel> dbModel) = 0;
 };

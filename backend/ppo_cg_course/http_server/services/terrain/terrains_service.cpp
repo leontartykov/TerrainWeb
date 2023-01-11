@@ -106,6 +106,7 @@ bool TerrainsService::get_render_png_image(dbTerrain_t &terrain, light_t &light)
     __image = std::make_shared<PNGImage>();
 
     scene_info = __fill_scene_info(terrain, light);
+    __scene->set_terrain_size(scene_info.terSize.width, scene_info.terSize.height);
 
     auto buildScene = __scene->create_scene(scene_info);
 
@@ -145,9 +146,21 @@ int TerrainsService::find_rating_project(const std::string &projName, servTerrai
     return ret_code;
 }
 
+int TerrainsService::get_rating_project_values(const std::string &projName, servTerrain_t &project)
+{
+    int ret_code = BAD_REQUEST;
+    if (!projName.empty()){
+        ret_code = __dbModel->get_terrain_params(projName, project);
+    }
+
+    return ret_code;
+}
+
 all_scene_info_t TerrainsService::__fill_scene_info(dbTerrain_t &terrain, light_t &light)
 {
     all_scene_info_t scene_info;
+    scene_info.terSize.width = terrain.width;
+    scene_info.terSize.height = terrain.height;
     scene_info.scene_meta_data = terrain.meta_config;
     scene_info.scene_point_light_position.set_point(light.x, light.y, light.z);
     scene_info.scene_rotate_terrain_angles = terrain.rotate_angles;
