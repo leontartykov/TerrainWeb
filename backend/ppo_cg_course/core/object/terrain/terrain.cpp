@@ -72,6 +72,12 @@ int Terrain::get_width(){
     return _width;
 }
 
+void Terrain::set_size(const int &width, const int &height)
+{
+    _width = height + 1;
+    _height = width + 1;
+}
+
 Point3D<double> Terrain::get_center_figure(){
     return _center_terrain_point;
 }

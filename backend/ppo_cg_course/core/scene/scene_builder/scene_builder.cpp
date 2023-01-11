@@ -11,7 +11,7 @@ std::shared_ptr<Terrain> SceneBuilder::get_terrain()
 
 std::shared_ptr<Terrain> ScenePerlinBuilder::create_terrain()
 {
-    terrain = std::shared_ptr<Terrain>(new Terrain());
+    terrain = std::make_shared<Terrain>();
     return terrain;
 }
 

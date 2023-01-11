@@ -16,10 +16,11 @@ class UserPostgres: public IUsersDb
         void __disconnect_db();
         bool __is_user_empty(const dbUsers_t &user);
         void __define_count_users();
+        std::string __dbName;
 
     public:
         UserPostgres() = default;
-        UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql);
+        UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql, const std::string &dbName);
         ~UserPostgres() = default;
 
         virtual int get(const int &id, dbUsers_t &user) override;

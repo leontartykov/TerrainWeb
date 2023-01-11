@@ -1,6 +1,7 @@
 #include "postgres_user.h"
 
-UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql){
+UserPostgres::UserPostgres(std::shared_ptr<pqxx::connection> &conn_psql, const std::string &dbName){
+    __dbName = dbName;
     __conn_psql = conn_psql;
     __define_count_users();
 }
@@ -13,7 +14,7 @@ int UserPostgres::get(const int &id, dbUsers_t &user)
     }
     else{
         pqxx::work worker(*__conn_psql);
-        std::string query = "SELECT * FROM terrain_project.users.info WHERE id = '" + \
+        std::string query = "SELECT * FROM "+__dbName+".users.info WHERE id = '" + \
                              std::to_string(id) + "';";
 
         pqxx::result response = worker.exec(query);
@@ -49,13 +50,13 @@ int UserPostgres::add(const dbUsers_t &user)
     }
     try{
         pqxx::work worker(*__conn_psql);
-        query = "SELECT deleted, blocked from terrain_project.users.info where login like '%" \
+        query = "SELECT deleted, blocked from "+__dbName+".users.info where login like '%" \
                  + user.login + "';";
         response = worker.exec(query);
 
         if (!response.empty()){
             if (response[0][0].as<bool>() != false){
-                query = "UPDATE terrain_project.users.info SET deleted = false \
+                query = "UPDATE "+__dbName+".users.info SET deleted = false \
                      WHERE login like '%" + user.login + "';";
             }
             else{
@@ -67,7 +68,7 @@ int UserPostgres::add(const dbUsers_t &user)
             userId = __count_users;
             __count_users++;
 
-            query = "INSERT INTO terrain_project.users.info values (" + \
+            query = "INSERT INTO "+__dbName+".users.info values (" + \
                                 std::to_string(userId) + ", '" +
                                 user.login + "', '" + user.password + "', " + std::to_string(user.perm_level) +
                                 ", false, " + "false)";
@@ -102,7 +103,7 @@ int UserPostgres::delete_user(const int &id)
 
             dbUsers_t del_user;
             pqxx::work worker(*__conn_psql);
-            std::string query = "UPDATE terrain_project.users.info SET deleted = true WHERE id = '" + \
+            std::string query = "UPDATE "+__dbName+".users.info SET deleted = true WHERE id = '" + \
                                 std::to_string(id) + "';";
             pqxx::result result = worker.exec(query);
 
@@ -132,7 +133,7 @@ int UserPostgres::delete_user(const std::string &login)
         try{
             pqxx::work worker(*__conn_psql);
             query = "DELETE \
-                     FROM terrain_project.users.info \
+                     FROM "+__dbName+".users.info \
                      WHERE login = '" + login + "';";
             worker.exec(query);
             worker.commit();
@@ -163,7 +164,7 @@ int UserPostgres::update(const int &id, const dbUsers_t &user)
     else{
         try{
                 pqxx::work worker(*__conn_psql);
-                query = "UPDATE terrain_project.users.info SET login = '" + \
+                query = "UPDATE "+__dbName+".users.info SET login = '" + \
                                     user.login + "' WHERE id = '" + std::to_string(id) + "';";
                 worker.exec(query);
                 worker.commit();
@@ -191,7 +192,7 @@ int UserPostgres::block(const int &id)
     else{
         try{
             pqxx::work worker(*__conn_psql);
-            std::string query = "UPDATE terrain_project.users.info SET blocked = true WHERE id = " \
+            std::string query = "UPDATE "+__dbName+".users.info SET blocked = true WHERE id = " \
                                  + std::to_string(id) + ";";
             worker.exec(query);
             worker.commit();
@@ -220,7 +221,7 @@ int UserPostgres::unlock(const int &id)
     else{
         try{
             pqxx::work worker(*__conn_psql);
-            std::string query = "UPDATE terrain_project.users.info SET blocked = false WHERE id = " \
+            std::string query = "UPDATE "+__dbName+".users.info SET blocked = false WHERE id = " \
                                 + std::to_string(id) + ";";
             worker.exec(query);
             worker.commit();
@@ -248,7 +249,7 @@ int UserPostgres::get_validation(dbUsers_t &user)
     try{
         pqxx::work worker(*__conn_psql);
         query = "SELECT info.id, info.blocked, info.deleted " \
-                "FROM terrain_project.users.info as info " \
+                "FROM "+__dbName+".users.info as info " \
                 "WHERE info.login = '" + user.login + "' AND info.password = '" + user.password + "';";
         response = worker.exec(query);
         if (response.empty()){
@@ -301,7 +302,7 @@ void UserPostgres::__define_count_users()
 
     try{
         pqxx::work worker(*__conn_psql);
-        std::string query = "SELECT COUNT(*) FROM terrain_project.users.info";
+        std::string query = "SELECT COUNT(*) FROM "+__dbName+".users.info";
         pqxx::result response = worker.exec(query);
         __count_users = std::stoi(response[0][0].c_str());
     }

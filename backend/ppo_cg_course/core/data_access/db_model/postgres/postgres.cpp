@@ -1,9 +1,10 @@
 #include "postgres.hpp"
 
-Postgres::Postgres(){
+Postgres::Postgres(const std::string &dbName){
     __connect_psql_to_db();
-    __users = std::make_unique<UserPostgres>(__connection);
-    __terrains = std::make_unique<TerrainProjectsPostgres>(__connection);
+    __dbName = dbName;
+    __users = std::make_unique<UserPostgres>(__connection, __dbName);
+    __terrains = std::make_unique<TerrainProjectsPostgres>(__connection, __dbName);
     __nUsers = this->get_count_users();
     __nTerrains = this->get_count_terrains();
 }
@@ -34,11 +35,11 @@ int Postgres::__connect_psql_to_db()
 }
 
 int Postgres::get_count_users(){
-    return __users.get()->get_count_users();
+    return __users->get_count_users();
 }
 
 int Postgres::get_count_terrains(){
-    return __terrains.get()->get_count_terrain_projects();
+    return __terrains->get_count_terrain_projects();
 }
 
 void Postgres::set_psql_connection(std::shared_ptr<pqxx::connection> &connection){
@@ -138,6 +139,18 @@ int Postgres::get_terrain_params(const std::string &userName, const std::string 
     return ret_code;
 }
 
+int Postgres::get_terrain_params(const std::string &projName, servTerrain_t &terParams)
+{
+    int ret_code = BAD_REQUEST;
+
+    dbTerrain_t dbTerParams;
+    if (!projName.empty()){
+        ret_code = __terrains->get_terrain_params(projName, dbTerParams);
+        __convertDbToServModel((const dbTerrain_t)dbTerParams, terParams);
+    }
+    return ret_code;
+}
+
 int Postgres::delete_terrain_project(const std::string &userName, const std::string &projName)
 {
     int ret_code = BAD_REQUEST;
@@ -221,6 +234,7 @@ int Postgres::get_terrain_project(const std::string &projName, servTerrainProjec
     int ret_code = NOT_FOUND;
     if (!userName.empty() && !projName.empty()){
         ret_code = __terrains->get_terrain_project(projName, dbTerProj, userName);
+        std::cerr << "ret_code_get_terra: " << ret_code << "\n";
         if (ret_code == SUCCESS){
             __convertDbToServModel(dbTerProj, servTerProj);
         }
@@ -328,4 +342,10 @@ int Postgres::login(const std::string &login, const std::string &password, int &
 int Postgres::login(const std::string &login, const std::string &password){
     int uuid = 0;
     return this->login(login, password, uuid);
+}
+
+void Postgres::set_db(const std::string &dbName)
+{
+    std::cerr << "SET_DB: " << dbName << "\n";
+    __dbName = dbName;
 }

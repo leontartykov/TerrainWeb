@@ -28,8 +28,9 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
     //width = win_boards.max_y; height = win_boards.max_x;
     int min_x = win_boards.min_x, max_x = win_boards.max_x;
     int min_y = win_boards.min_y, max_y = win_boards.max_y;
-    width = max_x - min_x, height = max_y - min_y;
-    //std::cerr << " height: " << height << "width: " << width  << "\n";
+    //width = max_x - min_x, height = max_y - min_y;
+    width = max_y - min_y, height = max_x - min_x;
+    std::cerr << " height: " << height << "width: " << width  << "\n";
     png_set_IHDR(
         png,
         info,
@@ -43,20 +44,20 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
 
     png_write_info(png, info);
 
-    row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
-    for(int y = 0; y < height; y++) {
+    row_pointers = (png_bytep*)malloc(sizeof(png_bytep) * width);
+    for(int y = 0; y < width; y++) {
         row_pointers[y] = (png_byte*)malloc(png_get_rowbytes(png,info));
       }
 
     std::vector<std::vector<QColor>> new_buffer;
 
-    new_buffer.reserve(height);
-    for (int i = 0; i < height; ++i){
-        new_buffer[i].reserve(width);
+    new_buffer.reserve(width);
+    for (int i = 0; i < width; ++i){
+        new_buffer[i].reserve(height);
     }
 
-    for (int i = 0; i < height; ++i){
-        for (int j = 0; j < width; ++j){
+    for (int i = 0; i < width; ++i){
+        for (int j = 0; j < height; ++j){
             new_buffer[i][j] = color_buffer[i+min_y][j+min_x];
         }
     }
@@ -65,16 +66,17 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
     /*for (int i = 0; i < height; ++i){
         std::cerr << "i=" << i;
         for (int j = 0; j < width; ++j){
-            std::cerr << "(" << color_buffer[i][j].red() << "," << color_buffer[i][j].green() << "," << color_buffer[i][j].blue() << "),";
+            std::cerr << "(" << new_buffer[i][j].red() << "," << new_buffer[i][j].green() << "," << new_buffer[i][j].blue() << "),";
         }
         std::cerr << "\n";
     }*/
     std::cerr << "TRANSER\n";
     int red, green, blue;
     png_bytep px;
-    for(int y = 0; y < height; y++) {
+    for(int y = 0; y < width; y++) {
         png_bytep row = row_pointers[y];
-        for(int x = 0; x < width; x++) {
+        for(int x = 0; x < height; x++) {
+            //std::cerr << "y: " << y << " x: " << x << "\n";
           px = &(row[x * 4]);
           new_buffer[x][y].getRgb(&red, &green, &blue);
           px[0] = red;
@@ -91,7 +93,7 @@ int PNGImage::create(std::string &path, std::vector<std::vector<QColor>> &color_
        png_destroy_write_struct(&png, &info);
     }
 
-    for(int y = 0; y < height; y++) {
+    for(int y = 0; y < width; y++) {
         free(row_pointers[y]);
       }
     free(row_pointers);

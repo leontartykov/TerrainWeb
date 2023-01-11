@@ -528,6 +528,7 @@ bool is_equal_colors(QColor color_1, QColor color_2)
 void ZBuffer::_init_zbuffer(int width, int height)
 {
     _width = width, _height = height;
+    std::cerr << "width_z_buffer: " << width << " height_zBuffer: " << height << "\n";
 
     std::vector<double> temp;
     std::vector<QColor> temp_color;

@@ -22,6 +22,7 @@ class IScene
             create_scene(all_scene_info_t &scene_info) = 0;
         virtual void build_scene(all_scene_info_t &scene_info) = 0;
         virtual void draw_scene(QGraphicsScene *scene, QGraphicsView *view) = 0;
+        virtual void set_terrain_size(const int &width, const int &height) = 0;
 };
 
 #endif

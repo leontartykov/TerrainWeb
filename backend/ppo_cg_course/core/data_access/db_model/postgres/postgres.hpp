@@ -33,6 +33,7 @@ enum ter_projs_action{
 class Postgres: public DbModel
 {
     private:
+        std::string __dbName;
         std::unique_ptr<UserPostgres> __users;                          //postgres's user management
         std::unique_ptr<TerrainProjectsPostgres> __terrains;            //postgres's terrain management
         Config __config;                                                //configure launch postgres database
@@ -51,7 +52,8 @@ class Postgres: public DbModel
         void __convertServToDbModel(const servTerrain_t &servTer, dbTerrain_t &dbTer);
 
     public:
-        Postgres();
+        Postgres() = default;
+        Postgres(const std::string &dbName);
         virtual ~Postgres() override {}
 
         virtual int get_user(const int &id, servUsers_t &servUser) override;
@@ -69,6 +71,7 @@ class Postgres: public DbModel
 
         virtual int add_new_terrain_project(const std::string &userName, const std::string &terProjName) override;
         virtual int get_terrain_params(const std::string &userName, const std::string &projName, servTerrain_t &terParams) override;
+        virtual int get_terrain_params(const std::string &projName, servTerrain_t &terParams) override;
         virtual int get_terrain_projects(const std::string &userName, int &page,
                                          std::vector<servTerrainProject_t> &servTerProjects) override;
         virtual int get_terrain_project(const std::string &projName, servTerrainProject_t &servTerProj, const std::string &userName="----") override;
@@ -81,6 +84,8 @@ class Postgres: public DbModel
 
         virtual int login(const std::string &login, const std::string &password, int &uuid) override;
         virtual int login(const std::string &login, const std::string &password) override;
+
+        virtual void set_db(const std::string &dbName) override;
 };
 
 #endif

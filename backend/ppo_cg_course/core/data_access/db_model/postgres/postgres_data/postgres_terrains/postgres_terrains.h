@@ -18,10 +18,11 @@ class TerrainProjectsPostgres
         std::shared_ptr<pqxx::connection> __conn_psql;
 
         void __define_count_terrain_projects();
+        std::string __dbName;
 
     public:
         TerrainProjectsPostgres() = default;
-        TerrainProjectsPostgres(std::shared_ptr<pqxx::connection> &conn_psql);
+        TerrainProjectsPostgres(std::shared_ptr<pqxx::connection> &conn_psql, const std::string &dbName);
 
         ~TerrainProjectsPostgres() = default;
 
@@ -33,6 +34,7 @@ class TerrainProjectsPostgres
 
         int add_new_terrain_project(const std::string &userName, const std::string &terProjName);
         int get_terrain_params(const std::string &userName, const std::string &projName, dbTerrain_t &ter);
+        int get_terrain_params(const std::string &projName, dbTerrain_t &ter);
         int delete_terrain_project(const std::string &userName, const std::string &projName);
         double get_terrain_project_rating(const std::string &projName, double &dbRating);
         int set_terrain_project_rating(const std::string &projName, const std::string &userName);

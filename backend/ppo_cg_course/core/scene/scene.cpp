@@ -7,6 +7,11 @@ Scene::Scene(){
     _zbuffer = new ZBuffer();
 }
 
+Scene::Scene(const int &terWidth, const int &terHeight){
+    _terrain = new Terrain(terWidth, terHeight);
+    _zbuffer = new ZBuffer();
+}
+
 Scene::~Scene(){
     delete[] _terrain;
     delete[] _zbuffer;
@@ -20,6 +25,10 @@ void Scene::set_zbuffer(ZBuffer *zbuffer){
     _zbuffer = zbuffer;
 }
 
+void Scene::set_terrain_size(const int &width, const int &height){
+    _terrain->change_size(width, height);
+}
+
 Terrain *Scene::get_terrain(){
     return _terrain;
 }
@@ -30,6 +39,7 @@ ZBuffer *Scene::get_zbuffer(){
 
 void Scene::build_scene(all_scene_info_t &scene_info)
 {
+
     _terrain->set_meta_data(scene_info.scene_meta_data);
     _terrain->set_rotate_angles(scene_info.scene_rotate_terrain_angles);
     _terrain->form_terrain();
@@ -76,7 +86,7 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     win.min_x = min_j; win.max_x = max_j;
     win.min_y = min_i; win.max_y = max_i;
 
-    //std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
+    std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
 
     return {color_matrix, win};
 }

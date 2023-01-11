@@ -20,7 +20,7 @@ class Terrain
         std::vector<std::vector<Vector3D<int>>> _normals_up_triangles, _normals_down_triangles;
         std::vector<std::vector<Vector3D<double>>> _shading_normals;
 
-        const int _default_width = 100, _default_height = 100;
+        const int _default_width = 150, _default_height = 150;
         int _width, _height;
         double _scale;
         Point3D<double> _center_terrain_point;
@@ -44,6 +44,7 @@ class Terrain
 
         int get_height();
         int get_width();
+        void set_size(const int &width, const int  &height);
         //void set_ter_size(const int &width, const int&)
 
         Point3D<double> get_center_figure();

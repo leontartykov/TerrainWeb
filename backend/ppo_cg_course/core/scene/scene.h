@@ -9,6 +9,8 @@ class Scene: public IScene
 {
     public:
         Scene();
+        Scene(const int &terWidth, const int &terHeight);
+
         virtual ~Scene() override;
 
         void set_terrain(Terrain *terrain);
@@ -18,6 +20,7 @@ class Scene: public IScene
         virtual void draw_scene(QGraphicsScene *scene, QGraphicsView *view) override;
         virtual std::pair<std::vector<std::vector<QColor>>, scene_win_t>
             create_scene(all_scene_info_t &scene_info) override;
+        virtual void set_terrain_size(const int &width, const int &height) override;
 
         Terrain *get_terrain();
         ZBuffer *get_zbuffer();
@@ -26,8 +29,6 @@ class Scene: public IScene
         //int load_terrain();
 
         void convert_color_to_black_and_white();
-
-
         bool is_background_color(QColor &color);
 
     private:
