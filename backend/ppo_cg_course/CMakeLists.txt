@@ -286,6 +286,7 @@ set(
     tests/unit_tests/data_builders/user_builder.hpp
     tests/unit_tests/data_builders/point3D_builder.hpp
     tests/unit_tests/data_builders/vector3D_builder.hpp
+    tests/unit_tests/data_builders/terrain_builder.hpp
 
     tests/unit_tests/tests_point_3d.cpp
     tests/unit_tests/tests_vector_3d.cpp
@@ -295,12 +296,24 @@ set(
     tests/unit_tests/tests_file.cpp
     tests/unit_tests/tests_image.cpp
     tests/unit_tests/tests_users.cpp
+
+    tests/integration_tests/tests_image.cpp
+
+    http_server/services/terrain/terrains_service.cpp
 )
 
 set(
     INTEGRATION_TESTS
 
-    tests/intergration_tests/integrTests.cpp
+    tests/integration_tests/tests_image.cpp
+
+    http_server/services/terrain/terrains_service.cpp
+)
+
+set(
+    TESTS
+    ${UNIT_TESTS}
+    ${INTEGRATION_TESTS}
 )
 
 set(
@@ -400,6 +413,8 @@ FetchContent_MakeAvailable(googletest)
 add_executable(
     unit_all_tests
 
+    tests/main_tests.cpp
+    ${TESTS}
     ${TERRAIN_ENGINE}
     ${IMAGES_ENGINE}
     ${CONFIG_ENGINE}
@@ -411,12 +426,12 @@ add_executable(
     ${REPOSITORY_USERS}
     ${POSTGRES_ENGINE}
     ${ENTRY_ENGINE}
-    ${UNIT_TESTS}
-    ${INTEGRATION_TESTS}
 
     core/data_access/db_model/base_db_model.hpp
 
     core/data_access/data_interfaces/interface_users_db.h
+
+
 )
 
 add_executable(
@@ -451,7 +466,10 @@ find_library(REDIS_PLUS_PLUS_LIB redis++)
 target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets
                     -lpqxx -lpq -ljsoncpp -lpng
                      ${JSONCPP_LIBRARIES} mysqlcppconn
-                     gtest gmock pthread gtest_main)
+                     -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
+                     -lssl -lcrypto -ljwt -lpng -lz
+                     Drogon::Drogon
+                     gtest gmock pthread)
 
 target_link_libraries(app_client Qt5::Gui Qt5::Widgets Qt5::Network
                         ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
