@@ -20,7 +20,8 @@ void api::v1::UsersController::set_dbModel(std::shared_ptr<DbModel> dbModel){
 api::v1::UsersController::UsersController()
 {
     __users_service = std::make_shared<UsersService>();
-    config_t config = __config.read_config_postgres();
+    config_t config;
+    __config.read_config_postgres(config);
 
     __users_service->set_dbModel(create_db_model(config));
 }

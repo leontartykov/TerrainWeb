@@ -7,7 +7,8 @@ api::v1::TerrainsController::TerrainsController(){
     __terrains_service = std::make_shared<TerrainsService>();
     //__config = std::make_shared<Config>();
 
-    config_t config = __config.read_config_postgres();
+    config_t config;
+    __config.read_config_postgres(config);
 
     __terrains_service->set_dbModel(create_db_model(config));
 
@@ -469,8 +470,6 @@ std::pair<dbTerrain_t, light_t>
 
     terrain.width = (*jsonBodyIn)["terrain"]["size"]["width"].asInt();
     terrain.height = (*jsonBodyIn)["terrain"]["size"]["height"].asInt();
-    std::cerr << "width: " << terrain.width << "\n";
-    std::cerr << "height: " << terrain.height << "\n";
     terrain.scale = (*jsonBodyIn)["terrain"]["scale"].asDouble();
     terrain.meta_config.octaves = (*jsonBodyIn)["terrain"]["config"]["octaves"].asInt();
     terrain.meta_config.gain = (*jsonBodyIn)["terrain"]["config"]["gain"].asDouble();
