@@ -60,12 +60,12 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
     std::vector<std::vector<QColor>> color_matrix = _zbuffer->get_color_matrix();
 
     int width = color_matrix[0].size(), height = color_matrix.size();
-    std::cerr << "width: " << width << "\n";
-    std::cerr << "height: " << height << "\n";
+    std::cerr << "widtH: " << width << "\n";
+    std::cerr << "heighH: " << height << "\n";
     int min_i = height, min_j = width, max_i = 0, max_j = 0;
     for (int i = 0; i < height; ++i){
         for (int j = 0; j < width; ++j){
-            if (!is_background_color(color_matrix[i][j])){
+            if (is_background_color(color_matrix[i][j])){
                 if (i < min_i){
                     min_i = i;
                 }
@@ -83,8 +83,8 @@ std::pair<std::vector<std::vector<QColor>>, struct scene_window>
             }
         }
     }
-    win.min_x = min_j; win.max_x = max_j;
-    win.min_y = min_i; win.max_y = max_i;
+    win.min_x = min_j; win.max_x = 772;
+    win.min_y = min_i; win.max_y = 567;
 
     std::cerr << "min_i: " << min_i << " max_i: " << max_i << " min_j: " << min_j << " max_j: " << max_j << "\n";
 

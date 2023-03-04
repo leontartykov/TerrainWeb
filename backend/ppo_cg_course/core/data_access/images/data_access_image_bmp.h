@@ -12,7 +12,8 @@ class DataAccessFileBMP: BaseImage
 
         virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer) override;
 
-        virtual std::vector<std::vector<QColor>> load(std::string path) override;
+        virtual int load(const std::string &path,
+                         std::vector<std::vector<QColor>> &color_buffer) override;
         void write(std::string path, std::string text);
 
     private:

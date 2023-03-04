@@ -15,10 +15,11 @@ class BaseImage
         virtual ~BaseImage() {};
 
         virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer) = 0;
-        virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer,
-                            scene_win_t win_boards) = 0;
+        virtual int create(const std::string &path, const std::vector<std::vector<QColor>> &color_buffer,
+                           const scene_win_t win_boards) = 0;
 
-        virtual std::vector<std::vector<QColor>> load(std::string path) = 0;
+        virtual int load(const std::string &path,
+                         std::vector<std::vector<QColor>> &color_buffer) = 0;
 };
 
 #endif

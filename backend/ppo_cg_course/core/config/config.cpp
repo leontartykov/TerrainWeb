@@ -1,10 +1,12 @@
 #include "config.h"
+#include "error_codes.h"
 
 Config::Config(){
     __old_config_path = "../ppo_cg_course/config_data/config.json";
     __config_path = "../ppo_cg_course/http_server/config.json";
 }
 
+///Old version
 config_t Config::read_config_file_postgres()
 {
     config_t config_data;
@@ -30,29 +32,37 @@ config_t Config::read_config_file_postgres()
     return config_data;
 }
 
-config_t Config::read_config_postgres()
+int Config::read_config_postgres(config_t &config_data)
 {
-    config_t config_data;
+    int success = SUCCESS;
     std::ifstream config_file;
     Json::Reader reader;
     Json::Value root;
 
-    config_file.open(__config_path);
-    reader.parse(config_file, root);
+    try{
+        std::cerr << "read\n";
+        config_file.open(__config_path);
 
-    if (root["db_clients"])
-    {
-        config_data.name_db_client = root["db_clients"][0]["name"].asString().c_str();
-        config_data.dbms_type = root["db_clients"][0]["rdbms"].asString().c_str();
-        config_data.db_name = root["db_clients"][0]["dbname"].asString().c_str();
-        config_data.host = root["db_clients"][0]["host"].asString().c_str();
-        config_data.user = root["db_clients"][0]["user"].asString().c_str();
-        config_data.password = root["db_clients"][0]["password"].asString().c_str();
-        config_data.port = root["db_clients"][0]["port"].asString().c_str();
+        reader.parse(config_file, root);
+
+        if (root["db_clients"])
+        {
+            config_data.name_db_client = root["db_clients"][0]["name"].asString().c_str();
+            config_data.dbms_type = root["db_clients"][0]["rdbms"].asString().c_str();
+            config_data.db_name = root["db_clients"][0]["dbname"].asString().c_str();
+            config_data.host = root["db_clients"][0]["host"].asString().c_str();
+            config_data.user = root["db_clients"][0]["user"].asString().c_str();
+            config_data.password = root["db_clients"][0]["password"].asString().c_str();
+            config_data.port = root["db_clients"][0]["port"].asString().c_str();
+        }
+        config_file.close();
     }
-    config_file.close();
+    catch(std::exception &e){
+        std::cerr << e.what() << "\n";
+        return ERR_CONFIG;
+    }
 
-    return config_data;
+    return success;
 }
 
 config_t Config::read_config_file_mysql()

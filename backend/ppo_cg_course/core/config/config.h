@@ -23,7 +23,7 @@ class Config
         config_t read_config_file_mysql();
 
         std::string form_options(config_t &config_data);
-        config_t read_config_postgres();
+        int read_config_postgres(config_t &config_data);
 };
 
 #endif

@@ -11,14 +11,20 @@ EntrySystem::~EntrySystem(){
 }
 
 int EntrySystem::_verify_user(user_info_t &user){
-    std::string query;
-    int error = 0;
+    std::string query, options;
+    config_t config_data;
+    int success = SUCCESS;
+
     try
     {
-        config_t config_data = _config.read_config_file_postgres();
-        std::string options = _config.form_options(config_data);
-        _connect = std::unique_ptr<pqxx::connection>(
-                    new pqxx::connection(options));
+        std::cerr << "success: " << success << "\n";
+        success = _config.read_config_postgres(config_data);
+        std::cerr << "success: " << success << "\n";
+        if (success == SUCCESS){
+            options = _config.form_options(config_data);
+            _connect = std::unique_ptr<pqxx::connection>(
+                        new pqxx::connection(options));
+        }
     }
     catch (std::exception const &e){
         log_info_t log_info_exception = {
@@ -46,7 +52,7 @@ int EntrySystem::_verify_user(user_info_t &user){
     pqxx::result R {worker.exec(query)};
 
     if (R.size() == 0){
-        error = 1;
+        success = 1;
         std::cout << "Ошибка идентификации: пользователь не найден." << std::endl;
         log_info_t log_info_exception = {
             .type_log = "error",
@@ -64,7 +70,7 @@ int EntrySystem::_verify_user(user_info_t &user){
     }
 
     _connect->disconnect();
-    return error;
+    return success;
 }
 
 servUsers_t EntrySystem::__input_user_info()
@@ -88,33 +94,40 @@ int EntrySystem::enter_system(){
     log_info_t log_info_exception;
     LogApp log_app;
 
-    while (ret_code >= SUCCESS)
-    {
-        userInfo = __input_user_info();
-        ret_code = __dbModel->login(userInfo.login, userInfo.password);
-
-        if (ret_code == SUCCESS)
+    try{
+        while (ret_code >= SUCCESS)
         {
-            log_info_exception.type_log = "info";
-            log_info_exception.message_error = "подключение пользователя.";
-            log_info_exception.user_login = userInfo.login;
-            log_info_exception.time_error = ctime(&_current_time);
+            userInfo = __input_user_info();
+            std::cerr << "ret_code: " << ret_code << "\n";
+            ret_code = __dbModel->login(userInfo.login, userInfo.password);
+            std::cerr << "ret_code: " << ret_code << "\n";
 
-            log_app.write_log_info(log_info_exception);
+            if (ret_code == SUCCESS)
+            {
+                log_info_exception.type_log = "info";
+                log_info_exception.message_error = "подключение пользователя.";
+                log_info_exception.user_login = userInfo.login;
+                log_info_exception.time_error = ctime(&_current_time);
 
-            if (userInfo.login.compare("admin") == 0){
-                std::shared_ptr<Admin> admin(new Admin());
-                std::shared_ptr<BaseAppUser> user = admin;
-                user->set_user_login(userInfo.login);
-                ret_code = user->do_action();
-            }
-            else{
-                std::shared_ptr<User> con_user(new User());
-                std::shared_ptr<BaseAppUser> user = con_user;
-                user->set_user_login(userInfo.login);
-                ret_code = user->do_action();
+                log_app.write_log_info(log_info_exception);
+
+                if (userInfo.login.compare("admin") == 0){
+                    std::shared_ptr<Admin> admin(new Admin());
+                    std::shared_ptr<BaseAppUser> user = admin;
+                    user->set_user_login(userInfo.login);
+                    ret_code = user->do_action();
+                }
+                else{
+                    std::shared_ptr<User> con_user(new User());
+                    std::shared_ptr<BaseAppUser> user = con_user;
+                    user->set_user_login(userInfo.login);
+                    ret_code = user->do_action();
+                }
             }
         }
+    }
+    catch(std::exception &e){
+        std::cerr << e.what() << "\n";
     }
 
     return ret_code;

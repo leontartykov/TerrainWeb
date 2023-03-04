@@ -14,24 +14,26 @@ int Postgres::__connect_psql_to_db()
 {
     config_t config_data;
     std::string options;
+    int success = SUCCESS;
 
     if (__connection){
         std::cout << "Уже есть подключение к БД.\n";
-        return SUCCESS;
+        return success;
     }
 
     try
     {
-        config_data = __config.read_config_postgres();
+        success = __config.read_config_postgres(config_data);
+
         options = __config.form_options(config_data);
-        __connection = std::shared_ptr<pqxx::connection>(new pqxx::connection(options));
+        __connection = std::make_shared<pqxx::connection>(options);
     }
     catch (std::exception const &e){
         std::cerr << e.what() << '\n';
         return -2;
     }
 
-    return SUCCESS;
+    return success;
 }
 
 int Postgres::get_count_users(){
@@ -322,18 +324,24 @@ int Postgres::login(const std::string &login, const std::string &password, int &
     int success = SUCCESS;
     dbUsers_t dbUser;
 
-    if (login.empty() || password.empty()){
-        success = BAD_REQUEST;
-    }
-    else
-    {
-        dbUser.login = login;
-        dbUser.password = password;
-
-        success = __users.get()->get_validation(dbUser);
-        if (success == SUCCESS && dbUser.is_blocked != "t" && dbUser.is_deleted != "t"){
-            uuid = dbUser.id;
+    try{
+        if (login.empty() || password.empty()){
+            success = BAD_REQUEST;
         }
+        else
+        {
+            dbUser.login = login;
+            dbUser.password = password;
+
+            success = __users.get()->get_validation(dbUser);
+            if (success == SUCCESS && dbUser.is_blocked != "t" && dbUser.is_deleted != "t"){
+                uuid = dbUser.id;
+            }
+        }
+    }
+    catch (std::exception &e){
+        std::cerr << e.what() << "\n";
+        return -1;
     }
 
     return success;

@@ -2,6 +2,7 @@
 #define _POSTGRES_USERS_H_
 
 #include <pqxx/pqxx>
+#include <exception>
 
 #include "core/data_access/data_interfaces/interface_users_db.h"
 #include "error_codes.h"

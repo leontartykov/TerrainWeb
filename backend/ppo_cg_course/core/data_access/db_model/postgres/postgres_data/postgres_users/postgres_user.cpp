@@ -262,8 +262,8 @@ int UserPostgres::get_validation(dbUsers_t &user)
         }
     }
     catch(std::exception const &e){
-        std::cerr << e.what() << '\n';
-        return -2;
+        std::cerr << e.what() << "\n";
+        //return -2;
     }
 
     return success;

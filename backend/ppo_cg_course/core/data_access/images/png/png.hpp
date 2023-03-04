@@ -14,9 +14,10 @@ class PNGImage: public BaseImage
         virtual ~PNGImage() override {};
 
         virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer) override;
-        virtual int create(std::string &path, std::vector<std::vector<QColor>> &color_buffer,
-                           scene_win_t win_boards) override;
-        virtual std::vector<std::vector<QColor>> load(std::string path) override;
+        virtual int create(const std::string &path, const std::vector<std::vector<QColor>> &color_buffer,
+                           const scene_win_t win_boards) override;
+        virtual int load(const std::string &path,
+                         std::vector<std::vector<QColor>> &color_buffer) override;
 };
 
 #endif

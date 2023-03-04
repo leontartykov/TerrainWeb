@@ -105,16 +105,16 @@ int DataAccessFileBMP::create(std::string &path, std::vector<std::vector<QColor>
     return 0;
 }
 
-std::vector<std::vector<QColor>> DataAccessFileBMP::load(std::string path)
+int DataAccessFileBMP::load(const std::string &path,
+                            std::vector<std::vector<QColor>> &color_buffer)
 {
     std::ifstream file;
-    std::vector<std::vector<QColor>> color_buffer;
 
     file.open(path, std::ifstream::binary);
 
     if (!file.is_open()){
         std::cout << "Ошибка открытия файла.\n";
-        return color_buffer;
+        return -1;
     }
 
     //general info about bmp file
@@ -125,7 +125,7 @@ std::vector<std::vector<QColor>> DataAccessFileBMP::load(std::string path)
     //check, if file is a bmp
     if (file_header.bfType != 0x4D42) {
             std::cout << "Error:  is not BMP file." << std::endl;
-            return color_buffer;
+            return -1;
     }
 
     read(file, file_header.bfSize, sizeof(file_header.bfSize));
@@ -243,7 +243,7 @@ std::vector<std::vector<QColor>> DataAccessFileBMP::load(std::string path)
     delete[] rgb_info;
 
     file.close();
-    return color_buffer;
+    return 0;
 }
 
 void DataAccessFileBMP::write(std::string path, std::string text){
