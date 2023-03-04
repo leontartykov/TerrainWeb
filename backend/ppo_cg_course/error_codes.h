@@ -10,4 +10,6 @@
 
 #define CONNECTION_FAILED 10
 
+#define ERR_CONFIG 11
+
 #endif // SERVER_CODES_H
