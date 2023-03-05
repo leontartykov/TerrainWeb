@@ -1,0 +1,48 @@
+{
+	"listeners": 
+	[
+		{
+		    "address": "127.0.0.1",
+		    "port": 7000,
+		    "https": false
+		}
+	],
+	
+	"db_clients":
+	[
+    	{
+			"name":"mainBackend",
+			"rdbms": "postgresql",
+			"host": "127.0.0.1",
+			"port": 5432,
+			"dbname": "terrain_project",
+			"user": "postgres",
+          	"password": "postgres",
+          	"is_fast": false,
+          	"number_of_connections": 1,
+          	"timeout": -1.0,
+          	"auto_batch": false
+		}
+	],
+	
+	"redis_clients": 
+	[
+        {
+            "name":"",
+            "host": "127.0.0.1",
+            "port": 6379,
+            "username": "",
+            "password": "",
+            "db": 0,
+            "is_fast": false,
+            "number_of_connections": 1,
+            "timeout": -1.0
+        }
+    ],
+	
+	"app": 
+	{
+		"server_header_field": "",
+		"enable_server_header": false
+	}
+}

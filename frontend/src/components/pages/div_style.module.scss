@@ -1,0 +1,21 @@
+.div_type_projects{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 150px;
+}
+
+.div_main_page{
+    display: flex;
+    flex-direction: column;
+    gap: 153px;
+
+    background: var(--PageBackground);
+}
+
+.div_project_page{
+    display: flex;
+    flex-direction: column;
+    
+    
+}

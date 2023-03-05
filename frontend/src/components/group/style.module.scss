@@ -1,0 +1,13 @@
+@import "index.css";
+
+.groupGenerateButtonSetToRating{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.groupLabelSwitcher{
+    display: flex;
+    flex-direction: row;
+    width:100%;
+}
