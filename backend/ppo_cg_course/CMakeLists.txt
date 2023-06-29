@@ -466,7 +466,7 @@ find_library(REDIS_PLUS_PLUS_LIB redis++)
 target_link_libraries(unit_all_tests Qt5::Gui Qt5::Widgets
                     -lpqxx -lpq -ljsoncpp -lpng
                      ${JSONCPP_LIBRARIES} mysqlcppconn
-                     -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
+                     -lpthread -lboost_log -lboost_system -lboost_thread
                      -lssl -lcrypto -ljwt -lpng -lz
                      Drogon::Drogon
                      gtest gmock pthread)
@@ -481,7 +481,7 @@ target_link_libraries(http_server Qt5::Gui Qt5::Widgets Qt5::Network
                         ${HIREDIS_LIB} ${REDIS_PLUS_PLUS_LIB}
                         -lpqxx -lpq
                         -ljsoncpp  ${JSONCPP_LIBRARIES}
-                        mysqlcppconn  -lpthread -lboost_log -lnghttp2_asio -lboost_system -lboost_thread
+                        mysqlcppconn  -lpthread -lboost_log -lboost_system -lboost_thread
                         -lssl -lcrypto -ljwt -lpng -lz
                         Drogon::Drogon)
 
