@@ -17,7 +17,7 @@ config_t Config::read_config_file_postgres()
     config_file.open(__old_config_path);
     reader.parse(config_file, root);
 
-    if (root["PostgreSQL"])
+    if (root["PostgreSQL"] == 1)
     {
         config_data.dbms_type = "PostgreSQL";
         config_data.db_name = root["PostgreSQL"]["db_name"].asString().c_str();
@@ -45,7 +45,7 @@ int Config::read_config_postgres(config_t &config_data)
 
         reader.parse(config_file, root);
 
-        if (root["db_clients"])
+        if (root["db_clients"] == 1)
         {
             config_data.name_db_client = root["db_clients"][0]["name"].asString().c_str();
             config_data.dbms_type = root["db_clients"][0]["rdbms"].asString().c_str();
@@ -75,7 +75,7 @@ config_t Config::read_config_file_mysql()
     config_file.open(__old_config_path);
     reader.parse(config_file, root);
 
-    if (root["MySQL"])
+    if (root["MySQL"] == 1)
     {
         config_data.dbms_type = "MySQL";
         config_data.db_name = root["MySQL"]["db_name"].asString().c_str();
